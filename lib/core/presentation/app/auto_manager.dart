@@ -1,3 +1,4 @@
+import 'package:automanager/core/presentation/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -11,9 +12,9 @@ class AutoManager extends StatelessWidget {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'AutoManager',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
+      themeMode: ThemeMode.system,
+      theme:  AppTheme.light,
+      darkTheme:  AppTheme.dark,
       home: const OnboardingScreen(),
     );
   }
