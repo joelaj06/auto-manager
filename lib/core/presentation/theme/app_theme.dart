@@ -1,4 +1,5 @@
 import 'package:automanager/core/presentation/theme/app_color_scheme.dart';
+import 'package:automanager/core/presentation/theme/fonts.dart';
 import 'package:flutter/material.dart';
 
 class AppTheme {
@@ -12,6 +13,7 @@ class AppTheme {
 
  static ThemeData _theme(ColorScheme colorScheme) => ThemeData(
         useMaterial3: true,
+        fontFamily: AppFonts.poppins,
         brightness: colorScheme.brightness,
         colorScheme: colorScheme,
         textTheme: textTheme.apply(

@@ -12,7 +12,7 @@ class AutoManager extends StatelessWidget {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'AutoManager',
-      themeMode: ThemeMode.system,
+      themeMode: ThemeMode.light,
       theme:  AppTheme.light,
       darkTheme:  AppTheme.dark,
       home: const OnboardingScreen(),
