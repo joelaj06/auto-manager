@@ -6,6 +6,7 @@ import 'package:automanager/core/presentation/widgets/app_button.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../../../core/presentation/routes/routes.dart';
 import '../../../../../core/presentation/utils/app_image_assets.dart';
 
 class OnboardingScreen extends StatefulWidget {
@@ -91,8 +92,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
                  const AppSpacing(v: 20),
                  AppButton(
-                     backgroundColor: Colors.white,
-                     onPressed: () {}, text: 'Continue'),
+                     onPressed: () {
+                       Get.toNamed(AppRoutes.login);
+                     }, text: 'Continue'),
                 ],
               ),
             ),

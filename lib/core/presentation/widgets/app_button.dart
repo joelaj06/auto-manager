@@ -90,8 +90,9 @@ class _AppButtonState extends State<AppButton> {
                     fontWeight: FontWeight.w400,
                     color: widget.enabled || widget.loading
                         ? Colors.white
-                        : context.colorScheme.inversePrimary,
-                    fontSize: widget.fontSize?? 20),
+                        : context.colorScheme.onInverseSurface,
+                    fontSize: widget.fontSize?? 20,
+                ),
               ),
             ),
           ),
