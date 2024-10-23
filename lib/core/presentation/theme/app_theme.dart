@@ -30,6 +30,7 @@ extension ThemeExtension on BuildContext {
 
   TextTheme get textTheme => Theme.of(this).textTheme;
 
+  ColorScheme get colorScheme => Theme.of(this).colorScheme;
 
   TextStyle get h2 => theme.textTheme.displayMedium!;
 
