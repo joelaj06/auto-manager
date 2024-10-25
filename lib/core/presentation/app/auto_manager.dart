@@ -1,8 +1,8 @@
 import 'package:automanager/core/presentation/theme/app_theme.dart';
+import 'package:automanager/main_bindings.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../routes/routes.dart';
-
 
 class AutoManager extends StatelessWidget {
   const AutoManager({super.key});
@@ -12,11 +12,12 @@ class AutoManager extends StatelessWidget {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Auto Manager',
-      themeMode: ThemeMode.system,
-      theme:  AppTheme.light,
-      darkTheme:  AppTheme.dark,
-      initialRoute: AppRoutes.onBoarding,
+      themeMode: ThemeMode.light,
+      theme: AppTheme.light,
+      darkTheme: AppTheme.dark,
+      initialRoute: AppRoutes.login,
       getPages: Pages.pages,
+      initialBinding: MainBindings(),
     );
   }
 }

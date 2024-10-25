@@ -8,6 +8,7 @@ import 'package:get/get.dart';
 
 import '../../../../../core/presentation/routes/routes.dart';
 import '../../../../../core/presentation/utils/app_image_assets.dart';
+import '../../../../../core/utils/utils.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -18,6 +19,8 @@ class OnboardingScreen extends StatefulWidget {
 
 class _OnboardingScreenState extends State<OnboardingScreen> {
   late AssetImage bgImage;
+
+  final SharedPreferencesWrapper _sharedPreferencesWrapper = Get.find();
 
 
   @override
@@ -31,8 +34,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     precacheImage(bgImage, context);
     super.didChangeDependencies();
   }
+
   @override
   Widget build(BuildContext context) {
+    print('build Onboarding Screen');
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
@@ -43,7 +48,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           Container(
             height: context.height,
             width: context.width,
-            decoration:  BoxDecoration(
+            decoration: BoxDecoration(
               image: DecorationImage(
                 image: bgImage,
                 fit: BoxFit.cover,
@@ -67,8 +72,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           Align(
             alignment: Alignment.bottomRight,
             child: Padding(
-              padding:
-                  AppPaddings.lA.add(AppPaddings.lB),
+              padding: AppPaddings.lA.add(AppPaddings.lB),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 mainAxisSize: MainAxisSize.min,
@@ -86,15 +90,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         'in one place',
                         style: context.h6.copyWith(color: Colors.white),
                       ),
-
                     ],
                   ),
-
-                 const AppSpacing(v: 20),
-                 AppButton(
-                     onPressed: () {
-                       Get.toNamed(AppRoutes.login);
-                     }, text: 'Continue'),
+                  const AppSpacing(v: 20),
+                  AppButton(
+                      onPressed: navigateToLoginScreen,
+                      text: 'Continue'),
                 ],
               ),
             ),
@@ -102,5 +103,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         ],
       ),
     );
+  }
+
+  void navigateToLoginScreen() async {
+    final bool skipOnboarding = await _sharedPreferencesWrapper.setBool(
+        SharedPrefsKeys.skipOnboarding, true);
+    if (skipOnboarding) {
+      await Get.toNamed(AppRoutes.login);
+    }
   }
 }

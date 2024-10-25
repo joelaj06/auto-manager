@@ -13,6 +13,19 @@ class Pages {
       name: AppRoutes.login,
       page: () => const LoginScreen(),
       binding: LoginBindings(),
+    ),GetPage<AppRoutes>(
+      name: AppRoutes.signup,
+      page: () => const SignUpScreen(),
+      binding: SignUpBindings(),
+    ),
+    GetPage<AppRoutes>(
+      name: AppRoutes.base,
+      page: () => const BaseScreen(),
+    ),
+    GetPage<AppRoutes>(
+      name: AppRoutes.addCompany,
+      page: () => const AddCompanyScreen(),
+      binding: CompanyBindings(),
     ),
   ];
 }

@@ -2,12 +2,12 @@ import 'package:automanager/core/presentation/utils/app_image_assets.dart';
 import 'package:automanager/core/presentation/utils/app_padding.dart';
 import 'package:automanager/core/presentation/utils/app_spacing.dart';
 import 'package:automanager/core/presentation/widgets/animated_column.dart';
-import 'package:automanager/feature/authentication/presentation/login/controller/login_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 import '../../../../../core/presentation/widgets/widgets.dart';
+import '../getx/login_controller.dart';
 
 class LoginScreen extends GetView<LoginController> {
   const LoginScreen({super.key});
@@ -123,9 +123,10 @@ class LoginScreen extends GetView<LoginController> {
           Obx(
             () => AppButton(
               key: const Key('loginButton'),
-              onPressed: () => controller.login,
+              onPressed: () => controller.login(),
               text: 'Login',
-              enabled: controller.formIsValid.value,
+              enabled:
+                  !controller.isLoading.value && controller.formIsValid.value,
             ),
           ),
         ],

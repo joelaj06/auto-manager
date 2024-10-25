@@ -35,7 +35,7 @@ void main() async{
     isReleaseMode: !environment.isDebugging,
     errorViewBuilder: (_) => const ErrorView(),
     onException: AppLog.e,
-    child:  const AutoManager(),
+    child:   const AutoManager(),
   );
 
 }
