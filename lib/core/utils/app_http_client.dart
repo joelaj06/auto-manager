@@ -31,7 +31,7 @@ class AppHTTPClient {
   final AuthLocalDataSource authLocalDataSource;
    http.Client httpClient;
 
-  static const int requestTimeout = 30;
+  static const int requestTimeout = 60;
 
   final String baseUrl = environment.url;
 

@@ -2,6 +2,7 @@ import 'dart:async';
 
 import '../../../../core/utils/shared_preferences_wrapper.dart';
 import '../../../../core/utils/shared_prefs_keys.dart';
+import '../models/models.dart';
 import '../models/response/login/login_response.dart';
 
 
@@ -16,6 +17,10 @@ abstract class AuthLocalDataSource {
   Future<void> persistAuthResponse(LoginResponse token);
 
   Future<bool> isAuthenticated();
+
+  Future<void> persistUserSignUpResponse(UserRegistration response);
+
+  Future<UserRegistration?> getUserSignUpResponse();
 
 }
 
@@ -62,6 +67,24 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
       SharedPrefsKeys.loginResponse,
       authResponse!.toJson(),
     );
+  }
+
+  @override
+  Future<void> persistUserSignUpResponse(UserRegistration response) async {
+   await _preferencesWrapper.setMap(
+     SharedPrefsKeys.signUpResponse,
+     response.toJson(),
+   );
+  }
+
+  @override
+  Future<UserRegistration?> getUserSignUpResponse() async{
+    final Map<String, dynamic>? json =
+        await _preferencesWrapper.getMap(SharedPrefsKeys.signUpResponse);
+    if (json != null) {
+      return UserRegistration.fromJson(json);
+    }
+    return null;
   }
 
 

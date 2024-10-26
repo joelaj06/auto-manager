@@ -1,5 +1,7 @@
+import 'package:automanager/feature/auto_manager/presentation/company/company.dart';
 import 'package:flutter/material.dart';
-class AddCompanyScreen extends StatelessWidget {
+import 'package:get/get.dart';
+class AddCompanyScreen extends GetView<CompanyController> {
   const AddCompanyScreen({super.key});
 
   @override

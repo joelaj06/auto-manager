@@ -37,7 +37,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   @override
   Widget build(BuildContext context) {
-    print('build Onboarding Screen');
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(

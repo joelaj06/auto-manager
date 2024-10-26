@@ -23,11 +23,11 @@ class AuthRepositoryImpl extends Repository implements AuthRepository {
     }, (LoginResponse response) async {
       await authLocalDataSource.persistAuthResponse(response);
       final User user = User(
-          id: response.id,
-          firstName: response.firstName,
-          lastName: response.lastName ?? '',
-          email: response.email ?? '',
-        );
+        id: response.id,
+        firstName: response.firstName,
+        lastName: response.lastName ?? '',
+        email: response.email ?? '',
+      );
       return right(user);
     });
   }
@@ -40,11 +40,11 @@ class AuthRepositoryImpl extends Repository implements AuthRepository {
         (LoginResponse response) async {
       await authLocalDataSource.persistAuthResponse(response);
       final User user = User(
-          id: response.id,
-          firstName: response.firstName,
-          lastName: response.lastName ?? '',
-          email: response.email ?? '',
-          );
+        id: response.id,
+        firstName: response.firstName,
+        lastName: response.lastName ?? '',
+        email: response.email ?? '',
+      );
       return right(user);
     });
   }
@@ -99,8 +99,15 @@ class AuthRepositoryImpl extends Repository implements AuthRepository {
   }
 
   @override
-  Future<Either<Failure, UserRegistration>> addUser({required UserRequest userRequest}) {
-    return makeRequest(authRemoteDataSource.addUser(userRequest: userRequest));
+  Future<Either<Failure, UserRegistration>> addUser(
+      {required UserRequest userRequest}) async {
+    final Either<Failure, UserRegistration> response = await makeRequest(
+        authRemoteDataSource.addUser(userRequest: userRequest));
+    return response.fold((Failure failure) => left(failure),
+        (UserRegistration response) async {
+      await authLocalDataSource.persistUserSignUpResponse(response);
+      return right(response);
+    });
   }
 
   @override
@@ -111,7 +118,13 @@ class AuthRepositoryImpl extends Repository implements AuthRepository {
   }
 
   @override
-  Future<Either<Failure, UserRegistration>> verifyOtp({required OtpVerificationRequest request}) {
+  Future<Either<Failure, UserRegistration>> verifyOtp(
+      {required OtpVerificationRequest request}) {
     return makeRequest(authRemoteDataSource.verifyOtp(request: request));
+  }
+
+  @override
+  Future<Either<Failure, UserRegistration>> loadUserSignUpData() async {
+    return makeLocalRequest(authLocalDataSource.getUserSignUpResponse);
   }
 }

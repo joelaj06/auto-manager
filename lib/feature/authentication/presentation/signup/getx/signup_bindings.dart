@@ -1,7 +1,6 @@
 
-import 'package:automanager/feature/authentication/domain/usecase/verifyRegistrationOtp.dart';
+import 'package:automanager/feature/authentication/domain/domain.dart';
 import 'package:get/get.dart';
-import '../../../domain/usecase/signup.dart';
 import 'signup_controller.dart';
 
 class SignUpBindings extends Bindings {
@@ -12,6 +11,8 @@ class SignUpBindings extends Bindings {
         userSignUp: UserSignUp(
           authRepository: Get.find(),
         ), verifyRegistrationOtp: VerifyRegistrationOtp(
+        authRepository: Get.find(),
+      ), loadUserSignupData: LoadUserSignupData(
         authRepository: Get.find(),
       ),
       ),

@@ -49,22 +49,36 @@ class SignUpScreen extends GetView<SignUpController> {
             fit: BoxFit.cover,
           ),
         ),
-        child: PageView(
-          controller: controller.pageController,
-          onPageChanged: controller.onPageChanged,
-          physics: const NeverScrollableScrollPhysics(),
-          children: <Widget>[
-            SingleChildScrollView(
-              child: AppAnimatedColumn(
-                crossAxisAlignment: CrossAxisAlignment.center,
+        child: FutureBuilder<String>(
+          future: controller.currentPageFuture,
+          builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+            if(snapshot.hasData){
+              return PageView(
+                controller: controller.pageController,
+                onPageChanged: controller.onPageChanged,
+                // physics: const NeverScrollableScrollPhysics(),
                 children: <Widget>[
-                  _buildLogo(context),
-                  _buildPersonalProfilePage(context),
+                  SingleChildScrollView(
+                    child: AppAnimatedColumn(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: <Widget>[
+                        _buildLogo(context),
+                        _buildPersonalProfilePage(context),
+                      ],
+                    ),
+                  ),
+                  _buildOtpVerificationPage(context),
                 ],
-              ),
-            ),
-            _buildOtpVerificationPage(context),
-          ],
+              );
+            }else{
+              return const SizedBox.shrink();
+            }
+          }
         ),
       ),
     );
@@ -101,10 +115,11 @@ class SignUpScreen extends GetView<SignUpController> {
                       'Please enter the OTP sent to ',
                       textAlign: TextAlign.start,
                     ),
-                    Text(
-                      controller.email.value,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
+                   Obx(() =>Text(
+                        controller.email.value,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   ],

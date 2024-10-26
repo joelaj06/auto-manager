@@ -4,6 +4,7 @@ import 'package:automanager/core/presentation/app/auto_manager.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:logging/logging.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 
 import 'core/error_handling/error_boundary.dart';
@@ -21,6 +22,7 @@ void main() async{
     DeviceOrientation.landscapeRight,
   ]);
 
+
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
 
   final ErrorReporter errorReporter = ErrorReporter(client: _ReporterClient());
@@ -31,13 +33,26 @@ void main() async{
     ),
   );
 
+  final String initialRoute = await getInitialRoute();
+
   ErrorBoundary(
     isReleaseMode: !environment.isDebugging,
     errorViewBuilder: (_) => const ErrorView(),
     onException: AppLog.e,
-    child:   const AutoManager(),
+    child:  AutoManager(initialRoute: initialRoute),
   );
 
+}
+
+Future<String> getInitialRoute() async {
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  String? currentRoute = prefs.getString('currentRoute');
+  final bool? skipOnboarding = prefs.getBool('skipOnboarding');
+  if (skipOnboarding == null || skipOnboarding == false) {
+    currentRoute = '/onboarding';
+  }
+  currentRoute ??= '/login';
+  return currentRoute;
 }
 
 

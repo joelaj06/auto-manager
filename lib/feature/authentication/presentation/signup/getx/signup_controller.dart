@@ -1,19 +1,19 @@
-import 'package:automanager/feature/authentication/domain/usecase/verifyRegistrationOtp.dart';
+import 'package:automanager/core/core.dart';
+import 'package:automanager/feature/authentication/domain/domain.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
-import '../../../../../core/errors/failure.dart';
-import '../../../../../core/presentation/utils/utils.dart';
 import '../../../data/models/models.dart';
-import '../../../domain/usecase/signup.dart';
 
 class SignUpController extends GetxController {
   SignUpController(
-      {required this.userSignUp, required this.verifyRegistrationOtp});
+      {required this.userSignUp, required this.verifyRegistrationOtp,
+      required this.loadUserSignupData});
 
   final UserSignUp userSignUp;
   final VerifyRegistrationOtp verifyRegistrationOtp;
+  final LoadUserSignupData loadUserSignupData;
 
   //reactive variables
   final RxInt pageIndex = 0.obs;
@@ -30,12 +30,40 @@ class SignUpController extends GetxController {
   RxBool wrongOtp = false.obs;
   Rx<UserRegistration> registrationResponse = UserRegistration.empty().obs;
 
-  final PageController pageController = PageController(initialPage: 0);
+  late PageController pageController;
+  late Future<String> currentPageFuture;
+  final SharedPreferencesWrapper _sharedPreferencesWrapper =
+      Get.find<SharedPreferencesWrapper>();
+
+  @override
+  void onInit() {
+    loadUserData();
+    // Load the current route and set the pageController based on it
+    currentPageFuture = getCurrentPage();
+    super.onInit();
+  }
 
   @override
   void onClose() {
     pageController.dispose();
     super.onClose();
+  }
+
+  void loadUserData() async {
+    // ignore: unawaited_futures
+    isLoading(true);
+    final Either<Failure, UserRegistration> failureOrUser =
+        await loadUserSignupData(null);
+    failureOrUser.fold(
+      (Failure failure) {
+        isLoading(false);
+      },
+      (UserRegistration userRes) {
+        isLoading(false);
+        registrationResponse(userRes);
+        email(userRes.data?.email ?? '');
+      },
+    );
   }
 
   void verifyUserOtp() async {
@@ -58,8 +86,22 @@ class SignUpController extends GetxController {
         isLoading(false);
         AppSnack.show(
             title: '', message: userRes.message, status: SnackStatus.success);
+        saveCurrentRoute(AppRoutes.addCompany);
+        Get.toNamed<dynamic>(AppRoutes.addCompany);
       },
     );
+  }
+
+  Future<String> getCurrentPage() async {
+    final String currentRoute =
+        await _sharedPreferencesWrapper.getString(SharedPrefsKeys.currentRoute);
+    pageController = PageController(initialPage: currentRoute == AppRoutes.signup ? 1 : 0);
+    return currentRoute;
+  }
+
+  Future<void> saveCurrentRoute(String page) async {
+    await _sharedPreferencesWrapper.setString(
+        SharedPrefsKeys.currentRoute, page);
   }
 
   void signUp() async {
@@ -88,6 +130,7 @@ class SignUpController extends GetxController {
         AppSnack.show(
             title: '', message: userRes.message, status: SnackStatus.success);
         navigatePages(1);
+        saveCurrentRoute(AppRoutes.signup);
       },
     );
   }
@@ -108,7 +151,7 @@ class SignUpController extends GetxController {
   void otpVerificationCode(String value) {
     otpCode(value);
     if (otpCode.value.length == 6) {
-      verifyUserOtp();
+        verifyUserOtp();
     }
   }
 
