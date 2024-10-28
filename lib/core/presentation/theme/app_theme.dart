@@ -1,5 +1,6 @@
 import 'package:automanager/core/presentation/theme/app_color_scheme.dart';
 import 'package:automanager/core/presentation/theme/fonts.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class AppTheme {
@@ -7,11 +8,11 @@ class AppTheme {
 
   static const TextTheme textTheme = TextTheme();
 
-  static  ThemeData get light => _theme(AppColorScheme.lightScheme());
+  static ThemeData get light => _theme(AppColorScheme.lightScheme());
 
-  static  ThemeData  get dark => _theme(AppColorScheme.darkScheme());
+  static ThemeData get dark => _theme(AppColorScheme.darkScheme());
 
- static ThemeData _theme(ColorScheme colorScheme) => ThemeData(
+  static ThemeData _theme(ColorScheme colorScheme) => ThemeData(
         useMaterial3: true,
         fontFamily: AppFonts.poppins,
         brightness: colorScheme.brightness,
@@ -19,6 +20,14 @@ class AppTheme {
         textTheme: textTheme.apply(
           bodyColor: colorScheme.onSurface,
           displayColor: colorScheme.onSurface,
+        ),
+        appBarTheme: AppBarTheme(
+          titleTextStyle: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: colorScheme.onSurface,
+            fontSize: 24,
+            fontFamily: AppFonts.poppins,
+          )
         ),
         scaffoldBackgroundColor: colorScheme.background,
         canvasColor: colorScheme.surface,
@@ -58,22 +67,20 @@ extension ThemeExtension on BuildContext {
 
   TextStyle get caption => theme.textTheme.bodySmall!;
 
-  TextStyle get smallest =>
-      theme.textTheme.bodyMedium!;
+  TextStyle get smallest => theme.textTheme.bodyMedium!;
 
   TextStyle get captionError => theme.textTheme.bodySmall!
       .copyWith(color: Theme.of(this).colorScheme.error);
 
   TextStyle get button => theme.textTheme.labelLarge!;
 
-  TextStyle get buttonSmall =>
-      theme.textTheme.labelLarge!;
+  TextStyle get buttonSmall => theme.textTheme.labelLarge!;
 
   TextStyle get overline => theme.textTheme.labelSmall!;
 
   TextStyle get appBarTitle => theme.textTheme.bodyLarge!.copyWith(
-    fontWeight: FontWeight.w600,
-  );
+        fontWeight: FontWeight.w600,
+      );
 
   bool get isDarkMode =>
       MediaQuery.of(this).platformBrightness == Brightness.dark;

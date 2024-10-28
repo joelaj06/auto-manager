@@ -149,6 +149,7 @@ class SignUpScreen extends GetView<SignUpController> {
                 labelText: 'First Name',
                 onChanged: controller.onFirstNameInputChanged,
                 validator: controller.validateName,
+                textInputType: TextInputType.name
               ),
               const AppSpacing(
                 v: 10,
@@ -157,6 +158,7 @@ class SignUpScreen extends GetView<SignUpController> {
                 labelText: 'Last Name',
                 onChanged: controller.onLastNameInputChanged,
                 validator: controller.validateName,
+                textInputType: TextInputType.name
               ),
               const AppSpacing(
                 v: 10,
@@ -165,6 +167,7 @@ class SignUpScreen extends GetView<SignUpController> {
                 labelText: 'Email',
                 onChanged: controller.onEmailInputChanged,
                 validator: controller.validateEmail,
+                textInputType: TextInputType.emailAddress,
               ),
               const AppSpacing(
                 v: 10,
@@ -183,6 +186,7 @@ class SignUpScreen extends GetView<SignUpController> {
                   labelText: 'Password',
                   onChanged: controller.onPasswordInputChanged,
                   validator: controller.validatePassword,
+                  textInputType: TextInputType.visiblePassword,
                   obscureText: !controller.showPassword.value,
                   suffixIcon: AnimatedSwitcher(
                     reverseDuration: Duration.zero,
@@ -222,6 +226,7 @@ class SignUpScreen extends GetView<SignUpController> {
                   onChanged: controller.onPasswordConfirmationInputChanged,
                   validator: controller.validatePasswordConfirmation,
                   obscureText: !controller.showPassword.value,
+                  textInputType: TextInputType.visiblePassword,
                   suffixIcon: AnimatedSwitcher(
                     reverseDuration: Duration.zero,
                     transitionBuilder:
