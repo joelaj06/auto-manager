@@ -16,51 +16,59 @@ class LoginScreen extends GetView<LoginController> {
   Widget build(BuildContext context) {
     return Scaffold(
       bottomNavigationBar: _buildBottomNavBar(context),
-      body: Container(
-        padding: AppPaddings.lA,
-        height: context.height,
-        width: context.width,
-        decoration: const BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage(AssetImages.loginBackground),
-            opacity: 0.1,
-            fit: BoxFit.cover,
-          ),
-        ),
-        child: SingleChildScrollView(
-          child: AppAnimatedColumn(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              const AppSpacing(v: 100),
-              _buildLogo(context),
-              _buildForm(),
-            ],
-          ),
-        ),
+      body: Obx(
+        () => controller.isLoadingLocalData.value
+            ? const SizedBox()
+            : Container(
+                padding: AppPaddings.lA,
+                height: context.height,
+                width: context.width,
+                decoration: const BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage(AssetImages.loginBackground),
+                    opacity: 0.1,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+                child: SingleChildScrollView(
+                  child: AppAnimatedColumn(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      const AppSpacing(v: 100),
+                      _buildLogo(context),
+                      _buildForm(),
+                    ],
+                  ),
+                ),
+              ),
       ),
     );
   }
 
   Widget _buildBottomNavBar(BuildContext context) {
-    return SizedBox(
-      height: 50,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          const Text('Don\'t have an account? '),
-          TextButton(
-            onPressed: () {
-              controller.navigateToSignUpScreen();
-            },
-            child: const Text(
-              'Register',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
+    return Obx(
+      () => controller.isLoadingLocalData.value
+          ? const SizedBox()
+          : SizedBox(
+              height: 50,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  const Text('Don\'t have an account? '),
+                  TextButton(
+                    onPressed: () {
+                      controller.navigateToSignUpScreen();
+                    },
+                    child: const Text(
+                      'Register',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  )
+                ],
               ),
             ),
-          )
-        ],
-      ),
     );
   }
 

@@ -1,3 +1,4 @@
+import 'package:automanager/core/core.dart';
 import 'package:automanager/core/presentation/utils/utils.dart';
 import 'package:automanager/feature/authentication/domain/domain.dart';
 import 'package:automanager/feature/auto_manager/data/data.dart';
@@ -61,6 +62,7 @@ class CompanyController extends GetxController {
   ];
 
   PageController pageController = PageController(initialPage: 0);
+  SharedPreferencesWrapper _sharedPreferencesWrapper = Get.find();
 
   @override
   void onInit() {
@@ -133,10 +135,12 @@ class CompanyController extends GetxController {
     );
   }
 
-  void navigateToLoginScreen() {
-    Get.offAllNamed(AppRoutes.login);
+  void navigateToLoginScreen() async {
+    await _sharedPreferencesWrapper.remove(
+      SharedPrefsKeys.currentRoute,
+    );
+    await Get.offAllNamed(AppRoutes.login);
   }
-
 
   void saveCompany() {
     if (pageIndex.value < 2) {

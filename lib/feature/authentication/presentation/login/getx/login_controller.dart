@@ -15,8 +15,9 @@ class LoginController extends GetxController{
   final LoadUser loadUser;
 
   RxBool showPassword = false.obs;
-  RxBool isLoading = false.obs;
   RxString email = ''.obs;
+  RxBool isLoading = false.obs;
+  RxBool isLoadingLocalData = false.obs;
   RxString password = ''.obs;
 
  // final SharedPreferencesWrapper _sharedPreferencesWrapper = Get.find();
@@ -29,18 +30,18 @@ class LoginController extends GetxController{
 
   void loadUserData() async {
     // ignore: unawaited_futures
-    isLoading(true);
+    isLoadingLocalData(true);
 
     final Either<Failure, User> failureOrUser = await loadUser(null);
 
     // ignore: unawaited_futures
     failureOrUser.fold(
           (Failure failure) {
-        isLoading(false);
+            isLoadingLocalData(false);
       },
           (User user) {
-        isLoading(false);
-        Get.offAllNamed<void>(AppRoutes.base);
+            isLoadingLocalData(false);
+       Get.offAllNamed<void>(AppRoutes.base);
       },
     );
   }

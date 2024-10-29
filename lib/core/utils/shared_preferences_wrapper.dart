@@ -106,9 +106,6 @@ class SharedPreferencesWrapper {
   Future<bool> remove(String key) async {
     final SharedPreferences sharedPreferences =
         await SharedPreferences.getInstance();
-/*    if(key==SharedPrefsKeys.loginResponse) {
-      return true;
-    }*/
     return sharedPreferences.remove(key);
   }
 

@@ -8,7 +8,7 @@ class AddCompanyScreen extends GetView<CompanyController> {
 
   @override
   Widget build(BuildContext context) {
-
+    controller.loadUserData();
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -78,13 +78,14 @@ class AddCompanyScreen extends GetView<CompanyController> {
         ),
         const AppSpacing(v: 10),
         Text(
-          'Successful',
+          '🎉 Congratulations!',
           style: context.textTheme.headlineSmall
               ?.copyWith(fontWeight: FontWeight.bold),
         ),
         const AppSpacing(v: 10),
         Text(
-          'You can now start using Auto Manager',
+          'Your business setup is complete. You\'re all set to get started.'
+              '\n Explore the features and manage your business with ease.',
           style: context.textTheme.bodyMedium,
           textAlign: TextAlign.center,
         ),

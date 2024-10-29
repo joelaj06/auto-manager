@@ -27,5 +27,25 @@ class Pages {
       page: () => const AddCompanyScreen(),
       binding: CompanyBindings(),
     ),
+    GetPage<AppRoutes>(
+      name: AppRoutes.dashboard,
+      page: () => const DashboardScreen(),
+    ),
+    GetPage<AppRoutes>(
+      name: AppRoutes.sales,
+      page: () => const SalesScreen(),
+    ),
+    GetPage<AppRoutes>(
+      name: AppRoutes.expenses,
+      page: () => const ExpensesScreen(),
+    ),
+    GetPage<AppRoutes>(
+      name: AppRoutes.rentals,
+      page: () => const RentalScreen(),
+    ),
+    GetPage<AppRoutes>(
+      name: AppRoutes.more,
+      page: () => const MoreScreen(),
+    ),
   ];
 }
