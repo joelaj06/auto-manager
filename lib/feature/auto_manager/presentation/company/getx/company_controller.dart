@@ -1,9 +1,21 @@
+import 'package:automanager/core/presentation/utils/utils.dart';
+import 'package:automanager/feature/authentication/domain/domain.dart';
+import 'package:automanager/feature/auto_manager/data/data.dart';
+import 'package:automanager/feature/auto_manager/domain/usecase/usecase.dart';
+import 'package:dartz/dartz.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
+import '../../../../../core/errors/failure.dart';
+import '../../../../../core/presentation/routes/app_routes.dart';
+import '../../../../authentication/data/models/models.dart';
+
 class CompanyController extends GetxController {
+  CompanyController(
+      {required this.addCompany, required this.loadUserSignupData});
 
-
+  final AddCompany addCompany;
+  final LoadUserSignupData loadUserSignupData;
 
   //reactive variables
   final RxInt pageIndex = 0.obs;
@@ -24,6 +36,8 @@ class CompanyController extends GetxController {
   final RxString registrationNumber = ''.obs;
   final RxString taxIdentificationNumber = ''.obs;
   final RxString motto = ''.obs;
+  final Rx<UserRegistration> registrationResponse =
+      UserRegistration.empty().obs;
 
   final List<String> industries = <String>[
     'Automotive',
@@ -52,12 +66,86 @@ class CompanyController extends GetxController {
   void onInit() {
     companyType(companyTypes.first);
     industry(industries.first);
+    loadUserData();
     super.onInit();
   }
 
+  void addNewCompany() async {
+    isLoading(true);
+    final Address address = Address(
+      state: state.value.trim(),
+      city: city.value.trim(),
+      street: street.value.trim(),
+      postalCode: postalCode.value.trim(),
+      country: country.value.trim(),
+    );
+
+    final Company companyRequest = Company(
+        name: companyName.value.trim(),
+        companyType: companyType.value.trim(),
+        industry: industry.value.trim(),
+        description: description.value.trim(),
+        website: website.value.trim(),
+        logoUrl: logo.value,
+        address: address,
+        phone: phone.value.trim(),
+        email: email.value.trim(),
+        registrationNumber: registrationNumber.value.trim(),
+        taxIdentificationNumber: taxIdentificationNumber.value.trim(),
+        motto: motto.value.trim(),
+        id: null,
+        ownerId: registrationResponse.value.data?.userId ?? '',
+        createdBy: registrationResponse.value.data?.userId ?? '',
+        isActive: true,
+        isVerified: false,
+        subscriptionPlan: 'basic');
+
+    final Either<Failure, Company> failureOrCompany =
+        await addCompany(companyRequest);
+    failureOrCompany.fold(
+      (Failure failure) {
+        isLoading(false);
+        AppSnack.show(message: failure.message, status: SnackStatus.error);
+      },
+      (Company company) {
+        isLoading(false);
+        AppSnack.show(
+            message: 'Company Successfully Created',
+            status: SnackStatus.success);
+        navigatePages(3);
+      },
+    );
+  }
+
+  void loadUserData() async {
+    // ignore: unawaited_futures
+    isLoading(true);
+    final Either<Failure, UserRegistration> failureOrUser =
+        await loadUserSignupData(null);
+    failureOrUser.fold(
+      (Failure failure) {
+        isLoading(false);
+      },
+      (UserRegistration userRes) {
+        isLoading(false);
+        registrationResponse(userRes);
+      },
+    );
+  }
+
+  void navigateToLoginScreen() {
+    Get.offAllNamed(AppRoutes.login);
+  }
 
 
-
+  void saveCompany() {
+    if (pageIndex.value < 2) {
+      pageIndex.value += 1;
+      navigatePages(pageIndex.value);
+    } else {
+      addNewCompany();
+    }
+  }
 
   void onCompanyNameInputChanged(String? value) {
     companyName(value);
@@ -123,7 +211,6 @@ class CompanyController extends GetxController {
     motto(value);
   }
 
-
   String? validateEmail(String? email) {
     String? errorMessage;
     // Check if email is empty
@@ -154,13 +241,6 @@ class CompanyController extends GetxController {
   void navigateToPreviousPage() {
     if (pageIndex.value != 0) {
       pageIndex.value -= 1;
-      navigatePages(pageIndex.value);
-    }
-  }
-
-  void saveCompany() {
-    if (pageIndex.value != 2) {
-      pageIndex.value += 1;
       navigatePages(pageIndex.value);
     }
   }

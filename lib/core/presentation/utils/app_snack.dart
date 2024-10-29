@@ -4,7 +4,6 @@ import 'package:ionicons/ionicons.dart';
 
 class AppSnack {
   static void show({
-    required String title,
     required String message,
     SnackStatus? status,
   }) {

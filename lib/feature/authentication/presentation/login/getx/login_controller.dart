@@ -62,11 +62,11 @@ class LoginController extends GetxController{
     failureOrUser.fold(
           (Failure failure) {
         isLoading(false);
-        AppSnack.show(title: '', message: failure.message, status: SnackStatus.error);
+        AppSnack.show(message: failure.message, status: SnackStatus.error);
       },
           (User user) {
         isLoading(false);
-        AppSnack.show(title: '', message: 'Login Successful', status: SnackStatus.success);
+        AppSnack.show(message: 'Login Successful', status: SnackStatus.success);
         Get.toNamed<dynamic>(AppRoutes.base);
       },
     );
@@ -75,7 +75,7 @@ class LoginController extends GetxController{
   void navigateToSignUpScreen() async{
     final dynamic result = await Get.toNamed<dynamic>(AppRoutes.signup);
     if(result != null){
-      AppSnack.show(title: '', message: 'User account created successfully',
+      AppSnack.show(message: 'User account created successfully',
           status: SnackStatus.success);
 
     }

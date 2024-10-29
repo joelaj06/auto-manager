@@ -79,13 +79,13 @@ class SignUpController extends GetxController {
         wrongOtp(true);
         isLoading(false);
         AppSnack.show(
-            title: '', message: failure.message, status: SnackStatus.error);
+            message: failure.message, status: SnackStatus.error);
       },
       (UserRegistration userRes) {
         wrongOtp(false);
         isLoading(false);
         AppSnack.show(
-            title: '', message: userRes.message, status: SnackStatus.success);
+             message: userRes.message, status: SnackStatus.success);
         saveCurrentRoute(AppRoutes.addCompany);
         Get.toNamed<dynamic>(AppRoutes.addCompany);
       },
@@ -122,13 +122,13 @@ class SignUpController extends GetxController {
       (Failure failure) {
         isLoading(false);
         AppSnack.show(
-            title: '', message: failure.message, status: SnackStatus.error);
+             message: failure.message, status: SnackStatus.error);
       },
       (UserRegistration userRes) {
         isLoading(false);
         registrationResponse(userRes);
         AppSnack.show(
-            title: '', message: userRes.message, status: SnackStatus.success);
+           message: userRes.message, status: SnackStatus.success);
         navigatePages(1);
         saveCurrentRoute(AppRoutes.signup);
       },

@@ -8,13 +8,19 @@ class AddCompanyScreen extends GetView<CompanyController> {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       appBar: AppBar(
         title: const Text(
           'Business Setup',
         ),
       ),
-      bottomNavigationBar: _buildBottomNavigationBar(),
+      bottomNavigationBar: Obx(
+        () => Visibility(
+          visible: controller.pageIndex.value < 3,
+          child: _buildBottomNavigationBar(),
+        ),
+      ),
       body: Column(
         children: <Widget>[
           const AppSpacing(v: 10),
@@ -48,12 +54,13 @@ class AddCompanyScreen extends GetView<CompanyController> {
               padding: AppPaddings.mA.add(AppPaddings.mT),
               child: PageView(
                 controller: controller.pageController,
+                onPageChanged: controller.onPageChanged,
                 physics: const NeverScrollableScrollPhysics(),
                 children: <Widget>[
                   _buildBasicInfoPage(context),
                   _buildContactPage(context),
                   _buildBusinessRegistrationPage(context),
-                  _buildAdditionalInfoPage(),
+                  _buildSuccessPage(context),
                 ],
               ),
             ),
@@ -63,9 +70,31 @@ class AddCompanyScreen extends GetView<CompanyController> {
     );
   }
 
-  Widget _buildAdditionalInfoPage() {
-    return Center(
-      child: Text('Basic Info'),
+  Widget _buildSuccessPage(BuildContext context) {
+    return Column(
+      children: <Widget>[
+        Image.asset(
+          AssetImages.success,
+        ),
+        const AppSpacing(v: 10),
+        Text(
+          'Successful',
+          style: context.textTheme.headlineSmall
+              ?.copyWith(fontWeight: FontWeight.bold),
+        ),
+        const AppSpacing(v: 10),
+        Text(
+          'You can now start using Auto Manager',
+          style: context.textTheme.bodyMedium,
+          textAlign: TextAlign.center,
+        ),
+        const AppSpacing(v: 20),
+        AppButton(
+          onPressed: controller.navigateToLoginScreen,
+          text: 'Continue',
+          // fontSize: 18,
+        ),
+      ],
     );
   }
 
@@ -110,7 +139,7 @@ class AddCompanyScreen extends GetView<CompanyController> {
           AppTextInputField(
             labelText: 'Company Email',
             onChanged: controller.onEmailInputChanged,
-            validator: controller.validateField,
+            validator: controller.validateEmail,
             textInputType: TextInputType.emailAddress,
             initialValue: controller.email.value,
           ),
@@ -246,7 +275,8 @@ class AddCompanyScreen extends GetView<CompanyController> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             Visibility(
-              visible: controller.pageIndex.value != 0,
+              visible: controller.pageIndex.value != 0 &&
+                  controller.pageIndex.value != 3,
               child: IconButton(
                 onPressed: controller.navigateToPreviousPage,
                 icon: const Icon(Icons.arrow_back),
@@ -256,7 +286,8 @@ class AddCompanyScreen extends GetView<CompanyController> {
               child: Padding(
                 padding: AppPaddings.mH,
                 child: AppButton(
-                  enabled: controller.pageIndex.value == 0
+                  enabled: controller.isLoading.value ||
+                          controller.pageIndex.value == 0
                       ? controller.companyBasicFormIsValid
                       : controller.pageIndex.value == 1
                           ? controller.companyAddressFormIsValid

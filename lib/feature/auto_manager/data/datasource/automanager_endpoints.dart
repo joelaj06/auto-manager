@@ -1,3 +1,3 @@
 class AutoManagerEndpoints {
-  static const String company = 'company';
+  static const String company = 'companies';
 }

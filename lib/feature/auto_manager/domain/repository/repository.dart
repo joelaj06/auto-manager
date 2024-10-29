@@ -1,0 +1,1 @@
+export 'automanager_repository.dart';
