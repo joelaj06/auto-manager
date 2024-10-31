@@ -15,5 +15,5 @@ List<String> mobileNavTexts = <String>[
   'Sales',
   'Expenses',
   'Rentals',
-  'Settings',
+  'More',
 ];

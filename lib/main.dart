@@ -2,10 +2,10 @@ import 'dart:async';
 
 import 'package:automanager/core/presentation/app/auto_manager.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:logging/logging.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 
 import 'core/error_handling/error_boundary.dart';
 import 'core/error_handling/error_reporter.dart';
@@ -13,8 +13,7 @@ import 'core/presentation/widgets/error_view.dart';
 import 'core/utils/app_log.dart';
 import 'core/utils/environment.dart';
 
-void main() async{
-
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await SystemChrome.setPreferredOrientations(<DeviceOrientation>[
     DeviceOrientation.portraitUp,
@@ -22,8 +21,19 @@ void main() async{
     DeviceOrientation.landscapeRight,
   ]);
 
+  SystemChrome.setSystemUIOverlayStyle(
+    const SystemUiOverlayStyle(
+      systemNavigationBarColor: Colors.transparent,
+        systemStatusBarContrastEnforced: true,
+        systemNavigationBarDividerColor: Colors.transparent,
+      //  systemNavigationBarIconBrightness: Brightness.light,
+        //statusBarIconBrightness: Brightness.light
+    ),
+  );
 
-  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
+  //Setting SystmeUIMode
+  await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge,
+      overlays: <SystemUiOverlay>[SystemUiOverlay.top]);
 
   final ErrorReporter errorReporter = ErrorReporter(client: _ReporterClient());
   Logger.root.level = Level.ALL;
@@ -39,9 +49,8 @@ void main() async{
     isReleaseMode: !environment.isDebugging,
     errorViewBuilder: (_) => const ErrorView(),
     onException: AppLog.e,
-    child:  AutoManager(initialRoute: initialRoute),
+    child: AutoManager(initialRoute: initialRoute),
   );
-
 }
 
 Future<String> getInitialRoute() async {
@@ -55,15 +64,14 @@ Future<String> getInitialRoute() async {
   return currentRoute;
 }
 
-
 class _ReporterClient implements ReporterClient {
   _ReporterClient();
 
   @override
   FutureOr<void> report(
       {required StackTrace stackTrace,
-        required Object error,
-        Object? extra}) async {
+      required Object error,
+      Object? extra}) async {
     // TODO: Sentry or Crashlytics
   }
 
@@ -72,4 +80,3 @@ class _ReporterClient implements ReporterClient {
     AppLog.i(object);
   }
 }
-

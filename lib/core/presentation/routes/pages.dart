@@ -21,6 +21,9 @@ class Pages {
     GetPage<AppRoutes>(
       name: AppRoutes.base,
       page: () => const BaseScreen(),
+      bindings: [
+        DashboardBindings(),
+      ]
     ),
     GetPage<AppRoutes>(
       name: AppRoutes.addCompany,
@@ -30,6 +33,7 @@ class Pages {
     GetPage<AppRoutes>(
       name: AppRoutes.dashboard,
       page: () => const DashboardScreen(),
+      binding: DashboardBindings(),
     ),
     GetPage<AppRoutes>(
       name: AppRoutes.sales,

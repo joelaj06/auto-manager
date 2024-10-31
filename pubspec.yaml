@@ -46,6 +46,7 @@ dependencies:
   circular_reveal_animation: ^2.0.1
   fluttertoast: ^8.2.8
   animated_bottom_navigation_bar: ^1.3.3
+  syncfusion_flutter_charts: ^24.2.9
 
 dev_dependencies:
   flutter_lints: ^3.0.0

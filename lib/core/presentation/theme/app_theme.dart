@@ -22,13 +22,20 @@ class AppTheme {
           displayColor: colorScheme.onSurface,
         ),
         appBarTheme: AppBarTheme(
+          backgroundColor: colorScheme.background,
           titleTextStyle: TextStyle(
             fontWeight: FontWeight.bold,
             color: colorScheme.onSurface,
             fontSize: 24,
             fontFamily: AppFonts.poppins,
-          )
+          ),
         ),
+
+        dividerTheme: DividerThemeData(
+          color: colorScheme.outline.withOpacity(0.6),
+          thickness: 1,
+        ),
+
         scaffoldBackgroundColor: colorScheme.background,
         canvasColor: colorScheme.surface,
       );

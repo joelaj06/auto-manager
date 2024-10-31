@@ -9,7 +9,7 @@ class AppColorScheme {
     return const ColorScheme(
       brightness: Brightness.light,
       primary: Color(0xff4d4d4d),
-      surfaceTint: Color(0xff5e5e5e),
+      surfaceTint:  Color(0xff5e5e5e),
       onPrimary: Color(0xffffffff),
       primaryContainer: Color(0xff717171),
       onPrimaryContainer: Color(0xffffffff),
