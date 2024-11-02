@@ -9,23 +9,27 @@ class NoParams {}
 
 class PageParams {
   const PageParams({
-    required this.page,
-    required this.size,
+     this.page,
+     this.size,
     this.query,
     this.startDate,
     this.endDate,
     this.userId,
     this.search,
-    this.company,
+    this.companyId,
+    this.year,
+    this.month,
   });
 
-  final int page;
-  final int size;
+  final int? page;
+  final int? size;
   final String? query;
   final String? startDate;
   final String? endDate;
   final String? userId;
   final String? search;
-  final String? company;
+  final String? companyId;
+  final int? year;
+  final int? month;
 
 }

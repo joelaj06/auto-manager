@@ -2,7 +2,7 @@ import 'package:automanager/core/core.dart';
 import 'package:automanager/feature/auto_manager/data/model/model.dart';
 import 'package:dartz/dartz.dart';
 
-import '../repository/automanager_repository.dart';
+import '../../repository/automanager_repository.dart';
 
 class AddCompany implements UseCase<Company, Company>{
   AddCompany({required this.autoManagerRepository});

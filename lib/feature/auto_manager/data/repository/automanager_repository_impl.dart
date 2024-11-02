@@ -18,5 +18,20 @@ class AutoManagerRepositoryImpl extends Repository
     return makeRequest(autoManagerRemoteDataSource.addCompany(companyRequest));
   }
 
+  @override
+  Future<Either<Failure, DashboardSummary>> fetchDashboardSummary(
+      {required String startDate,
+      required String endDate,
+      required String companyId}) {
+    return makeRequest(autoManagerRemoteDataSource.dashboardSummary(
+        startDate: startDate, endDate: endDate, companyId: companyId));
 
+  }
+
+  @override
+  Future<Either<Failure, MonthlySales>> fetchMonthlySales(
+      {required String companyId, required int year, required int month}) {
+    return makeRequest(autoManagerRemoteDataSource.monthlySales(
+        companyId: companyId, year: year, month: month));
+  }
 }
