@@ -1,12 +1,13 @@
 import 'package:automanager/core/core.dart';
 import 'package:automanager/core/presentation/theme/app_theme.dart';
+import 'package:automanager/core/utils/data_formatter.dart';
 import 'package:automanager/feature/auto_manager/presentation/dashboard/dashboard.dart';
 import 'package:automanager/feature/auto_manager/presentation/dashboard/widget/dashboard_cards.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:iconly/iconly.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:intl/intl.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
@@ -15,6 +16,7 @@ class DashboardScreen extends GetView<DashboardController> {
 
   @override
   Widget build(BuildContext context) {
+    // controller.getMonthlySales();
     return Scaffold(
         appBar: AppBar(
           centerTitle: false,
@@ -54,33 +56,47 @@ class DashboardScreen extends GetView<DashboardController> {
           const AppSpacing(
             v: 10,
           ),
-          DashboardSummaryCard(
-            title: 'Revenue',
-            value: 'GHS25,445',
-            icon: Iconsax.moneys5,
-            onTap: () {},
+          Obx(
+            () => DashboardSummaryCard(
+              title: 'Revenue',
+              value: DataFormatter.getLocalCompactCurrencyFormatter(context).format(
+                controller.dashboardSummary.value.revenue,
+              ),
+              icon: Iconsax.moneys5,
+              onTap: () {},
+            ),
           ),
           const AppSpacing(
             v: 10,
           ),
-          const Row(
+          Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               Expanded(
-                child: DashboardSummaryCard(
-                  title: 'Rentals',
-                  value: 'GHS25,445',
-                  icon: Ionicons.car,
+                child: Obx(
+                  () => DashboardSummaryCard(
+                    title: 'Rentals',
+                    value:
+                        DataFormatter.getLocalCompactCurrencyFormatter(context).format(
+                      controller.dashboardSummary.value.rentalSales,
+                    ),
+                    icon: Ionicons.car,
+                  ),
                 ),
               ),
-              AppSpacing(
+              const AppSpacing(
                 h: 10,
               ),
               Expanded(
-                child: DashboardSummaryCard(
-                  title: 'Expenses',
-                  value: 'GHS25,445',
-                  icon: IconlyBold.wallet,
+                child: Obx(
+                  () => DashboardSummaryCard(
+                    title: 'Expenses',
+                    value:
+                        DataFormatter.getLocalCompactCurrencyFormatter(context).format(
+                      controller.dashboardSummary.value.expenses,
+                    ),
+                    icon: IconlyBold.wallet,
+                  ),
                 ),
               ),
             ],
@@ -88,24 +104,29 @@ class DashboardScreen extends GetView<DashboardController> {
           const AppSpacing(
             v: 10,
           ),
-          const Row(
+          Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               Expanded(
-                child: DashboardSummaryCard(
-                  title: 'Drivers',
-                  value: '12',
-                  icon: IconlyBold.discovery,
+                child: Obx(
+                  () => DashboardSummaryCard(
+                    title: 'Drivers',
+                    value: controller.dashboardSummary.value.drivers.toString(),
+                    icon: IconlyBold.discovery,
+                  ),
                 ),
               ),
-              AppSpacing(
+              const AppSpacing(
                 h: 10,
               ),
               Expanded(
-                child: DashboardSummaryCard(
-                  title: 'Customers',
-                  value: '86',
-                  icon: IconlyBold.user_3,
+                child: Obx(
+                  () => DashboardSummaryCard(
+                    title: 'Customers',
+                    value:
+                        controller.dashboardSummary.value.customers.toString(),
+                    icon: IconlyBold.user_3,
+                  ),
                 ),
               ),
             ],
@@ -114,14 +135,15 @@ class DashboardScreen extends GetView<DashboardController> {
             v: 10,
           ),
           Card(
-            color:  context.colorScheme.outline.withOpacity(0.1),
-            shadowColor:  context.colorScheme.outline.withOpacity(0.1),
+            color: context.colorScheme.outline.withOpacity(0.1),
+            shadowColor: context.colorScheme.outline.withOpacity(0.1),
             child: Column(
               children: <Widget>[
                 Align(
                   alignment: Alignment.centerRight,
-                    child: _buildMonthDateField(context),),
-                _buildRoundedColumnChart(context),
+                  child: _buildMonthDateField(context),
+                ),
+                _buildWeeklyChart(context),
               ],
             ),
           ),
@@ -130,16 +152,16 @@ class DashboardScreen extends GetView<DashboardController> {
     );
   }
 
-  Widget _buildMonthDateField(BuildContext context){
+  Widget _buildMonthDateField(BuildContext context) {
     return InkWell(
       onTap: () {},
       child: Container(
         padding: AppPaddings.mA,
         decoration: BoxDecoration(
           color: context.colorScheme.outline.withOpacity(0.2),
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: AppBorderRadius.card,
         ),
-       // padding: AppPaddings.sA.add(AppPaddings.sH),
+        // padding: AppPaddings.sA.add(AppPaddings.sH),
         child: const Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
@@ -161,44 +183,50 @@ class DashboardScreen extends GetView<DashboardController> {
     );
   }
 
-  SfCartesianChart _buildRoundedColumnChart(BuildContext context) {
+  SfCartesianChart _buildWeeklyChart(BuildContext context) {
     return SfCartesianChart(
       plotAreaBorderWidth: 0,
       title: const ChartTitle(
         text: 'Weekly Revenue',
-        alignment: ChartAlignment.near
+        alignment: ChartAlignment.near,
       ),
-      primaryXAxis: const CategoryAxis(
+      primaryXAxis: const NumericAxis(
         axisLine: AxisLine(width: 0),
-        labelPosition: ChartDataLabelPosition.inside,
+        labelPosition: ChartDataLabelPosition.outside,
         majorTickLines: MajorTickLines(width: 0),
         majorGridLines: MajorGridLines(width: 0),
+        // labelFormat: 'Week {value}',
       ),
-      primaryYAxis:
-          const NumericAxis(isVisible: false, minimum: 0, maximum: 9000),
+      primaryYAxis: NumericAxis(
+        isVisible: false,
+        /*majorGridLines: const MajorGridLines(
+          width: 0.7,
+          dashArray: <double>[5, 10],
+        ),*/
+        numberFormat: NumberFormat.compactCurrency(
+          symbol: '',
+        ),
+      ),
       series: _getRoundedColumnSeries(context),
       tooltipBehavior: controller.tooltipBehavior,
     );
   }
 
-  // Get rounded corner column series
-  List<ColumnSeries<ChartData, String>> _getRoundedColumnSeries(BuildContext context) {
+  List<ColumnSeries<ChartData, String>> _getRoundedColumnSeries(
+      BuildContext context) {
     return <ColumnSeries<ChartData, String>>[
       ColumnSeries<ChartData, String>(
-        color:  context.colorScheme.outline,
+        color: context.colorScheme.outline,
         width: 0.7,
         dataLabelSettings: const DataLabelSettings(
             isVisible: true, labelAlignment: ChartDataLabelAlignment.top),
-        dataSource: <ChartData>[
-          ChartData(xValue: 'wk 1', yValue: 8683),
-          ChartData(xValue: 'wk 2', yValue: 6993),
-          ChartData(xValue: 'wk 3', yValue: 5498),
-          ChartData(xValue: 'wk 4', yValue: 5083),
-        ],
-
+        dataSource: controller.salesForTheMonthData,
         borderRadius: BorderRadius.circular(15),
         xValueMapper: (ChartData sales, _) => sales.xValue,
         yValueMapper: (ChartData sales, _) => sales.yValue,
+        onRendererCreated: (ChartSeriesController chartSeriesController) {
+          controller.chartSeriesController = chartSeriesController;
+        },
       ),
     ];
   }

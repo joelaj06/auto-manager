@@ -1,5 +1,7 @@
 import 'package:get/get.dart';
+import '../../feature/authentication/data/datasource/auth_local_data_source.dart';
 import '../presentation/routes/app_routes.dart';
+import '../presentation/utils/app_snack.dart';
 
 class AppException implements Exception {
   AppException(this.message, this.prefix, this.url);
@@ -43,10 +45,11 @@ class UnauthorizedException extends AppException {
   }
 
   void postUnAuthorized() async {
-   /* final AuthLocalDataSource authLocalDataSource =
+    final AuthLocalDataSource authLocalDataSource =
         Get.find<AuthLocalDataSource>();
-    await authLocalDataSource.deleteAuthResponse();*/
-    // AppSnacks().showError('Sign in', 'You need to sign in to continue');
+    await authLocalDataSource.deleteAuthResponse();
+     AppSnack.show(message: 'You need to sign in to continue',
+         status: SnackStatus.error);
     navigateToLogin();
   }
 

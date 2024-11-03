@@ -3,10 +3,6 @@ import 'package:automanager/feature/auto_manager/domain/domain.dart';
 import 'package:dartz/dartz.dart';
 import 'package:get/get.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
-
-import '../../../../../core/errors/failure.dart';
-import '../../../../../core/presentation/utils/utils.dart';
-import '../../../../../core/usecase/usecase.dart';
 import '../../../data/data.dart';
 
 class DashboardController extends GetxController {
@@ -19,9 +15,9 @@ class DashboardController extends GetxController {
 
   RxList<ChartData> salesForTheWeekData = <ChartData>[].obs;
   Rx<DashboardSummary> dashboardSummary = DashboardSummary.empty().obs;
-  RxString startDate = ''.obs;
-  RxString endDate = ''.obs;
-  RxString companyId = ''.obs;
+  RxString startDate = '2024-10-01'.obs;
+  RxString endDate = '2024-10-31'.obs;
+  RxString companyId = '64f1a4b77a5e5f5a098e4c77'.obs;
   Rx<MonthlySales> monthlySales = MonthlySales.empty().obs;
   RxList<ChartData> salesForTheMonthData = <ChartData>[].obs;
   RxBool isDateFilter = false.obs;
@@ -37,6 +33,9 @@ class DashboardController extends GetxController {
       color: Get.theme.colorScheme.primary,
       opacity: 0.8,
     );
+    clearRoute();
+    getMonthlySales();
+    getDashboardSummaryData();
     super.onInit();
   }
 
@@ -46,10 +45,18 @@ class DashboardController extends GetxController {
     super.onClose();
   }
 
+  void clearRoute() async {
+    await sharedPreferencesWrapper.remove(SharedPrefsKeys.currentRoute);
+  }
+
   void getSalesOfTheMonthData(MonthlySales sale) {
     for (int i = 0; i < sale.weeks.length; i++) {
-      salesForTheMonthData.add(ChartData(
-          xValue: sale.weeks[i].toString(), yValue: sale.weeks[i].toDouble()));
+      salesForTheMonthData.add(
+        ChartData(
+          xValue: sale.weeks[i].toString(),
+          yValue: sale.sales[i].toDouble(),
+        ),
+      );
     }
   }
 
@@ -58,8 +65,8 @@ class DashboardController extends GetxController {
       salesForTheWeekData.clear();
       getSalesOfTheMonthData(sale);
       chartSeriesController?.updateDataSource(
-        removedDataIndexes: <int>[0, 1, 2, 3, 4, 5, 6],
-        addedDataIndexes: <int>[0, 1, 2, 3, 4, 5, 6],
+        removedDataIndexes: <int>[0, 1, 2, 3,],
+        addedDataIndexes: <int>[0, 1, 2, 3,],
       );
     }
   }
@@ -70,7 +77,7 @@ class DashboardController extends GetxController {
       PageParams(
         companyId: companyId.value,
         year: DateTime.now().year,
-        month: DateTime.now().month,
+        month: DateTime.now().month - 1,
       ),
     );
     failureOrMonthlySales.fold((Failure failure) {

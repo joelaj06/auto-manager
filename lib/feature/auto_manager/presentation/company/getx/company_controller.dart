@@ -1,5 +1,4 @@
 import 'package:automanager/core/core.dart';
-import 'package:automanager/core/presentation/utils/utils.dart';
 import 'package:automanager/feature/authentication/domain/domain.dart';
 import 'package:automanager/feature/auto_manager/data/data.dart';
 import 'package:automanager/feature/auto_manager/domain/usecase/usecase.dart';
@@ -7,8 +6,6 @@ import 'package:dartz/dartz.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
-import '../../../../../core/errors/failure.dart';
-import '../../../../../core/presentation/routes/app_routes.dart';
 import '../../../../authentication/data/models/models.dart';
 
 class CompanyController extends GetxController {
@@ -62,7 +59,7 @@ class CompanyController extends GetxController {
   ];
 
   PageController pageController = PageController(initialPage: 0);
-  SharedPreferencesWrapper _sharedPreferencesWrapper = Get.find();
+  final SharedPreferencesWrapper _sharedPreferencesWrapper = Get.find();
 
   @override
   void onInit() {
@@ -100,7 +97,8 @@ class CompanyController extends GetxController {
         createdBy: registrationResponse.value.data?.userId ?? '',
         isActive: true,
         isVerified: false,
-        subscriptionPlan: 'basic');
+        subscriptionPlan: 'basic',
+    );
 
     final Either<Failure, Company> failureOrCompany =
         await addCompany(companyRequest);

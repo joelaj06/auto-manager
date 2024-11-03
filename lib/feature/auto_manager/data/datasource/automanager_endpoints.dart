@@ -5,7 +5,7 @@ class AutoManagerEndpoints {
           {required String startDate,
           required String endDate,
           required String companyId}) =>
-      '/dashboard/dashboardSummary?startDate=$startDate&endDate='
+      'dashboard/dashboardSummary?startDate=$startDate&endDate='
       '$endDate&companyId=$companyId';
 
   static String monthlySales({
