@@ -53,7 +53,7 @@ class DashboardController extends GetxController {
     for (int i = 0; i < sale.weeks.length; i++) {
       salesForTheMonthData.add(
         ChartData(
-          xValue: sale.weeks[i].toString(),
+          xValue: sale.weeks[i],
           yValue: sale.sales[i].toDouble(),
         ),
       );
@@ -116,6 +116,6 @@ class ChartData {
     required this.yValue,
   });
 
-  final String xValue;
+  final int? xValue;
   final double? yValue;
 }

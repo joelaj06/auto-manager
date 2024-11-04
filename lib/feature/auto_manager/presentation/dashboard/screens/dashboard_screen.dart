@@ -195,7 +195,7 @@ class DashboardScreen extends GetView<DashboardController> {
         labelPosition: ChartDataLabelPosition.outside,
         majorTickLines: MajorTickLines(width: 0),
         majorGridLines: MajorGridLines(width: 0),
-        // labelFormat: 'Week {value}',
+        labelFormat: 'Week {value}',
       ),
       primaryYAxis: NumericAxis(
         isVisible: false,
@@ -212,10 +212,10 @@ class DashboardScreen extends GetView<DashboardController> {
     );
   }
 
-  List<ColumnSeries<ChartData, String>> _getRoundedColumnSeries(
+  List<ColumnSeries<ChartData, num>> _getRoundedColumnSeries(
       BuildContext context) {
-    return <ColumnSeries<ChartData, String>>[
-      ColumnSeries<ChartData, String>(
+    return <ColumnSeries<ChartData, num>>[
+      ColumnSeries<ChartData, num>(
         color: context.colorScheme.outline,
         width: 0.7,
         dataLabelSettings: const DataLabelSettings(
