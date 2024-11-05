@@ -1,11 +1,9 @@
-import 'package:automanager/core/presentation/utils/app_image_assets.dart';
-import 'package:automanager/core/presentation/utils/app_padding.dart';
-import 'package:automanager/core/presentation/utils/app_spacing.dart';
-import 'package:automanager/core/presentation/widgets/animated_column.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
+import '../../../../../core/presentation/utils/utils.dart';
 import '../../../../../core/presentation/widgets/widgets.dart';
 import '../getx/login_controller.dart';
 
@@ -145,10 +143,7 @@ class LoginScreen extends GetView<LoginController> {
   Widget _buildLogo(BuildContext context) {
     return Padding(
       padding: AppPaddings.mA,
-      child: Image.asset(
-        context.isDarkMode
-            ? AssetImages.appLogoWhite
-            : AssetImages.appLogoBlack,
+      child: const AppLogo(
         height: 300,
         width: 300,
       ),

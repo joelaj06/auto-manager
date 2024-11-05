@@ -13,9 +13,9 @@ class DashboardBindings extends Bindings {
         ),
         fetchMonthlySales: FetchMonthlySales(
           autoManagerRepository: Get.find(),
-        ), loadUser: LoadUser(
-        authRepository: Get.find()
-      ),
+        ),
+        loadUser: LoadUser(authRepository: Get.find()),
+        fetchCompany: FetchCompany(autoManagerRepository: Get.find()),
       ),
     );
   }

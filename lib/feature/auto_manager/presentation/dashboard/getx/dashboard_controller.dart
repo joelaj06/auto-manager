@@ -13,11 +13,13 @@ class DashboardController extends GetxController {
   DashboardController(
       {required this.fetchDashboardSummaryData,
       required this.fetchMonthlySales,
-      required this.loadUser});
+      required this.loadUser,
+      required this.fetchCompany});
 
   final FetchDashboardSummaryData fetchDashboardSummaryData;
   final FetchMonthlySales fetchMonthlySales;
   final LoadUser loadUser;
+  final FetchCompany fetchCompany;
 
   //reactive variables
   Rx<DashboardSummary> dashboardSummary = DashboardSummary.empty().obs;
@@ -32,6 +34,7 @@ class DashboardController extends GetxController {
   RxInt month = DateTime.now().month.obs;
   RxInt year = DateTime.now().year.obs;
   Rx<DateTime> selectedMonthYear = DateTime.now().obs;
+  Rx<Company> company = Company.empty().obs;
 
   User loginResponse = User.empty();
 
@@ -56,11 +59,20 @@ class DashboardController extends GetxController {
     chartSeriesController = null;
     super.onClose();
   }
-
   void loadDependencies() async {
     await loadUserData().then((_) {
+      getCompany();
       getDashboardSummaryData();
       getMonthlySales();
+    });
+  }
+
+  void getCompany() async {
+    final Either<Failure, Company> failureOrCompany = await fetchCompany(
+      PageParams(companyId: loginResponse.company),
+    );
+    failureOrCompany.fold((_) {}, (Company data){
+      company(data);
     });
   }
 

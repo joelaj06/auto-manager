@@ -1,2 +1,2 @@
-export 'company/add_company.dart';
+export 'company/company.dart';
 export 'dashboard/dashboard.dart';

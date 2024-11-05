@@ -14,4 +14,6 @@ abstract class AutoManagerRepository {
 
   Future<Either<Failure, MonthlySales>> fetchMonthlySales(
       {required String companyId, required int year, required int month});
+
+  Future<Either<Failure, Company>> fetchCompany(String companyId);
 }

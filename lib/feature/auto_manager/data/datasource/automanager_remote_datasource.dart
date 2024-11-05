@@ -10,4 +10,6 @@ abstract class AutoManagerRemoteDatasource {
 
   Future<MonthlySales> monthlySales(
       {required String companyId, required int year, required int month});
+
+  Future<Company> fetchCompany(String companyId);
 }

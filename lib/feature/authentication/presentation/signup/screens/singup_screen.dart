@@ -1,3 +1,4 @@
+import 'package:automanager/core/core.dart';
 import 'package:automanager/core/presentation/widgets/app_otp_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -263,8 +264,7 @@ class SignUpScreen extends GetView<SignUpController> {
   }
 
   Widget _buildLogo(BuildContext context) {
-    return Image.asset(
-      context.isDarkMode ? AssetImages.appLogoWhite : AssetImages.appLogoBlack,
+    return const AppLogo(
       height: 200,
       width: 200,
     );

@@ -3,6 +3,7 @@ import 'package:automanager/core/presentation/theme/app_theme.dart';
 import 'package:automanager/core/utils/data_formatter.dart';
 import 'package:automanager/feature/auto_manager/presentation/dashboard/dashboard.dart';
 import 'package:automanager/feature/auto_manager/presentation/dashboard/widget/dashboard_cards.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:iconly/iconly.dart';
@@ -20,9 +21,16 @@ class DashboardScreen extends GetView<DashboardController> {
     return Scaffold(
         appBar: AppBar(
           centerTitle: false,
-          title: const FittedBox(
-            fit: BoxFit.fill,
-            child: Text('LA Logistics'),
+          title: SizedBox(
+            width: context.width,
+            height: kToolbarHeight,
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Obx(
+                () => Text(controller.company.value.name ?? 'Welcome',
+                textAlign: TextAlign.left,),
+              ),
+            ),
           ),
           toolbarHeight: kToolbarHeight * 1.3,
           actions: <Widget>[
@@ -36,7 +44,20 @@ class DashboardScreen extends GetView<DashboardController> {
                 ),
               ),
             ),
-            _logoWrapper(context, child: const FlutterLogo()),
+            Obx(
+              () => _logoWrapper(
+                context,
+                child: controller.company.value.logoUrl != null &&
+                        controller.company.value.logoUrl != ''
+                    ? CachedNetworkImage(
+                        imageUrl: controller.company.value.logoUrl!,
+                        errorWidget:
+                            (BuildContext context, String url, dynamic error) =>
+                                const Icon(Icons.error),
+                      )
+                    : const AppLogo(),
+              ),
+            ),
           ],
         ),
         body: Column(
