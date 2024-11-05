@@ -1,29 +1,42 @@
 import 'package:automanager/core/core.dart';
+import 'package:automanager/feature/authentication/domain/domain.dart';
 import 'package:automanager/feature/auto_manager/domain/domain.dart';
 import 'package:dartz/dartz.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
+import '../../../../../core/utils/data_formatter.dart';
+import '../../../../authentication/data/models/models.dart';
 import '../../../data/data.dart';
 
 class DashboardController extends GetxController {
   DashboardController(
       {required this.fetchDashboardSummaryData,
-      required this.fetchMonthlySales});
+      required this.fetchMonthlySales,
+      required this.loadUser});
 
-  FetchDashboardSummaryData fetchDashboardSummaryData;
-  FetchMonthlySales fetchMonthlySales;
+  final FetchDashboardSummaryData fetchDashboardSummaryData;
+  final FetchMonthlySales fetchMonthlySales;
+  final LoadUser loadUser;
 
-  RxList<ChartData> salesForTheWeekData = <ChartData>[].obs;
+  //reactive variables
   Rx<DashboardSummary> dashboardSummary = DashboardSummary.empty().obs;
-  RxString startDate = '2024-10-01'.obs;
-  RxString endDate = '2024-10-31'.obs;
-  RxString companyId = '64f1a4b77a5e5f5a098e4c77'.obs;
   Rx<MonthlySales> monthlySales = MonthlySales.empty().obs;
   RxList<ChartData> salesForTheMonthData = <ChartData>[].obs;
   RxBool isDateFilter = false.obs;
+  Rx<DateTime> selectedDate = DateTime.now().obs;
+  RxString dateText = 'This Month'.obs;
+  Rx<DateTime> startDate =
+      DateTime(DateTime.now().year, DateTime.now().month, 1).obs;
+  Rx<DateTime> endDate = DateTime.now().obs;
+  RxInt month = DateTime.now().month.obs;
+  RxInt year = DateTime.now().year.obs;
+  Rx<DateTime> selectedMonthYear = DateTime.now().obs;
+
+  User loginResponse = User.empty();
 
   TooltipBehavior tooltipBehavior = TooltipBehavior();
-  late ChartSeriesController? chartSeriesController;
+  late ChartSeriesController<ChartData, num>? chartSeriesController;
   final SharedPreferencesWrapper sharedPreferencesWrapper = Get.find();
 
   @override
@@ -34,8 +47,7 @@ class DashboardController extends GetxController {
       opacity: 0.8,
     );
     clearRoute();
-    getMonthlySales();
-    getDashboardSummaryData();
+    loadDependencies();
     super.onInit();
   }
 
@@ -45,11 +57,51 @@ class DashboardController extends GetxController {
     super.onClose();
   }
 
+  void loadDependencies() async {
+    await loadUserData().then((_) {
+      getDashboardSummaryData();
+      getMonthlySales();
+    });
+  }
+
+  void onMonthSelected(BuildContext context) async {
+    final DateTime? result = await AppDatePicker.showMonthYearPicker(context);
+    if (result != null) {
+      month(result.month);
+      year(result.year);
+      isDateFilter(true);
+      selectedMonthYear(result);
+      getMonthlySales();
+    }
+  }
+
+  void onDateRangeSelected(BuildContext context) async {
+    final DateRangeValues dateRangeValues =
+        await AppDatePicker.showDateRangePicker(context);
+    startDate(dateRangeValues.startDate);
+    endDate(dateRangeValues.endDate);
+    getTextDate(dateRangeValues);
+    getDashboardSummaryData();
+  }
+
+  void getTextDate(DateRangeValues values) {
+    if (values.startDate != null) {
+      final String start = DataFormatter.formatDateToStringDateOnly(
+        values.startDate!.toIso8601String(),
+      );
+      final String end = DataFormatter.formatDateToStringDateOnly(
+        values.endDate!.toIso8601String(),
+      );
+      final String dateString = 'From $start to $end';
+      dateText(dateString);
+    }
+  }
+
   void clearRoute() async {
     await sharedPreferencesWrapper.remove(SharedPrefsKeys.currentRoute);
   }
 
-  void getSalesOfTheMonthData(MonthlySales sale) {
+  void generateSalesOfTheMonthData(MonthlySales sale) {
     for (int i = 0; i < sale.weeks.length; i++) {
       salesForTheMonthData.add(
         ChartData(
@@ -61,12 +113,16 @@ class DashboardController extends GetxController {
   }
 
   void updateDataSource(MonthlySales sale) {
-    if (salesForTheWeekData.isNotEmpty) {
-      salesForTheWeekData.clear();
-      getSalesOfTheMonthData(sale);
-      chartSeriesController?.updateDataSource(
-        removedDataIndexes: <int>[0, 1, 2, 3,],
-        addedDataIndexes: <int>[0, 1, 2, 3,],
+    if (salesForTheMonthData.isNotEmpty && chartSeriesController != null) {
+      // Clear the data and generate new data
+      salesForTheMonthData.clear();
+      generateSalesOfTheMonthData(sale);
+
+      // Update all indices dynamically
+      final List<int> updatedIndexes =
+          List<int>.generate(salesForTheMonthData.length, (int index) => index);
+      chartSeriesController!.updateDataSource(
+        updatedDataIndexes: updatedIndexes,
       );
     }
   }
@@ -75,19 +131,22 @@ class DashboardController extends GetxController {
     final Either<Failure, MonthlySales> failureOrMonthlySales =
         await fetchMonthlySales(
       PageParams(
-        companyId: companyId.value,
-        year: DateTime.now().year,
-        month: DateTime.now().month - 1,
+        companyId: loginResponse.company,
+        year: year.value,
+        month: month.value,
       ),
     );
     failureOrMonthlySales.fold((Failure failure) {
       AppSnack.show(message: failure.message, status: SnackStatus.error);
     }, (MonthlySales sales) {
       monthlySales(sales);
-      salesForTheMonthData.clear();
-      getSalesOfTheMonthData(sales);
       if (isDateFilter.value) {
         updateDataSource(sales);
+      } else {
+        salesForTheMonthData.clear();
+        generateSalesOfTheMonthData(sales);
+        chartSeriesController
+            ?.updateDataSource(); // Update data after generating
       }
       isDateFilter(false);
     });
@@ -97,9 +156,9 @@ class DashboardController extends GetxController {
     final Either<Failure, DashboardSummary> failureOrDashboardSummary =
         await fetchDashboardSummaryData(
       PageParams(
-        startDate: startDate.value,
-        endDate: endDate.value,
-        companyId: companyId.value,
+        startDate: startDate.value.toIso8601String(),
+        endDate: endDate.value.toIso8601String(),
+        companyId: loginResponse.company,
       ),
     );
     failureOrDashboardSummary.fold((Failure failure) {
@@ -107,6 +166,17 @@ class DashboardController extends GetxController {
     }, (DashboardSummary summary) {
       dashboardSummary(summary);
     });
+  }
+
+  Future<void> loadUserData() async {
+    final Either<Failure, User> failureOrUser = await loadUser(null);
+    // ignore: unawaited_futures
+    failureOrUser.fold(
+      (Failure failure) {},
+      (User user) {
+        loginResponse = (user);
+      },
+    );
   }
 }
 

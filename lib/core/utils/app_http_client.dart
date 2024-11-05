@@ -54,6 +54,8 @@ class AppHTTPClient {
           'Connection problem. Please check your internet', uri.toString());
     } on TimeoutException catch (_) {
       throw ApiNotRespondingException('Request Timeout', uri.toString());
+    } on HttpException catch (_) {
+      throw ApiNotRespondingException('Server Cannot Be Reached', uri.toString());
     }
   }
 
@@ -77,6 +79,8 @@ class AppHTTPClient {
       throw FetchDataException('Connection problem ', uri.toString());
     } on TimeoutException {
       throw ApiNotRespondingException('Request Timeout', uri.toString());
+    }on HttpException catch (_) {
+      throw ApiNotRespondingException('Server Cannot Be Reached', uri.toString());
     }
   }
 
@@ -98,6 +102,8 @@ class AppHTTPClient {
       throw FetchDataException('Connection problem', uri.toString());
     } on TimeoutException {
       throw ApiNotRespondingException('Request Timeout', uri.toString());
+    }on HttpException catch (_) {
+      throw ApiNotRespondingException('Server Cannot Be Reached', uri.toString());
     }
   }
 
@@ -114,6 +120,8 @@ class AppHTTPClient {
       throw FetchDataException('Connection problem', uri.toString());
     } on TimeoutException {
       throw ApiNotRespondingException('Request Timeout', uri.toString());
+    }on HttpException catch (_) {
+      throw ApiNotRespondingException('Server Cannot Be Reached', uri.toString());
     }
   }
 

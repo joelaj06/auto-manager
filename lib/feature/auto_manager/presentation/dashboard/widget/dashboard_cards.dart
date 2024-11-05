@@ -9,12 +9,14 @@ class DashboardSummaryCard extends StatelessWidget {
       required this.title,
       required this.value,
       required this.icon,
-      this.onTap});
+      this.onTap,
+      this.valueIcon});
 
   final String title;
   final String value;
   final IconData icon;
   final VoidCallback? onTap;
+  final Widget? valueIcon;
 
   @override
   Widget build(BuildContext context) {
@@ -51,9 +53,17 @@ class DashboardSummaryCard extends StatelessWidget {
                     Text(
                       title.toUpperCase(),
                     ),
-                    Text(value,
-                        style: context.textTheme.titleLarge
-                            ?.copyWith(fontWeight: FontWeight.w500)),
+                    Row(
+                      children: <Widget>[
+                        Text(value,
+                            style: context.textTheme.titleLarge
+                                ?.copyWith(fontWeight: FontWeight.w500)),
+                        const AppSpacing(
+                          h: 5,
+                        ),
+                       if (valueIcon != null) valueIcon! else const SizedBox.shrink(),
+                      ],
+                    ),
                   ],
                 ),
               ],

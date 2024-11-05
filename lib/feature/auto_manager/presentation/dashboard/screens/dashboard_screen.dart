@@ -52,19 +52,64 @@ class DashboardScreen extends GetView<DashboardController> {
       child: Padding(
         padding: AppPaddings.mA,
         child: Column(children: <Widget>[
-          _buildDateField(context),
+          _buildDashboardSummaryDateField(context),
           const AppSpacing(
             v: 10,
           ),
           Obx(
             () => DashboardSummaryCard(
               title: 'Revenue',
-              value: DataFormatter.getLocalCompactCurrencyFormatter(context).format(
+              value: DataFormatter.getLocalCompactCurrencyFormatter(context)
+                  .format(
                 controller.dashboardSummary.value.revenue,
               ),
               icon: Iconsax.moneys5,
               onTap: () {},
+              valueIcon: (controller.dashboardSummary.value.revenue ?? 0) < 0
+                  ? Icon(
+                      Ionicons.arrow_down,
+                      size: 14,
+                      color: context.colorScheme.error,
+                    )
+                  : null,
             ),
+          ),
+          const AppSpacing(
+            v: 10,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Expanded(
+                child: Obx(
+                  () => DashboardSummaryCard(
+                    title: 'Sales',
+                    value:
+                        DataFormatter.getLocalCompactCurrencyFormatter(context)
+                            .format(
+                      controller.dashboardSummary.value.sales,
+                    ),
+                    icon: Icons.money_rounded,
+                  ),
+                ),
+              ),
+              const AppSpacing(
+                h: 10,
+              ),
+              Expanded(
+                child: Obx(
+                  () => DashboardSummaryCard(
+                    title: 'Expenses',
+                    value:
+                        DataFormatter.getLocalCompactCurrencyFormatter(context)
+                            .format(
+                      controller.dashboardSummary.value.expenses,
+                    ),
+                    icon: IconlyBold.wallet,
+                  ),
+                ),
+              ),
+            ],
           ),
           const AppSpacing(
             v: 10,
@@ -77,7 +122,8 @@ class DashboardScreen extends GetView<DashboardController> {
                   () => DashboardSummaryCard(
                     title: 'Rentals',
                     value:
-                        DataFormatter.getLocalCompactCurrencyFormatter(context).format(
+                        DataFormatter.getLocalCompactCurrencyFormatter(context)
+                            .format(
                       controller.dashboardSummary.value.rentalSales,
                     ),
                     icon: Ionicons.car,
@@ -90,12 +136,10 @@ class DashboardScreen extends GetView<DashboardController> {
               Expanded(
                 child: Obx(
                   () => DashboardSummaryCard(
-                    title: 'Expenses',
+                    title: 'Vehicles',
                     value:
-                        DataFormatter.getLocalCompactCurrencyFormatter(context).format(
-                      controller.dashboardSummary.value.expenses,
-                    ),
-                    icon: IconlyBold.wallet,
+                        controller.dashboardSummary.value.vehicles.toString(),
+                    icon: Ionicons.speedometer,
                   ),
                 ),
               ),
@@ -154,7 +198,9 @@ class DashboardScreen extends GetView<DashboardController> {
 
   Widget _buildMonthDateField(BuildContext context) {
     return InkWell(
-      onTap: () {},
+      onTap: () {
+        controller.onMonthSelected(context);
+      },
       child: Container(
         padding: AppPaddings.mA,
         decoration: BoxDecoration(
@@ -162,20 +208,22 @@ class DashboardScreen extends GetView<DashboardController> {
           borderRadius: AppBorderRadius.card,
         ),
         // padding: AppPaddings.sA.add(AppPaddings.sH),
-        child: const Row(
+        child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Icon(
+            const Icon(
               IconlyLight.calendar,
             ),
-            AppSpacing(
+            const AppSpacing(
               h: 10,
             ),
-            Row(
-              children: <Widget>[
-                Text('October 2024'),
-              ],
+            Obx(
+              () => Text(
+                DataFormatter.formatDateToTextMonthYear(
+                  controller.selectedMonthYear.value.toIso8601String(),
+                ),
+              ),
             )
           ],
         ),
@@ -183,11 +231,11 @@ class DashboardScreen extends GetView<DashboardController> {
     );
   }
 
-  SfCartesianChart _buildWeeklyChart(BuildContext context) {
+  Widget _buildWeeklyChart(BuildContext context) {
     return SfCartesianChart(
       plotAreaBorderWidth: 0,
       title: const ChartTitle(
-        text: 'Weekly Revenue',
+        text: 'Weekly Sales',
         alignment: ChartAlignment.near,
       ),
       primaryXAxis: const NumericAxis(
@@ -199,10 +247,6 @@ class DashboardScreen extends GetView<DashboardController> {
       ),
       primaryYAxis: NumericAxis(
         isVisible: false,
-        /*majorGridLines: const MajorGridLines(
-          width: 0.7,
-          dashArray: <double>[5, 10],
-        ),*/
         numberFormat: NumberFormat.compactCurrency(
           symbol: '',
         ),
@@ -224,16 +268,19 @@ class DashboardScreen extends GetView<DashboardController> {
         borderRadius: BorderRadius.circular(15),
         xValueMapper: (ChartData sales, _) => sales.xValue,
         yValueMapper: (ChartData sales, _) => sales.yValue,
-        onRendererCreated: (ChartSeriesController chartSeriesController) {
+        onRendererCreated:
+            (ChartSeriesController<ChartData, num> chartSeriesController) {
           controller.chartSeriesController = chartSeriesController;
         },
       ),
     ];
   }
 
-  Widget _buildDateField(BuildContext context) {
+  Widget _buildDashboardSummaryDateField(BuildContext context) {
     return InkWell(
-      onTap: () {},
+      onTap: () {
+        controller.onDateRangeSelected(context);
+      },
       child: Container(
         padding: AppPaddings.mA,
         decoration: BoxDecoration(
@@ -241,24 +288,21 @@ class DashboardScreen extends GetView<DashboardController> {
             border: Border.all(
               color: context.colorScheme.secondary.withOpacity(0.4),
             )),
-        child: const Row(
+        child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Icon(
+            const Icon(
               IconlyLight.calendar,
             ),
-            AppSpacing(
+            const AppSpacing(
               h: 10,
             ),
-            Row(
-              children: <Widget>[
-                Text('From '),
-                Text(
-                  '1st October 2024 to 31st October 2024',
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-              ],
+            Obx(
+              () => Text(
+                controller.dateText.value,
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
             )
           ],
         ),

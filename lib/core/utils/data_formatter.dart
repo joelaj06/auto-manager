@@ -18,8 +18,26 @@ class DataFormatter{
   }
 
 
+  /// ==> 'January, 2012'
+  static String formatDateToTextMonthYear(String date) {
+    if (date.isEmpty) {
+      return date;
+    }
+    final DateTime parsedDate = DateTime.parse(date);
+    return DateFormat.yMMMM().format(parsedDate);
+  }
+
+    /// ==> 'January 10, 2012'
+  static String formatDateToStringDateOnly(String date) {
+    if (date.isEmpty) {
+      return date;
+    }
+    final DateTime parsedDate = DateTime.parse(date);
+    return DateFormat.yMMMMd().format(parsedDate);
+  }
+
+    /// ==> 'Wednesday, January 10, 2012'
   static String formatDateToString(String date){
-    // ==> 'Wednesday, January 10, 2012'
     if(date == '') {
       return date;
     }

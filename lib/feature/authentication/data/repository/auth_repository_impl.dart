@@ -44,6 +44,7 @@ class AuthRepositoryImpl extends Repository implements AuthRepository {
         firstName: response.firstName,
         lastName: response.lastName ?? '',
         email: response.email ?? '',
+        company: response.company ?? '',
       );
       return right(user);
     });
