@@ -26,8 +26,9 @@ class DashboardScreen extends GetView<DashboardController> {
             height: kToolbarHeight,
             child: FittedBox(
               fit: BoxFit.scaleDown,
+              alignment: Alignment.centerLeft,
               child: Obx(
-                () => Text(controller.company.value.name ?? 'Welcome',
+                () => Text(controller.company.value.name ?? 'Auto Manager',
                 textAlign: TextAlign.left,),
               ),
             ),
