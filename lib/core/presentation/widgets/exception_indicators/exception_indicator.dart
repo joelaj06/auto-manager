@@ -54,7 +54,7 @@ class ExceptionIndicator extends StatelessWidget {
                   style: messageStyle,
                 ),
               if (onTryAgain == null)
-                const Spacer()
+                const SizedBox.shrink()
               else
                 AppButton(
                   //padding: AppPaddings.mA,

@@ -6,7 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
-class SalesController extends GetxController {
+class SalesController extends GetxController
+    with GetSingleTickerProviderStateMixin {
   SalesController({required this.fetchSales});
 
   final FetchSales fetchSales;
@@ -20,22 +21,71 @@ class SalesController extends GetxController {
   Rx<DateTime> endDate = DateTime.now().obs;
   RxString driverId = ''.obs;
   RxString status = ''.obs;
+  RxBool isSearching = false.obs;
+  Rx<TextEditingController> searchQueryTextEditingController =
+      TextEditingController().obs;
 
   //paging controller
   final PagingController<int, Sale> pagingController =
       PagingController<int, Sale>(firstPageKey: 1);
+
+  late AnimationController animationController;
+  late Animation<double> animation;
 
   @override
   void onInit() {
     pagingController.addPageRequestListener((int pageKey) {
       getSales(pageKey);
     });
+    animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 300),
+    );
+    animation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: animationController,
+        curve: Curves.easeInOut,
+      ),
+    );
     super.onInit();
+  }
+
+  @override
+  void onClose() {
+    searchQueryTextEditingController.value.dispose();
+    pagingController.dispose();
+    animationController.dispose();
+    super.onClose();
+  }
+
+  //toggle the search on search icon pressed
+  void toggleSearch() {
+    isSearching(!isSearching.value);
+    if (isSearching.value) {
+      animationController.forward();
+    } else {
+      animationController.reverse();
+    }
+  }
+
+  void onSearchQuerySubmitted(String value) {
+    query(value);
+    pagingController.refresh();
+  }
+
+  void onSearchFieldInputChanged(String value) {
+    query(value);
+  }
+
+  void clearSearchField() {
+    query('');
+    searchQueryTextEditingController.value.text = '';
+    pagingController.refresh();
   }
 
   void onDateRangeSelected(BuildContext context) async {
     final DateRangeValues dateRangeValues =
-    await AppDatePicker.showDateRangePicker(context);
+        await AppDatePicker.showDateRangePicker(context);
     startDate(dateRangeValues.startDate);
     endDate(dateRangeValues.endDate);
     getTextDate(dateRangeValues);
@@ -71,8 +121,6 @@ class SalesController extends GetxController {
       }
     });
   }
-
-
 
   void getTextDate(DateRangeValues values) {
     if (values.startDate != null) {

@@ -1,3 +1,5 @@
+
+
 import 'package:automanager/core/core.dart';
 import 'package:automanager/core/presentation/theme/app_theme.dart';
 import 'package:automanager/feature/auto_manager/presentation/sales/getx/sales_controller.dart';
@@ -15,16 +17,42 @@ class SalesScreen extends GetView<SalesController> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Sales(10)'),
-        leading: IconButton(
-          onPressed: () {
-            controller.onDateRangeSelected(context);
-          },
-          icon: const Icon(IconlyLight.calendar),
+        title: Obx(() => AnimatedBuilder(
+            animation: controller.animation,
+            builder: (BuildContext context, Widget? child) {
+              return Opacity(
+                opacity: controller.isSearching.value
+                    ? controller.animation.value
+                    : 1.0,
+                child: Transform.translate(
+                  offset: Offset(0.0, 5.0 * (1 - controller.animation.value)),
+                  child: child,
+                ),
+              );
+            },
+            child: controller.isSearching.value
+                ? _buildSearchField(context)
+                : const Text('Sales(10)'),
+          ),
+        ),
+        leading: Obx(() => IconButton(
+            onPressed: () {
+              controller.isSearching.value
+                  ? controller.toggleSearch()
+                  : controller.onDateRangeSelected(context);
+            },
+            icon: Icon(
+              controller.isSearching.value
+                  ? Icons.arrow_back
+                  : IconlyLight.calendar,
+            ),
+          ),
         ),
         actions: <Widget>[
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              controller.toggleSearch();
+            },
             icon: const Icon(IconlyLight.search),
           ),
           IconButton(
@@ -53,6 +81,42 @@ class SalesScreen extends GetView<SalesController> {
     );
   }
 
+  Container _buildSearchField(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.only(left: 4),
+      decoration: BoxDecoration(
+        color: context.colorScheme.background,
+        borderRadius: BorderRadius.circular(5),
+        boxShadow: <BoxShadow>[
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.5),
+            blurRadius: 6.0,
+            spreadRadius: 0.0,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: TextFormField(
+        autofocus: true,
+        controller: controller.searchQueryTextEditingController.value,
+        onFieldSubmitted: controller.onSearchQuerySubmitted,
+        style: const TextStyle(
+          fontSize: 18,
+        ),
+        decoration: InputDecoration(
+          suffixIcon: IconButton(
+            onPressed: controller.clearSearchField,
+            icon: const Icon(
+              Icons.cancel,
+            ),
+          ),
+          border: InputBorder.none,
+          hintText: 'Search...',
+        ),
+      ),
+    );
+  }
+
   Widget _buildSalesList(BuildContext context) {
     return Column(
       children: <Widget>[
@@ -72,7 +136,6 @@ class SalesScreen extends GetView<SalesController> {
                     error: controller.pagingController.value.error as Failure,
                     onTryAgain: () => controller.pagingController.refresh(),
                   ),
-
                   noItemsFoundIndicatorBuilder: (BuildContext context) =>
                       const EmptyListIndicator(),
                   newPageProgressIndicatorBuilder: (BuildContext context) =>

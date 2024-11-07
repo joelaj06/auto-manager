@@ -8,6 +8,7 @@ class AssetImages {
   static const String loginBackground = '$_imageSource/patten_bg.png';
   static const String success = '$_imageSource/done.png';
   static const String emptyList = '$_imageSource/empty_list.png';
+  static const String emptyListLight = '$_imageSource/empty_list_light.png';
   static const String noConnection = '$_imageSource/no_connection.png';
   static const String noConnectionLight = '$_imageSource/no_connection_light.png';
   static const String error = '$_imageSource/error.png';

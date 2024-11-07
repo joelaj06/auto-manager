@@ -9,7 +9,7 @@ class EmptyListIndicator extends StatelessWidget {
     return const ExceptionIndicator(
       title: 'Sorry!',
       message: 'No result found.',
-      assetName: AssetImages.emptyList,
+      assetName: AssetImages.emptyListLight,
     );
   }
 }

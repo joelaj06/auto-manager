@@ -54,7 +54,6 @@ class _AppButtonState extends State<AppButton> {
   @override
   Widget build(BuildContext context) {
     widget.backgroundColor = widget.backgroundColor ?? Color(primaryColor.value);
-    print(widget.backgroundColor);
     return Padding(
       padding: AppPaddings.mA,
       child: GestureDetector(
