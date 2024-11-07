@@ -1,6 +1,5 @@
 import 'package:automanager/core/core.dart';
 import 'package:automanager/core/presentation/theme/app_theme.dart';
-import 'package:automanager/core/utils/data_formatter.dart';
 import 'package:automanager/feature/auto_manager/presentation/dashboard/dashboard.dart';
 import 'package:automanager/feature/auto_manager/presentation/dashboard/widget/dashboard_cards.dart';
 import 'package:cached_network_image/cached_network_image.dart';

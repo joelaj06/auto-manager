@@ -7,7 +7,7 @@ import '../utils/app_spacing.dart';
 class AppTextInputField extends StatefulWidget {
   AppTextInputField(
       {this.initialValue,
-      Key? key,
+      super.key,
       this.hintText,
       this.labelText,
       this.readOnly,
@@ -45,8 +45,7 @@ class AppTextInputField extends StatefulWidget {
       this.fontWeight,
       this.hintStyle,
       this.autofillHints,
-      this.onEditingComplete})
-      : super(key: key);
+      this.onEditingComplete});
 
   final String? initialValue;
   final String? hintText;

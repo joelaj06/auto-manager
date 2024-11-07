@@ -16,4 +16,14 @@ abstract class AutoManagerRepository {
       {required String companyId, required int year, required int month});
 
   Future<Either<Failure, Company>> fetchCompany(String companyId);
+
+  Future<Either<Failure, ListPage<Sale>>> fetchSales({
+    required int pageIndex,
+    required int pageSize,
+    required String? startDate,
+    required String? endDate,
+    required String? driverId,
+    required String? status,
+    required String? query,
+});
 }

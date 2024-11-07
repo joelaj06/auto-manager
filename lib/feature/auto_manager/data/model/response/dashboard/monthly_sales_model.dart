@@ -18,7 +18,7 @@ class MonthlySales with _$MonthlySales {
       _$MonthlySalesFromJson(json);
 
   factory MonthlySales.empty() => const MonthlySales(
-    weeks: [],
-    sales: [],
+    weeks: <int>[],
+    sales: <int>[],
   );
 }

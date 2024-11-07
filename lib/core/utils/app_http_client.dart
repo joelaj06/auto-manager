@@ -137,15 +137,22 @@ class AppHTTPClient {
       case 200:
         final dynamic responseJson =
             jsonDecode(utf8.decode(response.bodyBytes));
-        final String? totalCount = response.headers['total-count'];
+        final dynamic xPagination = jsonDecode(response.headers['x-pagination'].toString());
         AppLog.i(
             '============================ BODY RECEIVED ========================');
         AppLog.i(response.body);
+        AppLog.i(
+            '============================ RESPONSE HEADERS ========================');
+        AppLog.i(response.headers);
         late Map<String, dynamic> data;
         if (responseJson is List) {
           data = <String, dynamic>{
             'items': responseJson,
-            'total_count': totalCount
+            'totalCount': xPagination['totalCount'],
+            'meta': <String,dynamic>{
+              'meta_total': xPagination['totalCount'],
+              'meta_total_sales': response.headers['_meta_total_sales']
+            }
           };
         }
 

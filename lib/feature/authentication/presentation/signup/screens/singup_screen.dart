@@ -1,13 +1,7 @@
 import 'package:automanager/core/core.dart';
-import 'package:automanager/core/presentation/widgets/app_otp_widget.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../../../core/presentation/utils/utils.dart';
-import '../../../../../core/presentation/widgets/animated_column.dart';
-import '../../../../../core/presentation/widgets/app_button.dart';
-import '../../../../../core/presentation/widgets/app_text_input_field.dart';
 import '../getx/signup_controller.dart';
 
 class SignUpScreen extends GetView<SignUpController> {
@@ -111,7 +105,7 @@ class SignUpScreen extends GetView<SignUpController> {
                   v: 10,
                 ),
                 Row(
-                  children: [
+                  children: <Widget>[
                     const Text(
                       'Please enter the OTP sent to ',
                       textAlign: TextAlign.start,

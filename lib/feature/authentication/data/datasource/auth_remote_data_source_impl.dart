@@ -1,5 +1,4 @@
 
-import 'package:automanager/feature/authentication/data/models/request/otp/otp_verification_request.dart';
 
 import '../../../../core/utils/app_http_client.dart';
 import '../models/models.dart';

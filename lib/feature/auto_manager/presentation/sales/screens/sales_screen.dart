@@ -1,12 +1,14 @@
-
-
 import 'package:automanager/core/core.dart';
 import 'package:automanager/core/presentation/theme/app_theme.dart';
+import 'package:automanager/feature/auto_manager/presentation/sales/getx/sales_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:iconly/iconly.dart';
+import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
-class SalesScreen extends StatelessWidget {
+import '../../../data/model/response/sale/sales_model.dart';
+
+class SalesScreen extends GetView<SalesController> {
   const SalesScreen({super.key});
 
   @override
@@ -15,7 +17,9 @@ class SalesScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Sales(10)'),
         leading: IconButton(
-          onPressed: () {},
+          onPressed: () {
+            controller.onDateRangeSelected(context);
+          },
           icon: const Icon(IconlyLight.calendar),
         ),
         actions: <Widget>[
@@ -54,16 +58,40 @@ class SalesScreen extends StatelessWidget {
       children: <Widget>[
         _buildTableHeader(context),
         Expanded(
-            child: ListView.builder(
-                itemCount: 10,
-                itemBuilder: (BuildContext context, int index) {
-                  return _buildSalesListTile(context, index);
-                }))
+          child: RefreshIndicator(
+            onRefresh: () =>
+                Future<void>.sync(() => controller.pagingController.refresh()),
+            child: PagedListView<int, Sale>(
+                pagingController: controller.pagingController,
+                builderDelegate: PagedChildBuilderDelegate<Sale>(
+                  itemBuilder: (BuildContext context, Sale sale, int index) {
+                    return _buildSalesListTile(context, index, sale);
+                  },
+                  firstPageErrorIndicatorBuilder: (BuildContext context) =>
+                      ErrorIndicator(
+                    error: controller.pagingController.value.error as Failure,
+                    onTryAgain: () => controller.pagingController.refresh(),
+                  ),
+
+                  noItemsFoundIndicatorBuilder: (BuildContext context) =>
+                      const EmptyListIndicator(),
+                  newPageProgressIndicatorBuilder: (BuildContext context) =>
+                      const Center(
+                    child: CircularProgressIndicator.adaptive(),
+                  ),
+                  firstPageProgressIndicatorBuilder: (BuildContext context) =>
+                      const Center(
+                    child: CircularProgressIndicator.adaptive(),
+                  ),
+                ),
+                shrinkWrap: true),
+          ),
+        ),
       ],
     );
   }
 
-  Widget _buildSalesListTile(BuildContext context, int index) {
+  Widget _buildSalesListTile(BuildContext context, int index, Sale sale) {
     return Padding(
       padding: AppPaddings.mH,
       child: Column(
@@ -77,29 +105,35 @@ class SalesScreen extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Text(
-                        'SA-000${index + 1}',
+                        sale.saleId,
                         textAlign: TextAlign.left,
                         style: const TextStyle(
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      const Text('2022-01-01'),
+                      Text(DataFormatter.formatDate(sale.createdAt ?? '')),
                     ],
                   ),
                 ),
-                const Expanded(
+                Expanded(
                   child: Column(
                     children: <Widget>[
-                      Text('Stephen Asiedu'),
-                      Text('Kia Matiz Blue 2022',
-                      overflow: TextOverflow.ellipsis,),
+                      Text(
+                        '${sale.driver.user.firstName} ${sale.driver.user.lastName}',
+                        style: const TextStyle(fontWeight: FontWeight.w500),
+                      ),
+                      Text(
+                        '${sale.vehicle.model ?? ''} ${sale.vehicle.make ?? ''} ${sale.vehicle.color ?? ''} '
+                        '${sale.vehicle.year ?? ''}',
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ],
                   ),
                 ),
-                const Expanded(
+                Expanded(
                   child: Center(
                     child: Text(
-                      '600',
+                      sale.amount.toStringAsFixed(2),
                     ),
                   ),
                 ),
@@ -111,10 +145,10 @@ class SalesScreen extends StatelessWidget {
                         color: Colors.green.withOpacity(0.2),
                         borderRadius: AppBorderRadius.largeAll,
                       ),
-                      child: const Text(
-                        'Approved',
-                        style: TextStyle(color: Colors.green,
-                        fontSize: 12),
+                      child: Text(
+                        (sale.status ?? 'pending').toTitleCase(),
+                        style:
+                            const TextStyle(color: Colors.green, fontSize: 12),
                       ),
                     ),
                   ),
@@ -174,10 +208,12 @@ class SalesScreen extends StatelessWidget {
                 fontWeight: FontWeight.bold,
               ),
         ),
-         Chip(
+        Chip(
           backgroundColor: context.colorScheme.background,
-          label: const Text(
-            'From November 1, 2024 to November 30, 2024',
+          label: Obx(
+            () => Text(
+              controller.dateText.value,
+            ),
           ),
         ),
       ],

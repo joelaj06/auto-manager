@@ -12,4 +12,14 @@ abstract class AutoManagerRemoteDatasource {
       {required String companyId, required int year, required int month});
 
   Future<Company> fetchCompany(String companyId);
+
+  Future<ListPage<Sale>> fetchSales({
+    required int pageIndex,
+    required int pageSize,
+    required String? startDate,
+    required String? endDate,
+    required String? driverId,
+    required String? status,
+    required String? query,
+  });
 }

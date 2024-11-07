@@ -5,7 +5,6 @@ import 'package:dartz/dartz.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
-import '../../../../../core/utils/data_formatter.dart';
 import '../../../../authentication/data/models/models.dart';
 import '../../../data/data.dart';
 

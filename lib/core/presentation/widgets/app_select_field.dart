@@ -4,7 +4,7 @@ import '/core/core.dart';
 
 class AppSelectField<T> extends StatefulWidget {
   const AppSelectField({
-    Key? key,
+    super.key,
     required this.onChanged,
     this.value,
     this.validator,
@@ -16,7 +16,7 @@ class AppSelectField<T> extends StatefulWidget {
     this.customTitleBuilder,
     this.disabled = false,
     this.header,
-  }) : super(key: key);
+  });
   final void Function(T) onChanged;
   final T? value;
   final String? labelText;

@@ -1,5 +1,6 @@
 export 'app_http_client.dart';
 export 'app_log.dart';
+export 'data_formatter.dart';
 export 'environment.dart';
 export 'repository.dart';
 export 'shared_preferences_wrapper.dart';

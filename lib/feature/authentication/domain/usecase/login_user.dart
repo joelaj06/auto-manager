@@ -1,9 +1,9 @@
 import 'package:dartz/dartz.dart';
 
+import '../../../../../core/errors/failure.dart';
 import '../../data/data.dart';
 import '../repository/auth_repository.dart';
 import '/core/usecase/usecase.dart';
-import '../../../../../core/errors/failure.dart';
 
 
 

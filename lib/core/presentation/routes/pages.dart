@@ -1,4 +1,5 @@
 import 'package:automanager/feature/authentication/presentation/presentation.dart';
+import 'package:automanager/feature/auto_manager/presentation/sales/getx/sales_bindings.dart';
 import 'package:get/get.dart';
 import '../../../feature/auto_manager/presentation/presentation.dart';
 import 'app_routes.dart';
@@ -21,8 +22,9 @@ class Pages {
     GetPage<AppRoutes>(
       name: AppRoutes.base,
       page: () => const BaseScreen(),
-      bindings: [
+      bindings: <Bindings>[
         DashboardBindings(),
+        SalesBindings(),
       ]
     ),
     GetPage<AppRoutes>(
@@ -38,6 +40,7 @@ class Pages {
     GetPage<AppRoutes>(
       name: AppRoutes.sales,
       page: () => const SalesScreen(),
+      binding: SalesBindings(),
     ),
     GetPage<AppRoutes>(
       name: AppRoutes.expenses,

@@ -3,7 +3,6 @@ import 'dart:async';
 import '../../../../core/utils/shared_preferences_wrapper.dart';
 import '../../../../core/utils/shared_prefs_keys.dart';
 import '../models/models.dart';
-import '../models/response/login/login_response.dart';
 
 
 abstract class AuthLocalDataSource {

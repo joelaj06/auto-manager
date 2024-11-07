@@ -1,6 +1,5 @@
 import 'package:automanager/core/presentation/theme/app_color_scheme.dart';
 import 'package:automanager/core/presentation/theme/fonts.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class AppTheme {

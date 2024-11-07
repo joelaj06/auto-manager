@@ -1,6 +1,7 @@
 import 'dart:async';
 
 
+import 'package:automanager/core/core.dart';
 import 'package:automanager/core/presentation/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -19,8 +20,7 @@ class AppButton extends StatefulWidget {
         this.backgroundColor,
         this.padding,
         this.textColor,
-      Key? key})
-      : super(key: key);
+      super.key});
 
   final VoidCallback onPressed;
   final bool loading;
@@ -54,6 +54,7 @@ class _AppButtonState extends State<AppButton> {
   @override
   Widget build(BuildContext context) {
     widget.backgroundColor = widget.backgroundColor ?? Color(primaryColor.value);
+    print(widget.backgroundColor);
     return Padding(
       padding: AppPaddings.mA,
       child: GestureDetector(

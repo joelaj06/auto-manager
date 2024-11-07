@@ -25,7 +25,6 @@ class AutoManagerRepositoryImpl extends Repository
       required String companyId}) {
     return makeRequest(autoManagerRemoteDataSource.dashboardSummary(
         startDate: startDate, endDate: endDate, companyId: companyId));
-
   }
 
   @override
@@ -38,5 +37,27 @@ class AutoManagerRepositoryImpl extends Repository
   @override
   Future<Either<Failure, Company>> fetchCompany(String companyId) {
     return makeRequest(autoManagerRemoteDataSource.fetchCompany(companyId));
+  }
+
+  @override
+  Future<Either<Failure, ListPage<Sale>>> fetchSales(
+      {required int pageIndex,
+      required int pageSize,
+      required String? startDate,
+      required String? endDate,
+      required String? driverId,
+      required String? status,
+      required String? query}) {
+    return makeRequest(
+      autoManagerRemoteDataSource.fetchSales(
+        pageIndex: pageIndex,
+        pageSize: pageSize,
+        startDate: startDate,
+        endDate: endDate,
+        driverId: driverId,
+        status: status,
+        query: query,
+      ),
+    );
   }
 }

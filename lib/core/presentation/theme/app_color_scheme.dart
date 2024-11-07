@@ -217,7 +217,7 @@ class AppColorScheme {
 
 
 
-  List<ExtendedColor> get extendedColors => [];
+  List<ExtendedColor> get extendedColors => <ExtendedColor>[];
 }
 
 class ExtendedColor {

@@ -1,5 +1,4 @@
 import 'package:automanager/feature/auto_manager/data/data.dart';
-import 'package:automanager/feature/auto_manager/data/datasource/automanager_remote_datasource_impl.dart';
 import 'package:automanager/feature/auto_manager/domain/domain.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;

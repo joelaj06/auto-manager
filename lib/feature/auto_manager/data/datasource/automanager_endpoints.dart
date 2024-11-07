@@ -17,4 +17,38 @@ class AutoManagerEndpoints {
 
   static String company(String companyId) => 'companies/$companyId';
 
+  static const String sales = 'sales';
+  static String sale(String saleId) => 'sales/$saleId';
+  static String salesList({
+    required int pageIndex,
+    required int pageSize,
+    required String? startDate,
+    required String? endDate,
+  }) =>
+      'sales?pageIndex=$pageIndex&pageSize=$pageSize&startDate=$startDate&endDate=$endDate';
+}
+
+class FilterParams{
+ static String salesParams(
+      String endpoint,
+      final String? driverId,
+      final String? search,
+      final String? status
+      ){
+   String allParams = '';
+
+   if(driverId != null && driverId.isNotEmpty){
+     allParams = '$allParams&driverId=$driverId';
+   }
+   if(search != null && search.isNotEmpty){
+     allParams = '$allParams&search=$search';
+   }
+   if(status != null && status.isNotEmpty){
+     allParams = '$allParams&status=$status';
+   }
+
+   endpoint += allParams;
+
+   return endpoint;
+  }
 }
