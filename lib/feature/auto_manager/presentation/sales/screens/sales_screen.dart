@@ -1,5 +1,3 @@
-
-
 import 'package:automanager/core/core.dart';
 import 'package:automanager/core/presentation/theme/app_theme.dart';
 import 'package:automanager/feature/auto_manager/presentation/sales/getx/sales_controller.dart';
@@ -17,7 +15,8 @@ class SalesScreen extends GetView<SalesController> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Obx(() => AnimatedBuilder(
+        title: Obx(
+          () => AnimatedBuilder(
             animation: controller.animation,
             builder: (BuildContext context, Widget? child) {
               return Opacity(
@@ -32,10 +31,15 @@ class SalesScreen extends GetView<SalesController> {
             },
             child: controller.isSearching.value
                 ? _buildSearchField(context)
-                : const Text('Sales(10)'),
+                : Obx(
+                    () => Text(
+                      'Sales ${controller.totalCount.value == 0 ? '' : '(${controller.totalCount.value})'}',
+                    ),
+                  ),
           ),
         ),
-        leading: Obx(() => IconButton(
+        leading: Obx(
+          () => IconButton(
             onPressed: () {
               controller.isSearching.value
                   ? controller.toggleSearch()
@@ -264,12 +268,16 @@ class SalesScreen extends GetView<SalesController> {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Text(
-          'GHS 125,484.00',
-          textAlign: TextAlign.left,
-          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+        Obx(
+          () => Text(
+            DataFormatter.getLocalCurrencyFormatter(context).format(
+              controller.totalAmount.value,
+            ),
+            textAlign: TextAlign.left,
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+          ),
         ),
         Chip(
           backgroundColor: context.colorScheme.background,

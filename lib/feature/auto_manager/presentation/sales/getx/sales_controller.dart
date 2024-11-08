@@ -24,6 +24,9 @@ class SalesController extends GetxController
   RxBool isSearching = false.obs;
   Rx<TextEditingController> searchQueryTextEditingController =
       TextEditingController().obs;
+  RxInt totalCount = 0.obs;
+  RxDouble totalAmount = 0.0.obs;
+
 
   //paging controller
   final PagingController<int, Sale> pagingController =
@@ -108,6 +111,14 @@ class SalesController extends GetxController
       pagingController.error = (failure);
     }, (ListPage<Sale> newPage) {
       isLoading(false);
+
+      //get meta data
+      final Map<String, dynamic>? meta = newPage.metaData;
+      if (meta != null) {
+        totalCount(meta['totalCount']);
+        totalAmount(double.tryParse(meta['totalSales']) ?? 0.0);
+      }
+      //check if the new page is the last page
       final int previouslyFetchedItemsCount =
           pagingController.itemList?.length ?? 0;
 

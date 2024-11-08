@@ -150,8 +150,8 @@ class AppHTTPClient {
             'items': responseJson,
             'totalCount': xPagination['totalCount'],
             'meta': <String,dynamic>{
-              'meta_total': xPagination['totalCount'],
-              'meta_total_sales': response.headers['_meta_total_sales']
+              'totalCount': xPagination['totalCount'],
+              'totalSales': response.headers['_meta_total_sales']
             }
           };
         }
