@@ -23,16 +23,19 @@ void main() async {
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
       systemNavigationBarColor: Colors.transparent,
-        systemStatusBarContrastEnforced: true,
-        systemNavigationBarDividerColor: Colors.transparent,
+      systemStatusBarContrastEnforced: true,
+      systemNavigationBarDividerColor: Colors.transparent,
       //  systemNavigationBarIconBrightness: Brightness.light,
-        //statusBarIconBrightness: Brightness.light
+      //statusBarIconBrightness: Brightness.light
     ),
   );
 
   //Setting SystmeUIMode
-  await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge,
-      overlays: <SystemUiOverlay>[SystemUiOverlay.top]);
+  await SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
+      overlays: [SystemUiOverlay.top, SystemUiOverlay.bottom]);
+
+  /*await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge,
+      overlays: <SystemUiOverlay>[SystemUiOverlay.top]);*/
 
   final ErrorReporter errorReporter = ErrorReporter(client: _ReporterClient());
   Logger.root.level = Level.ALL;

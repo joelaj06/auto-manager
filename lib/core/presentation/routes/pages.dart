@@ -1,5 +1,4 @@
 import 'package:automanager/feature/authentication/presentation/presentation.dart';
-import 'package:automanager/feature/auto_manager/presentation/sales/getx/sales_bindings.dart';
 import 'package:get/get.dart';
 import '../../../feature/auto_manager/presentation/presentation.dart';
 import 'app_routes.dart';
@@ -53,6 +52,10 @@ class Pages {
     GetPage<AppRoutes>(
       name: AppRoutes.more,
       page: () => const MoreScreen(),
+    ), GetPage<AppRoutes>(
+      name: AppRoutes.addSale,
+      page: () => const AddSaleScreen(),
+      binding: SalesBindings(),
     ),
   ];
 }

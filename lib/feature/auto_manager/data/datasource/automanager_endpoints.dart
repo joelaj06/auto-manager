@@ -26,6 +26,24 @@ class AutoManagerEndpoints {
     required String? endDate,
   }) =>
       'sales?pageIndex=$pageIndex&pageSize=$pageSize&startDate=$startDate&endDate=$endDate';
+
+  static const String drivers = 'drivers';
+  static String driver(String driverId) => 'drivers/$driverId';
+  static String driversList({
+    required int pageIndex,
+    required int pageSize,
+    required String? query,
+  }) =>
+      'drivers?pageIndex=$pageIndex&pageSize=$pageSize&query=$query';
+
+  static const String vehicles = 'vehicles';
+  static String vehicle(String vehicleId) => 'vehicles/$vehicleId';
+  static String vehiclesList({
+    required int pageIndex,
+    required int pageSize,
+    required String? query,
+  }) =>
+      'vehicles?pageIndex=$pageIndex&pageSize=$pageSize&query=$query';
 }
 
 class FilterParams{

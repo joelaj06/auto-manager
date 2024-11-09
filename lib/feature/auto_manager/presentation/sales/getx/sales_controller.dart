@@ -8,9 +8,16 @@ import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
 class SalesController extends GetxController
     with GetSingleTickerProviderStateMixin {
-  SalesController({required this.fetchSales});
+  SalesController(
+      {required this.fetchSales,
+      required this.fetchVehicles,
+      required this.fetchDrivers,
+      required this.addSale});
 
   final FetchSales fetchSales;
+  final FetchVehicles fetchVehicles;
+  final FetchDrivers fetchDrivers;
+  final AddSale addSale;
 
   //reactive variables
   RxBool isLoading = false.obs;
@@ -20,13 +27,18 @@ class SalesController extends GetxController
       DateTime(DateTime.now().year, DateTime.now().month, 1).obs;
   Rx<DateTime> endDate = DateTime.now().obs;
   RxString driverId = ''.obs;
-  RxString status = ''.obs;
+  RxString status = 'approved'.obs;
   RxBool isSearching = false.obs;
   Rx<TextEditingController> searchQueryTextEditingController =
       TextEditingController().obs;
   RxInt totalCount = 0.obs;
   RxDouble totalAmount = 0.0.obs;
-
+  Rx<Driver> selectedDriver = Driver.empty().obs;
+  Rx<Vehicle> selectedVehicle = Vehicle.empty().obs;
+  RxString amount = '0.0'.obs;
+  RxString vehicleId = ''.obs;
+  RxList<Driver> drivers = <Driver>[].obs;
+  RxList<Vehicle> vehicles = <Vehicle>[].obs;
 
   //paging controller
   final PagingController<int, Sale> pagingController =
@@ -59,6 +71,88 @@ class SalesController extends GetxController
     pagingController.dispose();
     animationController.dispose();
     super.onClose();
+  }
+
+
+  void loadDependencies() {
+    fetchAllVehicles();
+    fetchAllDrivers();
+    resetFields();
+  }
+
+  void resetFields(){
+    amount.value = '0.0';
+    vehicleId.value = '';
+    selectedVehicle.value = Vehicle.empty();
+    selectedDriver.value = Driver.empty();
+    driverId.value = '';
+  }
+
+  void onSaleSaved() async {
+    isLoading(true);
+    final AddSaleRequest addSaleRequest = AddSaleRequest(
+      amount: double.parse(amount.value),
+      //date: dateText.value,
+      driverId: driverId.value,
+      vehicleId: vehicleId.value,
+    );
+
+    final Either<Failure, Sale> failureOrSale = await addSale(addSaleRequest);
+    failureOrSale.fold(
+      (Failure failure) {
+        isLoading(false);
+        AppSnack.show(
+          message: failure.message,
+          status: SnackStatus.error,
+        );
+      },
+      (Sale sale) {
+        isLoading(false);
+         Get.back<dynamic>(result: sale);
+         endDate(DateTime.now());
+        pagingController.refresh();
+      },
+    );
+  }
+
+  void fetchAllVehicles() async {
+    final Either<Failure, ListPage<Vehicle>> failureOrVehicles =
+        await fetchVehicles(const PageParams(
+      pageIndex: 1,
+      pageSize: 100,
+      query: '',
+    ));
+    failureOrVehicles.fold(
+      (Failure failure) => null,
+      (ListPage<Vehicle> listPage) {
+        vehicles(listPage.itemList);
+      },
+    );
+  }
+
+  void fetchAllDrivers() async {
+    final Either<Failure, ListPage<Driver>> failureOrDrivers =
+        await fetchDrivers(const PageParams(
+      pageIndex: 1,
+      pageSize: 100,
+      query: '',
+    ));
+    failureOrDrivers.fold(
+      (Failure failure) => null,
+      (ListPage<Driver> listPage) {
+        drivers(listPage.itemList);
+      },
+    );
+  }
+
+  void navigateToAddSalesScreen() async {
+    final dynamic res = await Get.toNamed(AppRoutes.addSale);
+    if(res != null) {
+      AppSnack.show(
+        message: 'Sale added successfully',
+        status: SnackStatus.success,
+      );
+    }
   }
 
   //toggle the search on search icon pressed
@@ -103,8 +197,8 @@ class SalesController extends GetxController
       pageSize: 10,
       startDate: startDate.value.toIso8601String(),
       endDate: endDate.value.toIso8601String(),
-      driverId: driverId.value,
-      status: status.value,
+     // driverId: driverId.value,
+     // status: status.value,
       query: query.value,
     ));
     failureOrSales.fold((Failure failure) {
@@ -145,4 +239,42 @@ class SalesController extends GetxController
       dateText(dateString);
     }
   }
+
+  void onAmountInputChanged(String? value) {
+    amount(value);
+  }
+
+  void onDriverSelected(Driver driver) {
+    selectedDriver(driver);
+    driverId(driver.id);
+  }
+
+  void onVehicleSelected(Vehicle vehicle) {
+    selectedVehicle(vehicle);
+    vehicleId(vehicle.id);
+  }
+
+  String? validateField(String? value) {
+    String? errorMessage;
+    if (value!.isEmpty) {
+      errorMessage = 'Field is required';
+    }
+    return errorMessage;
+  }
+
+  String? validateAmount(String? value) {
+    String? errorMessage;
+    if (value!.isEmpty || double.tryParse(value) == null) {
+      errorMessage = 'Please enter a valid amount';
+    }
+    if ((double.tryParse(amount.value) ?? 0) <= 0) {
+      errorMessage = 'Amount should be greater than 0';
+    }
+    return errorMessage;
+  }
+
+  RxBool get saleFormIsValid =>
+      (validateAmount(amount.value) == null &&
+      validateField(driverId.value) == null &&
+      validateField(vehicleId.value) == null).obs;
 }

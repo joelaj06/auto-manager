@@ -60,4 +60,37 @@ class AutoManagerRepositoryImpl extends Repository
       ),
     );
   }
+
+  @override
+  Future<Either<Failure, Sale>> addSale(
+      {required AddSaleRequest addSaleRequest}) {
+    return makeRequest(
+        autoManagerRemoteDataSource.addSale(addSaleRequest: addSaleRequest));
+  }
+
+  @override
+  Future<Either<Failure, ListPage<Driver>>> fetchDrivers({
+    required int pageIndex,
+    required int pageSize,
+    required String? query,
+  }) {
+    return makeRequest(autoManagerRemoteDataSource.fetchDrivers(
+      pageIndex: pageIndex,
+      pageSize: pageSize,
+      query: query,
+    ));
+  }
+
+  @override
+  Future<Either<Failure, ListPage<Vehicle>>> fetchVehicles({
+    required int pageIndex,
+    required int pageSize,
+    required String? query,
+  }) {
+    return makeRequest(autoManagerRemoteDataSource.fetchVehicles(
+      pageIndex: pageIndex,
+      pageSize: pageSize,
+      query: query,
+    ));
+  }
 }

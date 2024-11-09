@@ -25,5 +25,20 @@ abstract class AutoManagerRepository {
     required String? driverId,
     required String? status,
     required String? query,
+  });
+
+  Future<Either<Failure, Sale>> addSale(
+      {required AddSaleRequest addSaleRequest});
+
+  Future<Either<Failure, ListPage<Driver>>> fetchDrivers({
+    required int pageIndex,
+    required int pageSize,
+    required String? query,
+});
+
+  Future<Either<Failure, ListPage<Vehicle>>> fetchVehicles({
+    required int pageIndex,
+    required int pageSize,
+    required String? query,
 });
 }

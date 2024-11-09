@@ -14,6 +14,10 @@ class SalesScreen extends GetView<SalesController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        onPressed: controller.navigateToAddSalesScreen,
+        child: const Icon(IconlyLight.plus),
+      ),
       appBar: AppBar(
         title: Obx(
           () => AnimatedBuilder(
@@ -72,7 +76,7 @@ class SalesScreen extends GetView<SalesController> {
             child: Padding(
               padding: AppPaddings.mH,
               child: SizedBox(
-                height: context.height * 0.08,
+                height: context.height * 0.09,
                 child: _buildTotalAmountCard(context),
               ),
             ),
@@ -127,8 +131,11 @@ class SalesScreen extends GetView<SalesController> {
         _buildTableHeader(context),
         Expanded(
           child: RefreshIndicator(
-            onRefresh: () =>
-                Future<void>.sync(() => controller.pagingController.refresh()),
+            onRefresh: () {
+              controller.endDate(DateTime.now());
+              return Future<void>.sync(
+                  () => controller.pagingController.refresh());
+            },
             child: PagedListView<int, Sale>(
                 pagingController: controller.pagingController,
                 builderDelegate: PagedChildBuilderDelegate<Sale>(
@@ -186,12 +193,12 @@ class SalesScreen extends GetView<SalesController> {
                   child: Column(
                     children: <Widget>[
                       Text(
-                        '${sale.driver.user.firstName} ${sale.driver.user.lastName}',
+                        '${sale.driver?.user.firstName ?? ''} ${sale.driver?.user.lastName ?? ''}',
                         style: const TextStyle(fontWeight: FontWeight.w500),
                       ),
                       Text(
-                        '${sale.vehicle.model ?? ''} ${sale.vehicle.make ?? ''} ${sale.vehicle.color ?? ''} '
-                        '${sale.vehicle.year ?? ''}',
+                        '${sale.vehicle?.model ?? ''} ${sale.vehicle?.make ?? ''} ${sale.vehicle?.color ?? ''} '
+                        '${sale.vehicle?.year ?? ''}',
                         overflow: TextOverflow.ellipsis,
                       ),
                     ],

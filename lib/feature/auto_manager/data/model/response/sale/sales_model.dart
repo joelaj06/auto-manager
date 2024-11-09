@@ -21,8 +21,8 @@ class Sale with _$Sale {
     String? createdBy,
     String? createdAt,
     String? updatedAt,
-   required Driver driver,
-   required Vehicle vehicle,
+   required Driver? driver,
+   required Vehicle? vehicle,
   }) = _Sale;
 
   const Sale._();

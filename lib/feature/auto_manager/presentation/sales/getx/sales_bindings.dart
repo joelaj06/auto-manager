@@ -7,10 +7,18 @@ class SalesBindings extends Bindings {
   void dependencies() {
     Get.lazyPut<SalesController>(
       () => SalesController(
-        fetchSales: FetchSales(
-          autoManagerRepository: Get.find(),
-        ),
-      ),
+          fetchSales: FetchSales(
+            autoManagerRepository: Get.find(),
+          ),
+          fetchVehicles: FetchVehicles(
+            autoManagerRepository: Get.find(),
+          ),
+          fetchDrivers: FetchDrivers(
+            autoManagerRepository: Get.find(),
+          ),
+          addSale: AddSale(
+            autoManagerRepository: Get.find(),
+          )),
     );
   }
 }

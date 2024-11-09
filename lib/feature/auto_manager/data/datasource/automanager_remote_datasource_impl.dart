@@ -67,10 +67,67 @@ class AutoMangerRemoteDatasourceImpl implements AutoManagerRemoteDatasource {
     final List<Sale> sales =
         items.map((dynamic sale) => Sale.fromJson(sale)).toList();
     final int total = json['totalCount'] as int;
-    final Map<String, dynamic> metaData =
-        json['meta'] as Map<String, dynamic>;
+    final Map<String, dynamic> metaData = json['meta'] as Map<String, dynamic>;
     return ListPage<Sale>(
-        itemList: sales, grandTotalCount: total, metaData: metaData,
+      itemList: sales,
+      grandTotalCount: total,
+      metaData: metaData,
+    );
+  }
+
+  @override
+  Future<Sale> addSale({required AddSaleRequest addSaleRequest}) async {
+    final Map<String, dynamic> json = await _client
+        .post(AutoManagerEndpoints.sales, body: addSaleRequest.toJson());
+    return Sale.fromJson(json);
+  }
+
+  @override
+  Future<ListPage<Driver>> fetchDrivers({
+    required int pageIndex,
+    required int pageSize,
+    required String? query,
+  }) async {
+    final Map<String, dynamic> json =
+        await _client.get(AutoManagerEndpoints.driversList(
+      pageIndex: pageIndex,
+      pageSize: pageSize,
+      query: query,
+    ));
+    final List<dynamic> items = json['items'] as List<dynamic>;
+    final List<Driver> drivers =
+        items.map((dynamic driver) => Driver.fromJson(driver)).toList();
+    final int total = json['totalCount'] as int;
+    final Map<String, dynamic> metaData = json['meta'] as Map<String, dynamic>;
+    return ListPage<Driver>(
+      itemList: drivers,
+      grandTotalCount: total,
+      metaData: metaData,
+    );
+  }
+
+  @override
+  Future<ListPage<Vehicle>> fetchVehicles({
+    required int pageIndex,
+    required int pageSize,
+    required String? query,
+  }) async {
+    final Map<String, dynamic> json = await _client.get(
+      AutoManagerEndpoints.vehiclesList(
+        pageIndex: pageIndex,
+        pageSize: pageSize,
+        query: query,
+      ),
+    );
+    final List<dynamic> items = json['items'] as List<dynamic>;
+    final List<Vehicle> vehicles =
+        items.map((dynamic vehicle) => Vehicle.fromJson(vehicle)).toList();
+    final int total = json['totalCount'] as int;
+    final Map<String, dynamic> metaData = json['meta'] as Map<String, dynamic>;
+    return ListPage<Vehicle>(
+      itemList: vehicles,
+      grandTotalCount: total,
+      metaData: metaData,
     );
   }
 }
