@@ -34,11 +34,19 @@ abstract class AutoManagerRepository {
     required int pageIndex,
     required int pageSize,
     required String? query,
-});
+  });
 
   Future<Either<Failure, ListPage<Vehicle>>> fetchVehicles({
     required int pageIndex,
     required int pageSize,
     required String? query,
-});
+  });
+
+  Future<Either<Failure, ListPage<Expense>>> fetchExpenses({
+    required int pageIndex,
+    required int pageSize,
+    required String? startDate,
+    required String? endDate,
+    required String? categoryId,
+  });
 }

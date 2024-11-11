@@ -21,6 +21,7 @@ class PageParams {
     this.month,
     this.driverId,
     this.status,
+    this.categoryId,
   });
 
   final int? pageIndex;
@@ -35,5 +36,6 @@ class PageParams {
   final int? year;
   final int? month;
   final String? status;
+  final String? categoryId;
 
 }

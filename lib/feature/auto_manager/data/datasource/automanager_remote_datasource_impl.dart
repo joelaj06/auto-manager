@@ -130,4 +130,33 @@ class AutoMangerRemoteDatasourceImpl implements AutoManagerRemoteDatasource {
       metaData: metaData,
     );
   }
+
+  @override
+  Future<ListPage<Expense>> fetchExpenses({
+    required int pageIndex,
+    required int pageSize,
+    required String? startDate,
+    required String? endDate,
+    required String? categoryId,
+  }) async {
+    final Map<String, dynamic> json = await _client.get(
+      FilterParams.expenseParams(
+          AutoManagerEndpoints.expenseList(
+              pageIndex: pageIndex,
+              pageSize: pageSize,
+              startDate: startDate,
+              endDate: endDate, categoryId: categoryId),
+          categoryId),
+    );
+    final List<dynamic> items = json['items'] as List<dynamic>;
+    final List<Expense> expenses =
+        items.map((dynamic expense) => Expense.fromJson(expense)).toList();
+    final int total = json['totalCount'] as int;
+    final Map<String, dynamic> metaData = json['meta'] as Map<String, dynamic>;
+    return ListPage<Expense>(
+      itemList: expenses,
+      grandTotalCount: total,
+      metaData: metaData,
+    );
+  }
 }

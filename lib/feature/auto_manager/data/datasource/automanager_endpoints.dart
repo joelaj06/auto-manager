@@ -44,9 +44,33 @@ class AutoManagerEndpoints {
     required String? query,
   }) =>
       'vehicles?pageIndex=$pageIndex&pageSize=$pageSize&query=$query';
+
+  static String expenseList({
+    required int pageIndex,
+    required int pageSize,
+    required String? startDate,
+    required String? endDate,
+    required String? categoryId,
+  }) => 'expenses?pageIndex=$pageIndex&pageSize=$pageSize&startDate=$startDate&endDate=$endDate';
+
+  static String expense(String expenseId) => 'expenses/$expenseId';
 }
 
 class FilterParams{
+  static String expenseParams(
+      String endpoint,
+      final String? categoryId
+      ){
+        String allParams = '';
+
+        if(categoryId != null && categoryId.isNotEmpty){
+          allParams = '$allParams&categoryId=$categoryId';
+        }
+
+        endpoint += allParams;
+
+        return endpoint;
+      }
  static String salesParams(
       String endpoint,
       final String? driverId,

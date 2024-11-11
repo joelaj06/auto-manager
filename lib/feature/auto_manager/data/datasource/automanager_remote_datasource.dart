@@ -24,14 +24,24 @@ abstract class AutoManagerRemoteDatasource {
   });
 
   Future<Sale> addSale({required AddSaleRequest addSaleRequest});
+
   Future<ListPage<Driver>> fetchDrivers({
     required int pageIndex,
     required int pageSize,
     required String? query,
-});
+  });
+
   Future<ListPage<Vehicle>> fetchVehicles({
     required int pageIndex,
     required int pageSize,
     required String? query,
-});
+  });
+
+  Future<ListPage<Expense>> fetchExpenses({
+    required int pageIndex,
+    required int pageSize,
+    required String? startDate,
+    required String? endDate,
+    required String? categoryId,
+  });
 }

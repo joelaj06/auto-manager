@@ -93,4 +93,20 @@ class AutoManagerRepositoryImpl extends Repository
       query: query,
     ));
   }
+
+  @override
+  Future<Either<Failure, ListPage<Expense>>> fetchExpenses(
+      {required int pageIndex,
+      required int pageSize,
+      required String? startDate,
+      required String? endDate,
+      required String? categoryId}) {
+    return makeRequest(autoManagerRemoteDataSource.fetchExpenses(
+      pageIndex: pageIndex,
+      pageSize: pageSize,
+      startDate: startDate,
+      endDate: endDate,
+      categoryId: categoryId,
+    ));
+  }
 }

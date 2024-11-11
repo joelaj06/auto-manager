@@ -151,7 +151,8 @@ class AppHTTPClient {
             'totalCount': xPagination['totalCount'],
             'meta': <String,dynamic>{
               'totalCount': xPagination['totalCount'],
-              'totalSales': response.headers['_meta_total_sales']
+              'totalSales': response.headers['_meta_total_sales'],
+              'totalExpenses': response.headers['_meta_total_expenses']
             }
           };
         }
