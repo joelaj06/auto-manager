@@ -10,6 +10,7 @@ import '../../../../../core/presentation/utils/utils.dart';
 import '../../../../../core/presentation/widgets/exception_indicators/exceptions.dart';
 import '../../../../../core/utils/utils.dart';
 import '../../../data/model/model.dart';
+import '../../sales/widgets/modal_list_card.dart';
 
 class ExpensesScreen extends GetView<ExpenseController> {
   const ExpensesScreen({super.key});
@@ -93,41 +94,86 @@ class ExpensesScreen extends GetView<ExpenseController> {
     );
   }
 
+  Widget _buildExpenseDetailModal(
+      BuildContext context, Expense expense,) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
+        child: Column(
+          children: <Widget>[
+            ModalListCard(
+                title: 'Date',
+                value: DataFormatter.formatDateToString(expense.createdAt ?? '')),
+            ModalListCard(
+                title: 'Expense Type',
+                value: expense.category?.name ?? '--'),
+            ModalListCard(
+                title: 'Incurred By',
+                value: '${expense.incurredBy?.firstName ?? ''} '
+                    '${expense.incurredBy?.lastName ?? ''}'),
+            ModalListCard(
+              title: 'Vehicle',
+              value:
+              ' ${expense.vehicle?.make ?? ''} ${expense.vehicle?.model ?? ''} ${expense.vehicle?.color ?? ''} '
+                  '${expense.vehicle?.year ?? ''}',
+            ),
+            ModalListCard(
+              title: 'Amount',
+              value: DataFormatter.getLocalCurrencyFormatter(context)
+                  .format(expense.amount),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildExpensesListTile(
       BuildContext context, int index, Expense expense) {
-    return Padding(
-      padding: AppPaddings.mH,
-      child: Column(
-        children: <Widget>[
-          Padding(
-            padding: AppPaddings.lV,
-            child: Row(
-              children: <Widget>[
-                Expanded(
-                  child:
-                      Text(DataFormatter.formatDate(expense.createdAt ?? '')),
-                ),
-                Expanded(
-                  child: Text(
-                    expense.category?.name ?? '',
-                    style: const TextStyle(fontWeight: FontWeight.w500),
+    return InkWell(
+      onTap: (){
+        showModalBottomSheet<dynamic>(
+          context: context,
+          builder: (BuildContext context) => SizedBox(
+            child: _buildExpenseDetailModal(context, expense),
+          ),
+        );
+      },
+      child: Padding(
+        padding: AppPaddings.mH,
+        child: Column(
+          children: <Widget>[
+            Padding(
+              padding: AppPaddings.lV,
+              child: Row(
+                children: <Widget>[
+                  Expanded(
+                    child:
+                        Text(DataFormatter.formatDate(expense.createdAt ?? '')),
                   ),
-                ),
-                Expanded(
-                  child: Center(
+                  Expanded(
                     child: Text(
-                      expense.amount?.toStringAsFixed(2) ??
-                          0.0.toStringAsFixed(2),
+                      expense.category?.name ?? '',
+                      style: const TextStyle(fontWeight: FontWeight.w500),
                     ),
                   ),
-                ),
-              ],
+                  Expanded(
+                    child: Center(
+                      child: Text(
+                        expense.amount?.toStringAsFixed(2) ??
+                            0.0.toStringAsFixed(2),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-          const Divider(
-            height: 2,
-          ),
-        ],
+            const Divider(
+              height: 2,
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -144,7 +190,7 @@ class ExpensesScreen extends GetView<ExpenseController> {
               child: Text('Date'),
             ),
             Expanded(
-              child: Text('Category'),
+              child: Text('Expense Type'),
             ),
             Expanded(
               child: Center(

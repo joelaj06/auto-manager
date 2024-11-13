@@ -7,6 +7,7 @@ import 'package:iconly/iconly.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
 import '../../../data/model/response/sale/sales_model.dart';
+import '../widgets/modal_list_card.dart';
 
 class SalesScreen extends GetView<SalesController> {
   const SalesScreen({super.key});
@@ -165,75 +166,120 @@ class SalesScreen extends GetView<SalesController> {
     );
   }
 
-  Widget _buildSalesListTile(BuildContext context, int index, Sale sale) {
+  Widget _buildSaleDetailModal(
+    BuildContext context,
+    Sale sale,
+  ) {
     return Padding(
-      padding: AppPaddings.mH,
-      child: Column(
-        children: <Widget>[
-          Padding(
-            padding: AppPaddings.lV,
-            child: Row(
-              children: <Widget>[
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text(
-                        sale.saleId,
-                        textAlign: TextAlign.left,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
+      padding: const EdgeInsets.all(8.0),
+      child: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
+        child: Column(
+          children: <Widget>[
+            ModalListCard(title: 'Sale ID', value: sale.saleId ?? '--'),
+            ModalListCard(
+                title: 'Date',
+                value: DataFormatter.formatDateToString(sale.createdAt ?? '')),
+            ModalListCard(
+                title: 'Driver',
+                value: '${sale.driver?.user.firstName ?? ''} '
+                    '${sale.driver?.user.lastName ?? ''}'),
+            ModalListCard(
+              title: 'Vehicle',
+              value:
+                  ' ${sale.vehicle?.make ?? ''} ${sale.vehicle?.model ?? ''} ${sale.vehicle?.color ?? ''} '
+                  '${sale.vehicle?.year ?? ''}',
+            ),
+            ModalListCard(
+              title: 'Amount',
+              value: DataFormatter.getLocalCurrencyFormatter(context)
+                  .format(sale.amount),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSalesListTile(BuildContext context, int index, Sale sale) {
+    return InkWell(
+      onTap: () {
+        showModalBottomSheet<dynamic>(
+          context: context,
+          builder: (BuildContext context) => SizedBox(
+            child: _buildSaleDetailModal(context, sale),
+          ),
+        );
+      },
+      child: Padding(
+        padding: AppPaddings.mH,
+        child: Column(
+          children: <Widget>[
+            Padding(
+              padding: AppPaddings.lV,
+              child: Row(
+                children: <Widget>[
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text(
+                          sale.saleId,
+                          textAlign: TextAlign.left,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Text(DataFormatter.formatDate(sale.createdAt ?? '')),
+                      ],
+                    ),
+                  ),
+                  Expanded(
+                    child: Column(
+                      children: <Widget>[
+                        Text(
+                          '${sale.driver?.user.firstName ?? ''} ${sale.driver?.user.lastName ?? ''}',
+                          style: const TextStyle(fontWeight: FontWeight.w500),
+                        ),
+                        Text(
+                          '${sale.vehicle?.model ?? ''} ${sale.vehicle?.make ?? ''} ${sale.vehicle?.color ?? ''} '
+                          '${sale.vehicle?.year ?? ''}',
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                    ),
+                  ),
+                  Expanded(
+                    child: Center(
+                      child: Text(
+                        sale.amount.toStringAsFixed(2),
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: Center(
+                      child: Container(
+                        padding: AppPaddings.mH.add(AppPaddings.sV),
+                        decoration: BoxDecoration(
+                          color: Colors.green.withOpacity(0.2),
+                          borderRadius: AppBorderRadius.largeAll,
+                        ),
+                        child: Text(
+                          (sale.status ?? 'pending').toTitleCase(),
+                          style: const TextStyle(
+                              color: Colors.green, fontSize: 12),
                         ),
                       ),
-                      Text(DataFormatter.formatDate(sale.createdAt ?? '')),
-                    ],
-                  ),
-                ),
-                Expanded(
-                  child: Column(
-                    children: <Widget>[
-                      Text(
-                        '${sale.driver?.user.firstName ?? ''} ${sale.driver?.user.lastName ?? ''}',
-                        style: const TextStyle(fontWeight: FontWeight.w500),
-                      ),
-                      Text(
-                        '${sale.vehicle?.model ?? ''} ${sale.vehicle?.make ?? ''} ${sale.vehicle?.color ?? ''} '
-                        '${sale.vehicle?.year ?? ''}',
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ],
-                  ),
-                ),
-                Expanded(
-                  child: Center(
-                    child: Text(
-                      sale.amount.toStringAsFixed(2),
                     ),
                   ),
-                ),
-                Expanded(
-                  child: Center(
-                    child: Container(
-                      padding: AppPaddings.mH.add(AppPaddings.sV),
-                      decoration: BoxDecoration(
-                        color: Colors.green.withOpacity(0.2),
-                        borderRadius: AppBorderRadius.largeAll,
-                      ),
-                      child: Text(
-                        (sale.status ?? 'pending').toTitleCase(),
-                        style:
-                            const TextStyle(color: Colors.green, fontSize: 12),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-          const Divider(
-            height: 2,
-          ),
-        ],
+            const Divider(
+              height: 2,
+            ),
+          ],
+        ),
       ),
     );
   }
