@@ -145,7 +145,8 @@ class AutoMangerRemoteDatasourceImpl implements AutoManagerRemoteDatasource {
               pageIndex: pageIndex,
               pageSize: pageSize,
               startDate: startDate,
-              endDate: endDate, categoryId: categoryId),
+              endDate: endDate,
+              categoryId: categoryId),
           categoryId),
     );
     final List<dynamic> items = json['items'] as List<dynamic>;
@@ -158,5 +159,25 @@ class AutoMangerRemoteDatasourceImpl implements AutoManagerRemoteDatasource {
       grandTotalCount: total,
       metaData: metaData,
     );
+  }
+
+  @override
+  Future<List<ExpenseCategory>> fetchExpenseCategories() async {
+    final Map<String, dynamic> json =
+        await _client.get(AutoManagerEndpoints.expenseCategories);
+    final List<dynamic> items = json['items'] as List<dynamic>;
+    final List<ExpenseCategory> expenseCategories =  items
+        .map((dynamic category) => ExpenseCategory.fromJson(category))
+        .toList();
+
+    return expenseCategories;
+  }
+
+  @override
+  Future<Expense> addExpense(
+      {required AddExpenseRequest addExpenseRequest}) async {
+    final Map<String, dynamic> json = await _client
+        .post(AutoManagerEndpoints.expenses, body: addExpenseRequest.toJson());
+    return Expense.fromJson(json);
   }
 }

@@ -49,4 +49,9 @@ abstract class AutoManagerRepository {
     required String? endDate,
     required String? categoryId,
   });
+
+  Future<Either<Failure, List<ExpenseCategory>>> fetchExpenseCategories();
+
+  Future<Either<Failure, Expense>> addExpense(
+      {required AddExpenseRequest addExpenseRequest});
 }

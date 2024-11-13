@@ -42,7 +42,7 @@ class DataFormatter{
       return date;
     }
     final DateTime parsedDate = DateTime.parse(date);
-    return DateFormat.yMMMMEEEEd().format(parsedDate);
+    return DateFormat.yMMMMEEEEd().add_jm().format(parsedDate);
   }
 
   static String formatDateAndTimeToString(String dateString){

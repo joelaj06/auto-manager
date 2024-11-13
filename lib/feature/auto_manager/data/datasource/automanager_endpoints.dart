@@ -54,6 +54,10 @@ class AutoManagerEndpoints {
   }) => 'expenses?pageIndex=$pageIndex&pageSize=$pageSize&startDate=$startDate&endDate=$endDate';
 
   static String expense(String expenseId) => 'expenses/$expenseId';
+
+  static const String expenses = 'expenses';
+
+  static const String expenseCategories = 'expense/expenseCategories';
 }
 
 class FilterParams{

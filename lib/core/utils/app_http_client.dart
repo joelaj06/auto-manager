@@ -148,11 +148,11 @@ class AppHTTPClient {
         if (responseJson is List) {
           data = <String, dynamic>{
             'items': responseJson,
-            'totalCount': xPagination['totalCount'],
+            'totalCount':  xPagination != null ? xPagination['totalCount'] : '',
             'meta': <String,dynamic>{
-              'totalCount': xPagination['totalCount'],
-              'totalSales': response.headers['_meta_total_sales'],
-              'totalExpenses': response.headers['_meta_total_expenses']
+              'totalCount':  xPagination != null ? xPagination['totalCount'] : '',
+              'totalSales': response.headers['_meta_total_sales']  ?? '',
+              'totalExpenses': response.headers['_meta_total_expenses']  ?? '',
             }
           };
         }

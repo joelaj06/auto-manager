@@ -9,6 +9,11 @@ class ExpenseBindings extends Bindings {
     Get.lazyPut<ExpenseController>(
       () => ExpenseController(
           fetchExpenses: FetchExpenses(
+            autoManagerRepository: Get.find(),
+          ),
+          fetchExpenseCategories: FetchExpenseCategories(
+            autoManagerRepository: Get.find(),
+          ), addExpense: AddExpense(
         autoManagerRepository: Get.find(),
       )),
     );

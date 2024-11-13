@@ -115,7 +115,7 @@ class SalesController extends GetxController
     );
   }
 
-  void fetchAllVehicles() async {
+  Future<List<Vehicle>?> fetchAllVehicles() async {
     final Either<Failure, ListPage<Vehicle>> failureOrVehicles =
         await fetchVehicles(const PageParams(
       pageIndex: 1,
@@ -126,8 +126,10 @@ class SalesController extends GetxController
       (Failure failure) => null,
       (ListPage<Vehicle> listPage) {
         vehicles(listPage.itemList);
+        return listPage.itemList;
       },
     );
+    return null;
   }
 
   void fetchAllDrivers() async {

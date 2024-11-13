@@ -59,5 +59,10 @@ class Pages {
       page: () => const AddSaleScreen(),
       binding: SalesBindings(),
     ),
+    GetPage<AppRoutes>(
+      name: AppRoutes.addExpense,
+      page: () => const AddExpenseScreen(),
+      binding: ExpenseBindings(),
+    ),
   ];
 }

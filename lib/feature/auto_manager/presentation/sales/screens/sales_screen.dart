@@ -38,7 +38,8 @@ class SalesScreen extends GetView<SalesController> {
                 ? _buildSearchField(context)
                 : Obx(
                     () => Text(
-                      'Sales ${controller.totalCount.value == 0 ? '' : '(${controller.totalCount.value})'}',
+                      'Sales ${controller.totalCount.value == 0 ? '' :
+                      '(${controller.totalCount.value})'}',
                     ),
                   ),
           ),

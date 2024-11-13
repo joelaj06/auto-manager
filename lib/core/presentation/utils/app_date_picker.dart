@@ -38,7 +38,7 @@ class AppDatePicker {
     return values;
   }
 
-  static Future<List<DateTime?>?> showOnlyDatePicker(
+  static Future<DateTime?> showOnlyDatePicker(
       BuildContext context) async {
     final List<DateTime?>? value = await showCalendarDatePicker2Dialog(
       context: context,
@@ -51,11 +51,10 @@ class AppDatePicker {
       ),
       dialogSize: const Size(325, 400),
       borderRadius: BorderRadius.circular(15),
-      value: _dialogCalendarPickerValue,
-      dialogBackgroundColor: Colors.white,
+     // value: _dialogCalendarPickerValue,
     );
 
-    return value;
+    return value?[0];
   }
 
   static Future<String?> displayTimePicker(

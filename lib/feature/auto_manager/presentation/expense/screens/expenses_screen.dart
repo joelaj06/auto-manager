@@ -19,16 +19,19 @@ class ExpensesScreen extends GetView<ExpenseController> {
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: controller.navigateToAddExpenseScreen,
         child: const Icon(IconlyLight.plus),
       ),
       appBar: AppBar(
-        title: Text('Expenses'),
+        title: Obx(
+          () => Text(
+              'Expenses${controller.totalCount.value == 0 ? '' : '(${controller.totalCount.value})'}'),
+        ),
         leading: IconButton(
           onPressed: () {
             controller.onDateRangeSelected(context);
           },
-          icon: Icon(
+          icon: const Icon(
             IconlyLight.calendar,
           ),
         ),
@@ -62,7 +65,8 @@ class ExpensesScreen extends GetView<ExpenseController> {
             onRefresh: () {
               controller.endDate(DateTime.now());
               return Future<void>.sync(
-                  () => controller.pagingController.refresh());
+                  () => controller.pagingController.refresh(),
+              );
             },
             child: PagedListView<int, Expense>(
                 pagingController: controller.pagingController,
@@ -95,7 +99,9 @@ class ExpensesScreen extends GetView<ExpenseController> {
   }
 
   Widget _buildExpenseDetailModal(
-      BuildContext context, Expense expense,) {
+    BuildContext context,
+    Expense expense,
+  ) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: SingleChildScrollView(
@@ -104,10 +110,10 @@ class ExpensesScreen extends GetView<ExpenseController> {
           children: <Widget>[
             ModalListCard(
                 title: 'Date',
-                value: DataFormatter.formatDateToString(expense.createdAt ?? '')),
+                value:
+                    DataFormatter.formatDateToString(expense.createdAt ?? '')),
             ModalListCard(
-                title: 'Expense Type',
-                value: expense.category?.name ?? '--'),
+                title: 'Expense Type', value: expense.category?.name ?? '--'),
             ModalListCard(
                 title: 'Incurred By',
                 value: '${expense.incurredBy?.firstName ?? ''} '
@@ -115,13 +121,17 @@ class ExpensesScreen extends GetView<ExpenseController> {
             ModalListCard(
               title: 'Vehicle',
               value:
-              ' ${expense.vehicle?.make ?? ''} ${expense.vehicle?.model ?? ''} ${expense.vehicle?.color ?? ''} '
+                  ' ${expense.vehicle?.make ?? ''} ${expense.vehicle?.model ?? ''} ${expense.vehicle?.color ?? ''} '
                   '${expense.vehicle?.year ?? ''}',
             ),
             ModalListCard(
               title: 'Amount',
               value: DataFormatter.getLocalCurrencyFormatter(context)
                   .format(expense.amount),
+            ),
+            ModalListCard(
+              title: 'Notes',
+              value: expense.description ?? '',
             ),
           ],
         ),
@@ -132,7 +142,7 @@ class ExpensesScreen extends GetView<ExpenseController> {
   Widget _buildExpensesListTile(
       BuildContext context, int index, Expense expense) {
     return InkWell(
-      onTap: (){
+      onTap: () {
         showModalBottomSheet<dynamic>(
           context: context,
           builder: (BuildContext context) => SizedBox(

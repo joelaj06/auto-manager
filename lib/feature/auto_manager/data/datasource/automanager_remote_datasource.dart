@@ -44,4 +44,8 @@ abstract class AutoManagerRemoteDatasource {
     required String? endDate,
     required String? categoryId,
   });
+
+  Future<List<ExpenseCategory>> fetchExpenseCategories();
+
+  Future<Expense> addExpense({required AddExpenseRequest addExpenseRequest});
 }

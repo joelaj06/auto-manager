@@ -109,4 +109,14 @@ class AutoManagerRepositoryImpl extends Repository
       categoryId: categoryId,
     ));
   }
+
+  @override
+  Future<Either<Failure, List<ExpenseCategory>>> fetchExpenseCategories() {
+    return makeRequest(autoManagerRemoteDataSource.fetchExpenseCategories());
+  }
+
+  @override
+  Future<Either<Failure, Expense>> addExpense({required AddExpenseRequest addExpenseRequest}) {
+    return makeRequest(autoManagerRemoteDataSource.addExpense(addExpenseRequest: addExpenseRequest));
+  }
 }
