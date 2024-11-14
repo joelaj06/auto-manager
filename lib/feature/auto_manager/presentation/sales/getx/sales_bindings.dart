@@ -18,7 +18,9 @@ class SalesBindings extends Bindings {
           ),
           addSale: AddSale(
             autoManagerRepository: Get.find(),
-          )),
+          ), deleteSale: DeleteSale(
+            autoManagerRepository: Get.find(),
+      )),
     );
   }
 }

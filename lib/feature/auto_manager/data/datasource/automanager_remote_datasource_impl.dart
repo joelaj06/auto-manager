@@ -180,4 +180,11 @@ class AutoMangerRemoteDatasourceImpl implements AutoManagerRemoteDatasource {
         .post(AutoManagerEndpoints.expenses, body: addExpenseRequest.toJson());
     return Expense.fromJson(json);
   }
+
+  @override
+  Future<Sale> deleteSale({required String saleId}) async{
+    await _client
+        .delete(AutoManagerEndpoints.sale(saleId));
+    return Sale.empty();
+  }
 }

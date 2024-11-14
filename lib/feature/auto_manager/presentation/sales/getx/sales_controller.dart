@@ -12,12 +12,14 @@ class SalesController extends GetxController
       {required this.fetchSales,
       required this.fetchVehicles,
       required this.fetchDrivers,
-      required this.addSale});
+      required this.addSale,
+      required this.deleteSale});
 
   final FetchSales fetchSales;
   final FetchVehicles fetchVehicles;
   final FetchDrivers fetchDrivers;
   final AddSale addSale;
+  final DeleteSale deleteSale;
 
   //reactive variables
   RxBool isLoading = false.obs;
@@ -80,6 +82,24 @@ class SalesController extends GetxController
     resetFields();
   }
 
+  void deleteASale(String saleId) async{
+    isLoading(true);
+    final Either<Failure, Sale> failureOrSale = await deleteSale(saleId);
+    failureOrSale.fold(
+      (Failure failure) {
+        isLoading(false);
+        AppSnack.show(
+          message: failure.message,
+          status: SnackStatus.error,
+        );
+      },
+      (_) {
+        isLoading(false);
+        pagingController.refresh();
+      },
+    );
+  }
+
   void resetFields(){
     amount.value = '0.0';
     vehicleId.value = '';
@@ -87,6 +107,8 @@ class SalesController extends GetxController
     selectedDriver.value = Driver.empty();
     driverId.value = '';
   }
+
+
 
   void onSaleSaved() async {
     isLoading(true);

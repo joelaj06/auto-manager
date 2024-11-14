@@ -2,6 +2,7 @@ import 'package:automanager/core/core.dart';
 import 'package:automanager/core/presentation/theme/app_theme.dart';
 import 'package:automanager/feature/auto_manager/presentation/sales/getx/sales_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:get/get.dart';
 import 'package:iconly/iconly.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
@@ -38,8 +39,7 @@ class SalesScreen extends GetView<SalesController> {
                 ? _buildSearchField(context)
                 : Obx(
                     () => Text(
-                      'Sales ${controller.totalCount.value == 0 ? '' :
-                      '(${controller.totalCount.value})'}',
+                      'Sales ${controller.totalCount.value == 0 ? '' : '(${controller.totalCount.value})'}',
                     ),
                   ),
           ),
@@ -142,7 +142,23 @@ class SalesScreen extends GetView<SalesController> {
                 pagingController: controller.pagingController,
                 builderDelegate: PagedChildBuilderDelegate<Sale>(
                   itemBuilder: (BuildContext context, Sale sale, int index) {
-                    return _buildSalesListTile(context, index, sale);
+                    return Slidable(
+                      endActionPane: ActionPane(
+                        motion: const DrawerMotion(),
+                        children: <Widget>[
+                          SlidableAction(
+                            backgroundColor: context.colorScheme.background,
+                            foregroundColor: Colors.red,
+                            icon: IconlyLight.delete,
+                            label: 'Delete',
+                            onPressed: (BuildContext context) {
+                              controller.deleteASale(sale.id);
+                            },
+                          ),
+                        ],
+                      ),
+                      child: _buildSalesListTile(context, index, sale),
+                    );
                   },
                   firstPageErrorIndicatorBuilder: (BuildContext context) =>
                       ErrorIndicator(

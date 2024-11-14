@@ -25,6 +25,8 @@ abstract class AutoManagerRemoteDatasource {
 
   Future<Sale> addSale({required AddSaleRequest addSaleRequest});
 
+  Future<Sale> deleteSale({required String saleId});
+
   Future<ListPage<Driver>> fetchDrivers({
     required int pageIndex,
     required int pageSize,
@@ -48,4 +50,6 @@ abstract class AutoManagerRemoteDatasource {
   Future<List<ExpenseCategory>> fetchExpenseCategories();
 
   Future<Expense> addExpense({required AddExpenseRequest addExpenseRequest});
+
+
 }

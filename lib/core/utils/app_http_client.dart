@@ -157,6 +157,8 @@ class AppHTTPClient {
           };
         }
 
+
+
         if (responseJson is Map<String, dynamic>) {
           if (endpoint.contains('users/auth/login')) {
             final Map<String, String> header = response.headers;
@@ -167,6 +169,9 @@ class AppHTTPClient {
           }
         }
         return data;
+
+      case 204:
+        return <String, dynamic>{};
       case 400:
         final dynamic errorJson = jsonDecode(utf8.decode(response.bodyBytes));
         throw BadRequestException(

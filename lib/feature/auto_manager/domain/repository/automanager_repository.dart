@@ -30,6 +30,8 @@ abstract class AutoManagerRepository {
   Future<Either<Failure, Sale>> addSale(
       {required AddSaleRequest addSaleRequest});
 
+  Future<Either<Failure, Sale>> deleteSale({required String saleId});
+
   Future<Either<Failure, ListPage<Driver>>> fetchDrivers({
     required int pageIndex,
     required int pageSize,
