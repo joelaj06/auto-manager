@@ -126,4 +126,21 @@ class AutoManagerRepositoryImpl extends Repository
   Future<Either<Failure, Sale>> deleteSale({required String saleId}) {
     return makeRequest(autoManagerRemoteDataSource.deleteSale(saleId: saleId));
   }
+
+  @override
+  Future<Either<Failure, Expense>> deleteExpense({required String expenseId}) {
+    return makeRequest(
+        autoManagerRemoteDataSource.deleteExpense(expenseId: expenseId));
+  }
+
+  @override
+  Future<Either<Failure, Expense>> updateExpense(
+      {required UpdateExpenseRequest updateExpenseRequest}) {
+    return makeRequest(
+      autoManagerRemoteDataSource.updateExpense(
+        expenseId: updateExpenseRequest.id,
+        updateExpenseRequest: updateExpenseRequest,
+      ),
+    );
+  }
 }

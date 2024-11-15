@@ -4,19 +4,25 @@ import 'package:get/get.dart';
 
 import '../../../../../core/presentation/presentation.dart';
 import '../../../data/model/model.dart';
+import '../arguments/add_expense_argument.dart';
 
 class AddExpenseScreen extends GetView<ExpenseController> {
   const AddExpenseScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final AddExpenseArgument? args = Get.arguments as AddExpenseArgument?;
+
+    if (args != null) {
+      controller.getExpenseData(args.expense);
+    }
     controller.loadDependencies();
     return Scaffold(
       extendBody: false,
       appBar: AppBar(
-        title: const Text('New Expense'),
+        title: Text(args != null ? 'Update Expense' : 'New Expense'),
       ),
-      bottomNavigationBar: _buildBottomBar(context),
+      bottomNavigationBar: _buildBottomBar(context, args),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
@@ -47,7 +53,9 @@ class AddExpenseScreen extends GetView<ExpenseController> {
                   onChanged: (ExpenseCategory category) {
                     controller.onCategorySelected(category);
                   },
-                  value: controller.selectedCategory.value,
+                  value: args != null
+                      ? args.expense.category
+                      : controller.selectedCategory.value,
                   options: controller.expenseCategories,
                   titleBuilder: (_, ExpenseCategory category) =>
                       (category.name ?? '').toTitleCase(),
@@ -59,7 +67,9 @@ class AddExpenseScreen extends GetView<ExpenseController> {
                   onChanged: (Vehicle vehicle) {
                     controller.onVehicleSelected(vehicle);
                   },
-                  value: controller.selectedVehicle.value,
+                  value: args != null
+                      ? args.expense.vehicle
+                      : controller.selectedVehicle.value,
                   options: controller.salesController.vehicles,
                   titleBuilder: (_, Vehicle vehicle) =>
                       ('${vehicle.model ?? ''} ${vehicle.make ?? ''}'
@@ -77,13 +87,15 @@ class AddExpenseScreen extends GetView<ExpenseController> {
                   textInputType: const TextInputType.numberWithOptions(
                     decimal: true,
                   ),
-                  initialValue: '0.0',
+                  initialValue:
+                      args != null ? args.expense.amount.toString() : '0.0',
                 ),
                 const AppSpacing(v: 10),
                 AppTextInputField(
                   labelText: 'Notes',
                   maxLines: 3,
                   onChanged: controller.onDescriptionInputChanged,
+                  initialValue: args != null ? args.expense.description : '',
                 ),
               ],
             ),
@@ -93,15 +105,23 @@ class AddExpenseScreen extends GetView<ExpenseController> {
     );
   }
 
-  Widget _buildBottomBar(BuildContext context) {
+  Widget _buildBottomBar(BuildContext context, AddExpenseArgument? args) {
     return SizedBox(
       height: 70,
       child: Obx(
         () => AppButton(
-          text: 'Save',
-          onPressed: controller.addNewExpense,
-          enabled: controller.expenseFormIsValid.value &&
-              !controller.isLoading.value,
+          text: args != null ? 'Update' : 'Save',
+          onPressed: () {
+            if (args != null) {
+              controller.updateTheExpense(args.expense.id);
+            } else {
+              controller.addNewExpense();
+            }
+          },
+          enabled: args != null
+              ? controller.amountIsValid.value
+              : (controller.expenseFormIsValid.value &&
+                  !controller.isLoading.value),
         ),
       ),
     );

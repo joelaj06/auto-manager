@@ -51,5 +51,9 @@ abstract class AutoManagerRemoteDatasource {
 
   Future<Expense> addExpense({required AddExpenseRequest addExpenseRequest});
 
+  Future<Expense> deleteExpense({required String expenseId});
 
+  Future<Expense> updateExpense(
+      {required String expenseId,
+      required UpdateExpenseRequest updateExpenseRequest});
 }

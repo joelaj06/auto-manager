@@ -14,13 +14,12 @@ class AppHTTPClient {
   AppHTTPClient({
     required this.authLocalDataSource,
     required this.httpClient,
-  }){
-    httpClient =
-            InterceptedClient.build(
-              interceptors: <InterceptorContract>[
-                AuthInterceptor(authLocalDataSource: Get.find())
-              ],
-            );
+  }) {
+    httpClient = InterceptedClient.build(
+      interceptors: <InterceptorContract>[
+        AuthInterceptor(authLocalDataSource: Get.find())
+      ],
+    );
   }
 
   final http.Client _client = InterceptedClient.build(
@@ -29,7 +28,7 @@ class AppHTTPClient {
       ]);
 
   final AuthLocalDataSource authLocalDataSource;
-   http.Client httpClient;
+  http.Client httpClient;
 
   static const int requestTimeout = 60;
 
@@ -55,7 +54,8 @@ class AppHTTPClient {
     } on TimeoutException catch (_) {
       throw ApiNotRespondingException('Request Timeout', uri.toString());
     } on HttpException catch (_) {
-      throw ApiNotRespondingException('Server Cannot Be Reached', uri.toString());
+      throw ApiNotRespondingException(
+          'Server Cannot Be Reached', uri.toString());
     }
   }
 
@@ -79,8 +79,9 @@ class AppHTTPClient {
       throw FetchDataException('Connection problem ', uri.toString());
     } on TimeoutException {
       throw ApiNotRespondingException('Request Timeout', uri.toString());
-    }on HttpException catch (_) {
-      throw ApiNotRespondingException('Server Cannot Be Reached', uri.toString());
+    } on HttpException catch (_) {
+      throw ApiNotRespondingException(
+          'Server Cannot Be Reached', uri.toString());
     }
   }
 
@@ -102,8 +103,9 @@ class AppHTTPClient {
       throw FetchDataException('Connection problem', uri.toString());
     } on TimeoutException {
       throw ApiNotRespondingException('Request Timeout', uri.toString());
-    }on HttpException catch (_) {
-      throw ApiNotRespondingException('Server Cannot Be Reached', uri.toString());
+    } on HttpException catch (_) {
+      throw ApiNotRespondingException(
+          'Server Cannot Be Reached', uri.toString());
     }
   }
 
@@ -120,14 +122,15 @@ class AppHTTPClient {
       throw FetchDataException('Connection problem', uri.toString());
     } on TimeoutException {
       throw ApiNotRespondingException('Request Timeout', uri.toString());
-    }on HttpException catch (_) {
-      throw ApiNotRespondingException('Server Cannot Be Reached', uri.toString());
+    } on HttpException catch (_) {
+      throw ApiNotRespondingException(
+          'Server Cannot Be Reached', uri.toString());
     }
   }
 
   Map<String, dynamic> _processResponse(
       http.Response response, String endpoint) {
-    if (response.statusCode != 200 && response.statusCode != 201) {
+    if (!isGoodResponse(response.statusCode)) {
       AppLog.i(
           '============================ ERROR THROWN ========================');
       AppLog.i(utf8.decode(response.bodyBytes));
@@ -137,7 +140,8 @@ class AppHTTPClient {
       case 200:
         final dynamic responseJson =
             jsonDecode(utf8.decode(response.bodyBytes));
-        final dynamic xPagination = jsonDecode(response.headers['x-pagination'].toString());
+        final dynamic xPagination =
+            jsonDecode(response.headers['x-pagination'].toString());
         AppLog.i(
             '============================ BODY RECEIVED ========================');
         AppLog.i(response.body);
@@ -148,16 +152,15 @@ class AppHTTPClient {
         if (responseJson is List) {
           data = <String, dynamic>{
             'items': responseJson,
-            'totalCount':  xPagination != null ? xPagination['totalCount'] : '',
-            'meta': <String,dynamic>{
-              'totalCount':  xPagination != null ? xPagination['totalCount'] : '',
-              'totalSales': response.headers['_meta_total_sales']  ?? '',
-              'totalExpenses': response.headers['_meta_total_expenses']  ?? '',
+            'totalCount': xPagination != null ? xPagination['totalCount'] : '',
+            'meta': <String, dynamic>{
+              'totalCount':
+                  xPagination != null ? xPagination['totalCount'] : '',
+              'totalSales': response.headers['_meta_total_sales'] ?? '',
+              'totalExpenses': response.headers['_meta_total_expenses'] ?? '',
             }
           };
         }
-
-
 
         if (responseJson is Map<String, dynamic>) {
           if (endpoint.contains('users/auth/login')) {
@@ -190,13 +193,13 @@ class AppHTTPClient {
           errorJson['message'],
           response.request!.url.toString(),
         );
-        case 404:
+      case 404:
         final dynamic errorJson = jsonDecode(utf8.decode(response.bodyBytes));
         throw BadRequestException(
           errorJson['message'],
           response.request!.url.toString(),
         );
-        case 409:
+      case 409:
         final dynamic errorJson = jsonDecode(utf8.decode(response.bodyBytes));
         throw BadRequestException(
           errorJson['message'],
@@ -214,6 +217,14 @@ class AppHTTPClient {
           response.request!.url.toString(),
         );
     }
+  }
+
+  bool isGoodResponse(int code) {
+    return <int>{
+      200,
+      201,
+      204,
+    }.contains(code);
   }
 
   Map<String, dynamic> filterNull(Map<String, dynamic> body) {

@@ -13,9 +13,16 @@ class ExpenseBindings extends Bindings {
           ),
           fetchExpenseCategories: FetchExpenseCategories(
             autoManagerRepository: Get.find(),
-          ), addExpense: AddExpense(
-        autoManagerRepository: Get.find(),
-      )),
+          ),
+          addExpense: AddExpense(
+            autoManagerRepository: Get.find(),
+          ),
+          updateExpense: UpdateExpense(
+            autoManagerRepository: Get.find(),
+          ),
+          deleteExpense: DeleteExpense(
+            autoManagerRepository: Get.find(),
+          )),
     );
   }
 }

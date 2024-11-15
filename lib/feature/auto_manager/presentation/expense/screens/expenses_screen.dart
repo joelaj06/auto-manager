@@ -1,6 +1,7 @@
 import 'package:automanager/core/presentation/theme/app_theme.dart';
 import 'package:automanager/feature/auto_manager/presentation/expense/expense.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:get/get.dart';
 import 'package:iconly/iconly.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
@@ -49,14 +50,14 @@ class ExpensesScreen extends GetView<ExpenseController> {
             ),
           ),
           Expanded(
-            child: _buildSalesList(context),
+            child: _buildExpenseList(context),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildSalesList(BuildContext context) {
+  Widget _buildExpenseList(BuildContext context) {
     return Column(
       children: <Widget>[
         _buildTableHeader(context),
@@ -65,7 +66,7 @@ class ExpensesScreen extends GetView<ExpenseController> {
             onRefresh: () {
               controller.endDate(DateTime.now());
               return Future<void>.sync(
-                  () => controller.pagingController.refresh(),
+                () => controller.pagingController.refresh(),
               );
             },
             child: PagedListView<int, Expense>(
@@ -73,7 +74,32 @@ class ExpensesScreen extends GetView<ExpenseController> {
                 builderDelegate: PagedChildBuilderDelegate<Expense>(
                   itemBuilder:
                       (BuildContext context, Expense expense, int index) {
-                    return _buildExpensesListTile(context, index, expense);
+                    return Slidable(
+                      endActionPane: ActionPane(
+                        motion: const DrawerMotion(),
+                        children: <Widget>[
+                          SlidableAction(
+                            backgroundColor: context.colorScheme.background,
+                            //  foregroundColor: Colors.red,
+                            icon: IconlyLight.edit,
+                            label: 'Edit',
+                            onPressed: (BuildContext context) {
+                              controller.navigateToUpdateExpenseScreen(expense);
+                            },
+                          ),
+                          SlidableAction(
+                            backgroundColor: context.colorScheme.background,
+                            foregroundColor: Colors.red,
+                            icon: IconlyLight.delete,
+                            label: 'Delete',
+                            onPressed: (BuildContext context) {
+                              controller.deleteExpense(expense.id);
+                            },
+                          ),
+                        ],
+                      ),
+                      child: _buildExpensesListTile(context, index, expense),
+                    );
                   },
                   firstPageErrorIndicatorBuilder: (BuildContext context) =>
                       ErrorIndicator(
@@ -160,7 +186,19 @@ class ExpensesScreen extends GetView<ExpenseController> {
                 children: <Widget>[
                   Expanded(
                     child:
-                        Text(DataFormatter.formatDate(expense.createdAt ?? '')),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Text(
+                              expense.expenseId,
+                              textAlign: TextAlign.left,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Text(DataFormatter.formatDate(expense.createdAt ?? '')),
+                          ],
+                        ),
                   ),
                   Expanded(
                     child: Text(

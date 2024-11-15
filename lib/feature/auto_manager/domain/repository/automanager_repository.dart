@@ -56,4 +56,9 @@ abstract class AutoManagerRepository {
 
   Future<Either<Failure, Expense>> addExpense(
       {required AddExpenseRequest addExpenseRequest});
+
+  Future<Either<Failure, Expense>> deleteExpense({required String expenseId});
+
+  Future<Either<Failure, Expense>> updateExpense(
+      { required UpdateExpenseRequest updateExpenseRequest});
 }

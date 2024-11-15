@@ -1,4 +1,5 @@
 import 'package:automanager/core/core.dart';
+import 'package:automanager/feature/auto_manager/presentation/expense/arguments/add_expense_argument.dart';
 import 'package:automanager/feature/auto_manager/presentation/presentation.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/cupertino.dart';
@@ -12,11 +13,15 @@ class ExpenseController extends GetxController {
   ExpenseController(
       {required this.fetchExpenses,
       required this.fetchExpenseCategories,
-      required this.addExpense});
+      required this.addExpense,
+      required this.updateExpense,
+      required this.deleteExpense});
 
   final FetchExpenses fetchExpenses;
   final FetchExpenseCategories fetchExpenseCategories;
   final AddExpense addExpense;
+  final UpdateExpense updateExpense;
+  final DeleteExpense deleteExpense;
 
   RxString dateText = 'This Month'.obs;
   Rx<DateTime> startDate =
@@ -33,6 +38,7 @@ class ExpenseController extends GetxController {
   RxList<Vehicle> vehicles = <Vehicle>[].obs;
   RxList<ExpenseCategory> expenseCategories = <ExpenseCategory>[].obs;
   Rx<TextEditingController> dateController = TextEditingController().obs;
+  Rx<Expense> expense = Expense.empty().obs;
 
   //paging controller
   final PagingController<int, Expense> pagingController =
@@ -59,6 +65,75 @@ class ExpenseController extends GetxController {
     clearFields();
   }
 
+  void getExpenseData(Expense exp) {
+    expense(exp);
+    dateController.value.text = DataFormatter.formatDateToString(
+      exp.date.toString(),
+    );
+  }
+
+  void updateTheExpense(String expenseId) async {
+
+    isLoading(true);
+    final UpdateExpenseRequest expenseRequest = UpdateExpenseRequest(
+      id: expenseId,
+      description: description.value.isNotEmpty ? description.value.trim() : null,
+      amount: amount.value > 0 ? amount.value : null,
+      vehicleId: (selectedVehicle.value.id ?? '').isNotEmpty
+          ? selectedVehicle.value.id
+          : null,
+      category: (selectedCategory.value.id ?? '').isNotEmpty
+          ? selectedCategory.value.id
+          : null,
+      date: selectedDate.value.toIso8601String().isNotEmpty
+          ? selectedDate.value.toIso8601String()
+          : null,
+    );
+    print(expenseRequest);
+
+    final Either<Failure, Expense> failureOrExpense =
+        await updateExpense(expenseRequest);
+    failureOrExpense.fold(
+      (Failure failure) {
+        isLoading(false);
+        AppSnack.show(message: failure.message, status: SnackStatus.error);
+      },
+      (Expense updatedExpense) {
+        isLoading(false);
+        refreshPage();
+        Get.back<dynamic>(result: updatedExpense);
+      },
+    );
+  }
+
+  void deleteTheExpense(String expenseId) async {
+    isLoading(true);
+    final Either<Failure, Expense> failureOrExpense =
+        await deleteExpense(expenseId);
+    failureOrExpense.fold(
+      (Failure failure) {
+        isLoading(false);
+        AppSnack.show(message: failure.message, status: SnackStatus.error);
+      },
+      (_) {
+        isLoading(false);
+        refreshPage();
+        AppSnack.show(
+            message: 'Expense deleted successfully',
+            status: SnackStatus.success);
+      },
+    );
+  }
+
+  void navigateToUpdateExpenseScreen(Expense expense) async {
+    final dynamic result = await Get.toNamed<dynamic>(AppRoutes.addExpense,
+        arguments: AddExpenseArgument(expense));
+    if (result != null) {
+      AppSnack.show(
+          message: 'Expense updated successfully', status: SnackStatus.success);
+    }
+  }
+
   void addNewExpense() async {
     isLoading(true);
     final AddExpenseRequest expenseRequest = AddExpenseRequest(
@@ -66,12 +141,11 @@ class ExpenseController extends GetxController {
       amount: amount.value,
       description: description.value,
       incurredBy: null,
-      vehicleId: selectedVehicle.value.id ?? '',
+      vehicleId: (selectedVehicle.value.id?? '').isEmpty ? null : selectedVehicle.value.id,
       date: selectedDate.value.toIso8601String(),
     );
     final Either<Failure, Expense> failureOrExpense =
         await addExpense(expenseRequest);
-
     failureOrExpense.fold(
       (Failure failure) {
         isLoading(false);
@@ -79,8 +153,7 @@ class ExpenseController extends GetxController {
       },
       (Expense newExpense) {
         isLoading(false);
-        endDate(DateTime.now());
-        pagingController.refresh();
+        refreshPage();
         Get.back<dynamic>(result: newExpense);
       },
     );
@@ -187,6 +260,11 @@ class ExpenseController extends GetxController {
     }
   }
 
+  void refreshPage() {
+    endDate(DateTime.now());
+    pagingController.refresh();
+  }
+
   void clearFields() {
     selectedDate(DateTime.now());
     dateController.value.text = DataFormatter.formatDateToString(
@@ -221,7 +299,7 @@ class ExpenseController extends GetxController {
   }
 
   void onDescriptionInputChanged(String? value) {
-    description(value ?? '');
+    description(value);
   }
 
   void onCategorySelected(ExpenseCategory category) {
@@ -246,6 +324,10 @@ class ExpenseController extends GetxController {
     }
     return errorMessage;
   }
+
+  RxBool get amountIsValid =>
+      (validateAmount(amount.value.toStringAsFixed(2)) == null ||
+      expense.value.amount! >= 0).obs;
 
   RxBool get expenseFormIsValid =>
       (validateAmount(amount.value.toStringAsFixed(2)) == null &&

@@ -14,6 +14,7 @@ part 'expense_model.g.dart';
 class Expense with _$Expense {
   const factory Expense({
     @JsonKey(name: '_id') required String id,
+    required String expenseId,
     ExpenseCategory? category,
     String? status,
     String? company,
@@ -32,6 +33,7 @@ class Expense with _$Expense {
 
   factory Expense.empty() =>  Expense(
     id: '',
+    expenseId: '',
     category: ExpenseCategory.empty(),
     status: '',
   );

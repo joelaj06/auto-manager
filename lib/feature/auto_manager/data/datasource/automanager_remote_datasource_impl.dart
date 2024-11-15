@@ -166,7 +166,7 @@ class AutoMangerRemoteDatasourceImpl implements AutoManagerRemoteDatasource {
     final Map<String, dynamic> json =
         await _client.get(AutoManagerEndpoints.expenseCategories);
     final List<dynamic> items = json['items'] as List<dynamic>;
-    final List<ExpenseCategory> expenseCategories =  items
+    final List<ExpenseCategory> expenseCategories = items
         .map((dynamic category) => ExpenseCategory.fromJson(category))
         .toList();
 
@@ -182,9 +182,25 @@ class AutoMangerRemoteDatasourceImpl implements AutoManagerRemoteDatasource {
   }
 
   @override
-  Future<Sale> deleteSale({required String saleId}) async{
-    await _client
-        .delete(AutoManagerEndpoints.sale(saleId));
+  Future<Sale> deleteSale({required String saleId}) async {
+    await _client.delete(AutoManagerEndpoints.sale(saleId));
     return Sale.empty();
+  }
+
+  @override
+  Future<Expense> deleteExpense({required String expenseId}) async {
+   final json = await _client.delete(AutoManagerEndpoints.expense(expenseId));
+    print(json);
+   return Expense.empty();
+  }
+
+  @override
+  Future<Expense> updateExpense(
+      {required String expenseId,
+      required UpdateExpenseRequest updateExpenseRequest}) async {
+    final Map<String, dynamic> json = await _client.put(
+        AutoManagerEndpoints.expense(expenseId),
+        body: updateExpenseRequest.toJson());
+    return Expense.fromJson(json);
   }
 }
