@@ -158,6 +158,7 @@ class AppHTTPClient {
                   xPagination != null ? xPagination['totalCount'] : '',
               'totalSales': response.headers['_meta_total_sales'] ?? '',
               'totalExpenses': response.headers['_meta_total_expenses'] ?? '',
+              'totalRentals': response.headers['_meta_total_rentals'] ?? '',
             }
           };
         }

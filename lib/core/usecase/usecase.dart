@@ -1,7 +1,7 @@
 import 'package:dartz/dartz.dart';
 import '../errors/failure.dart';
 
-abstract class UseCase<Type, Params> {
+abstract interface class UseCase<Type, Params> {
   Future<Either<Failure, Type>> call(Params params);
 }
 
@@ -22,6 +22,8 @@ class PageParams {
     this.driverId,
     this.status,
     this.categoryId,
+    this.customerId,
+    this.vehicleId,
   });
 
   final int? pageIndex;
@@ -37,5 +39,7 @@ class PageParams {
   final int? month;
   final String? status;
   final String? categoryId;
+  final String? customerId;
+  final String? vehicleId;
 
 }

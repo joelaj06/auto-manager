@@ -1,6 +1,6 @@
 import '../model/model.dart';
 
-abstract class AutoManagerRemoteDatasource {
+abstract interface class AutoManagerRemoteDatasource {
   Future<Company> addCompany(Company company);
 
   Future<DashboardSummary> dashboardSummary(
@@ -56,4 +56,14 @@ abstract class AutoManagerRemoteDatasource {
   Future<Expense> updateExpense(
       {required String expenseId,
       required UpdateExpenseRequest updateExpenseRequest});
+
+  Future<ListPage<Rental>> fetchRentals({
+    required int pageIndex,
+    required int pageSize,
+    required String? startDate,
+    required String? endDate,
+    required String? query,
+    required String? customerId,
+    required String? vehicleId,
+});
 }

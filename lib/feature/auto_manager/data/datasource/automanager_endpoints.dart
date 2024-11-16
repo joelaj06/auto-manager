@@ -58,9 +58,47 @@ class AutoManagerEndpoints {
   static const String expenses = 'expenses';
 
   static const String expenseCategories = 'expense/expenseCategories';
+
+  static const String rentals = 'rentals';
+
+  static String rental(String rentalId) => 'rentals/$rentalId';
+
+  static String rentalList({
+    required int pageIndex,
+    required int pageSize,
+    required String? startDate,
+    required String? endDate,
+  }) => 'rentals?pageIndex=$pageIndex&pageSize=$pageSize&startDate='
+      '$startDate&endDate=$endDate';
 }
 
 class FilterParams{
+
+  static String rentalParams(
+      String endpoint,
+      final String? search,
+      final String? vehicleId,
+      final String? customerId,
+      ){
+
+    String allParams = '';
+    if(search != null && search.isNotEmpty){
+      allParams = '$allParams&search=$search';
+    }
+    if(vehicleId != null && vehicleId.isNotEmpty){
+      allParams = '$allParams&vehicleId=$vehicleId';
+    }
+    if(customerId != null && customerId.isNotEmpty){
+      allParams = '$allParams&renter=$customerId';
+    }
+
+    endpoint += allParams;
+
+    return endpoint;
+
+      }
+
+
   static String expenseParams(
       String endpoint,
       final String? categoryId

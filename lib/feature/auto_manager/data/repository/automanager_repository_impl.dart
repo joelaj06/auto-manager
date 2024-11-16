@@ -143,4 +143,24 @@ class AutoManagerRepositoryImpl extends Repository
       ),
     );
   }
+
+  @override
+  Future<Either<Failure, ListPage<Rental>>> fetchRentals(
+      {required int pageIndex,
+      required int pageSize,
+      required String? startDate,
+      required String? endDate,
+      required String? query,
+      required String? customerId,
+      required String? vehicleId}) {
+    return makeRequest(autoManagerRemoteDataSource.fetchRentals(
+      pageIndex: pageIndex,
+      pageSize: pageSize,
+      startDate: startDate,
+      endDate: endDate,
+      query: query,
+      customerId: customerId,
+      vehicleId: vehicleId,
+    ));
+  }
 }

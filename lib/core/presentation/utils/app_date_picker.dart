@@ -2,6 +2,8 @@ import 'package:calendar_date_picker2/calendar_date_picker2.dart';
 import 'package:flutter/material.dart';
 import 'package:month_picker_dialog/month_picker_dialog.dart';
 
+import '../../utils/data_formatter.dart';
+
 class AppDatePicker {
   static final List<DateTime?> _dialogCalendarPickerValue = <DateTime?>[
     DateTime.now().subtract(const Duration(days: 1)),
@@ -66,6 +68,24 @@ class AppDatePicker {
     );
     final String formattedTime = time.toString().split('(')[1].split(')')[0];
     return formattedTime;
+  }
+
+  ///
+  /// Returns a formatted date string from the given date
+  /// in a string format of 'From January 10, 2012 to January 15, 2012'
+  ///
+ static String getTextDate(DateRangeValues values) {
+    if (values.startDate != null) {
+      final String start = DataFormatter.formatDateToStringDateOnly(
+        values.startDate!.toIso8601String(),
+      );
+      final String end = DataFormatter.formatDateToStringDateOnly(
+        values.endDate!.toIso8601String(),
+      );
+      final String dateString = 'From $start to $end';
+      return dateString;
+    }
+    return 'Invalid Date';
   }
 }
 

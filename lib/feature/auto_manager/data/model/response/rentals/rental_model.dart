@@ -31,6 +31,7 @@ class Rental with _$Rental {
     required double? totalAmount,
     String? receiptNumber,
     List<RentalExtension>? extensions,
+    String? date,
   }) = _Rental;
 
   const Rental._();

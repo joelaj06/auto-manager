@@ -25,6 +25,7 @@ class Pages {
         DashboardBindings(),
         SalesBindings(),
         ExpenseBindings(),
+        RentalBindings(),
       ]
     ),
     GetPage<AppRoutes>(
@@ -50,6 +51,7 @@ class Pages {
     GetPage<AppRoutes>(
       name: AppRoutes.rentals,
       page: () => const RentalScreen(),
+      binding: RentalBindings(),
     ),
     GetPage<AppRoutes>(
       name: AppRoutes.more,

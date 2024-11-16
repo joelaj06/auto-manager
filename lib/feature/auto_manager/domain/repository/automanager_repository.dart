@@ -3,7 +3,7 @@ import 'package:dartz/dartz.dart';
 import '../../../../core/errors/failure.dart';
 import '../../data/model/model.dart';
 
-abstract class AutoManagerRepository {
+abstract interface class AutoManagerRepository {
   Future<Either<Failure, Company>> addCompany(
       {required Company companyRequest});
 
@@ -61,4 +61,14 @@ abstract class AutoManagerRepository {
 
   Future<Either<Failure, Expense>> updateExpense(
       { required UpdateExpenseRequest updateExpenseRequest});
+
+  Future<Either<Failure, ListPage<Rental>>> fetchRentals({
+    required int pageIndex,
+    required int pageSize,
+    required String? startDate,
+    required String? endDate,
+    required String? query,
+    required String? customerId,
+    required String? vehicleId,
+  });
 }
