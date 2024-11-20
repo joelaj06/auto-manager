@@ -65,5 +65,18 @@ abstract interface class AutoManagerRemoteDatasource {
     required String? query,
     required String? customerId,
     required String? vehicleId,
-});
+  });
+
+  Future<Rental> addRental({required RentalRequest addRentalRequest});
+
+  Future<Rental> updateRental(
+      {required String rentalId, required RentalRequest updateRentalRequest});
+
+  Future<Rental> deleteRental({required String rentalId});
+
+  Future<ListPage<Customer>> fetchCustomers({
+    required int pageIndex,
+    required int pageSize,
+    required String? query,
+  });
 }

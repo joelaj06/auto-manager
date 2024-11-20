@@ -163,4 +163,42 @@ class AutoManagerRepositoryImpl extends Repository
       vehicleId: vehicleId,
     ));
   }
+
+  @override
+  Future<Either<Failure, Rental>> addRental({
+    required RentalRequest addRentalRequest,
+  }) {
+    return makeRequest(autoManagerRemoteDataSource.addRental(
+      addRentalRequest: addRentalRequest,
+    ));
+  }
+
+  @override
+  Future<Either<Failure, Rental>> deleteRental({
+    required String rentalId,
+  }) {
+    return makeRequest(autoManagerRemoteDataSource.deleteRental(
+      rentalId: rentalId,
+    ));
+  }
+
+  @override
+  Future<Either<Failure, Rental>> updateRental({
+    required RentalRequest updateRentalRequest,
+  }) {
+    return makeRequest(autoManagerRemoteDataSource.updateRental(
+      rentalId: updateRentalRequest.id!,
+      updateRentalRequest: updateRentalRequest,
+    ));
+  }
+
+  @override
+  Future<Either<Failure, ListPage<Customer>>> fetchCustomers(
+      {required int pageIndex, required int pageSize, required String? query}) {
+    return makeRequest(autoManagerRemoteDataSource.fetchCustomers(
+      pageIndex: pageIndex,
+      pageSize: pageSize,
+      query: query,
+    ));
+  }
 }

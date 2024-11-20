@@ -1,4 +1,5 @@
 export 'company/company.dart';
+export 'customer/customer.dart';
 export 'dashboard/dashboard.dart';
 export 'driver/drivers.dart';
 export 'expenses/expense.dart';

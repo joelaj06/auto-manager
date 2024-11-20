@@ -70,9 +70,33 @@ class AutoManagerEndpoints {
     required String? endDate,
   }) => 'rentals?pageIndex=$pageIndex&pageSize=$pageSize&startDate='
       '$startDate&endDate=$endDate';
+
+  static const String customers = 'customers';
+
+  static String customer(String customerId) => 'customers/$customerId';
+
+  static String customerList({
+    required int pageIndex,
+    required int pageSize,
+  }) => 'customers?pageIndex=$pageIndex&pageSize=$pageSize';
 }
 
+
+
 class FilterParams{
+
+  static String customerParams(
+      String endpoint,
+      final String? search,
+      ){
+    String allParams = '';
+    if(search != null && search.isNotEmpty){
+      allParams = '$allParams&search=$search';
+    }
+    endpoint += allParams;
+
+    return endpoint;
+  }
 
   static String rentalParams(
       String endpoint,

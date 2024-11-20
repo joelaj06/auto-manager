@@ -60,7 +60,7 @@ abstract interface class AutoManagerRepository {
   Future<Either<Failure, Expense>> deleteExpense({required String expenseId});
 
   Future<Either<Failure, Expense>> updateExpense(
-      { required UpdateExpenseRequest updateExpenseRequest});
+      {required UpdateExpenseRequest updateExpenseRequest});
 
   Future<Either<Failure, ListPage<Rental>>> fetchRentals({
     required int pageIndex,
@@ -70,5 +70,19 @@ abstract interface class AutoManagerRepository {
     required String? query,
     required String? customerId,
     required String? vehicleId,
+  });
+
+  Future<Either<Failure, Rental>> addRental(
+      {required RentalRequest addRentalRequest});
+
+  Future<Either<Failure, Rental>> deleteRental({required String rentalId});
+
+  Future<Either<Failure, Rental>> updateRental(
+      {required RentalRequest updateRentalRequest});
+
+  Future<Either<Failure, ListPage<Customer>>> fetchCustomers({
+    required int pageIndex,
+    required int pageSize,
+    required String? query,
   });
 }

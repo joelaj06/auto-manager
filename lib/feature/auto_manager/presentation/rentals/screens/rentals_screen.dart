@@ -25,7 +25,7 @@ class RentalScreen extends GetView<RentalController> {
       appBar: AppBar(
         title: Obx(
           () => Text(
-              'Expenses${controller.totalCount.value == 0 ? '' : '(${controller.totalCount.value})'}'),
+              'Rentals${controller.totalCount.value == 0 ? '' : '(${controller.totalCount.value})'}'),
         ),
         leading: IconButton(
           onPressed: () {
@@ -78,10 +78,20 @@ class RentalScreen extends GetView<RentalController> {
                         children: <Widget>[
                           SlidableAction(
                             backgroundColor: context.colorScheme.background,
+                            icon: IconlyLight.edit,
+                            label: 'Edit',
+                            onPressed: (BuildContext context) {
+                              controller.navigateToUpdateRentalScreen(rental);
+                            },
+                          ),
+                          SlidableAction(
+                            backgroundColor: context.colorScheme.background,
                             foregroundColor: Colors.red,
                             icon: IconlyLight.delete,
                             label: 'Delete',
-                            onPressed: (BuildContext context) {},
+                            onPressed: (BuildContext context) {
+                              controller.deleteTheRental(rental);
+                            },
                           ),
                         ],
                       ),
@@ -126,9 +136,24 @@ class RentalScreen extends GetView<RentalController> {
                 title: 'Date',
                 value: DataFormatter.formatDateToString(rental.date ?? '')),
             ModalListCard(
-                title: 'Created By',
-                value: '${rental.createdBy?.firstName ?? ''} '
-                    '${rental.createdBy?.lastName ?? ''}'),
+              title: 'Customer',
+              value: rental.renter?.name ?? '--',
+            ),
+            ModalListCard(
+              title: 'Amount Paid',
+              value: DataFormatter.getLocalCurrencyFormatter(context)
+                  .format(rental.amountPaid ?? 0),
+            ),
+            ModalListCard(
+              title: 'Total Amount',
+              value: DataFormatter.getLocalCurrencyFormatter(context)
+                  .format(rental.totalAmount ?? 0),
+            ),
+            ModalListCard(
+              title: 'Balance',
+              value: DataFormatter.getLocalCurrencyFormatter(context)
+                  .format(rental.balance ?? 0),
+            ),
             ModalListCard(
               title: 'Vehicle',
               value:
@@ -136,13 +161,9 @@ class RentalScreen extends GetView<RentalController> {
                   '${rental.vehicle?.year ?? ''}',
             ),
             ModalListCard(
-              title: 'Customer',
-              value: rental.renter?.name ?? '--',
-            ), ModalListCard(
-              title: 'Amount',
-              value: DataFormatter.getLocalCurrencyFormatter(context)
-                  .format(rental.cost),
-            ),
+                title: 'Created By',
+                value: '${rental.createdBy?.firstName ?? ''} '
+                    '${rental.createdBy?.lastName ?? ''}'),
             ModalListCard(
               title: 'Extended',
               value: (rental.extensions ?? <RentalExtension>[]).isNotEmpty
@@ -211,10 +232,24 @@ class RentalScreen extends GetView<RentalController> {
                     ),
                   ),
                   Expanded(
-                    child: Center(
-                      child: Text(
-                        rental.cost.toStringAsFixed(2),
-                      ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: <Widget>[
+                        Text(
+                          (rental.totalAmount ?? 0).toStringAsFixed(2),
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Text(
+                          (rental.amountPaid ?? 0).toStringAsFixed(2),
+                          style: TextStyle(
+                            color: (rental.balance ?? 0) > 0
+                                ? Colors.red
+                                : Colors.green,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
@@ -251,8 +286,9 @@ class RentalScreen extends GetView<RentalController> {
               ),
             ),
             Expanded(
-              child: Center(
-                child: Text('Amount'),
+              child: Align(
+                alignment: Alignment.centerRight,
+                child: Text('Total/Paid'),
               ),
             ),
           ],

@@ -7,10 +7,18 @@ class RentalBindings extends Bindings {
   void dependencies() {
     Get.lazyPut<RentalController>(
       () => RentalController(
-        fetchRentals: FetchRentals(
-          autoManagerRepository: Get.find(),
-        ),
-      ),
+          fetchRentals: FetchRentals(
+            autoManagerRepository: Get.find(),
+          ),
+          addRental: AddRental(
+            autoManagerRepository: Get.find(),
+          ),
+          updateRental: UpdateRental(
+            autoManagerRepository: Get.find(),
+          ),
+          deleteRental: DeleteRental(
+            autoManagerRepository: Get.find(),
+          )),
     );
   }
 }

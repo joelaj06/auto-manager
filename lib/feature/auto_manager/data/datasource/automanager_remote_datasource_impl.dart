@@ -239,4 +239,47 @@ class AutoMangerRemoteDatasourceImpl implements AutoManagerRemoteDatasource {
       metaData: metaData,
     );
   }
+
+  @override
+  Future<Rental> addRental({required RentalRequest addRentalRequest}) async {
+    final Map<String, dynamic> json = await _client
+        .post(AutoManagerEndpoints.rentals, body: addRentalRequest.toJson());
+    return Rental.fromJson(json);
+  }
+
+  @override
+  Future<Rental> deleteRental({required String rentalId}) async {
+    await _client.delete(AutoManagerEndpoints.rental(rentalId));
+    return Rental.empty();
+  }
+
+  @override
+  Future<Rental> updateRental(
+      {required String rentalId,
+      required RentalRequest updateRentalRequest}) async {
+    final Map<String, dynamic> json = await _client.put(
+        AutoManagerEndpoints.rental(rentalId),
+        body: updateRentalRequest.toJson());
+    return Rental.fromJson(json);
+  }
+
+  @override
+  Future<ListPage<Customer>> fetchCustomers(
+      {required int pageIndex,
+      required int pageSize,
+      required String? query}) async{
+    final Map<String, dynamic> json = await _client.get(
+      FilterParams.customerParams(AutoManagerEndpoints.customerList(pageIndex: pageIndex, pageSize: pageSize), query),
+    );
+    final List<dynamic> items = json['items'] as List<dynamic>;
+    final List<Customer> customers =
+        items.map((dynamic customer) => Customer.fromJson(customer)).toList();
+    final int total = json['totalCount'] as int;
+    final Map<String, dynamic> metaData = json['meta'] as Map<String, dynamic>;
+    return ListPage<Customer>(
+      itemList: customers,
+      grandTotalCount: total,
+      metaData: metaData,
+    );
+  }
 }

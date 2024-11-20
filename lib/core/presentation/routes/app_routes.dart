@@ -11,4 +11,5 @@ class AppRoutes{
   static const String more = '/more';
   static const String addSale = '/addSale';
   static const String addExpense = '/addExpense';
+  static const String addRental = '/addRental';
 }
