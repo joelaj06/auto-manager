@@ -244,7 +244,7 @@ class RentalScreen extends GetView<RentalController> {
                         Text(
                           (rental.amountPaid ?? 0).toStringAsFixed(2),
                           style: TextStyle(
-                            color: (rental.balance ?? 0) > 0
+                            color: (rental.balance ?? 0) < 0
                                 ? Colors.red
                                 : Colors.green,
                           ),

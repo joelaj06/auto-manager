@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:automanager/core/usecase/usecase.dart';
 import 'package:automanager/feature/auto_manager/domain/domain.dart';
 import 'package:dartz/dartz.dart';
@@ -15,12 +17,16 @@ class RentalController extends GetxController {
       {required this.fetchRentals,
       required this.addRental,
       required this.updateRental,
-      required this.deleteRental});
+      required this.deleteRental,
+      required this.fetchCustomers,
+      required this.fetchVehicles});
 
   final FetchRentals fetchRentals;
   final AddRental addRental;
   final UpdateRental updateRental;
   final DeleteRental deleteRental;
+  final FetchCustomers fetchCustomers;
+  final FetchVehicles fetchVehicles;
 
   //reactive variables
   RxInt totalCount = 0.obs;
@@ -47,10 +53,13 @@ class RentalController extends GetxController {
   RxString note = ''.obs;
   RxString purpose = ''.obs;
   RxDouble balance = 0.0.obs;
+  RxString customerQuery = ''.obs;
+  RxBool isCustomerSearching = false.obs;
 
   //paging controller
   final PagingController<int, Rental> pagingController =
       PagingController<int, Rental>(firstPageKey: 1);
+  Timer? _debounceTimer;
 
   @override
   void onInit() {
@@ -101,6 +110,7 @@ class RentalController extends GetxController {
   }
 
   void addNewRental() async {
+    isLoading(true);
     final RentalRequest addRentalRequest = RentalRequest(
       renter: selectedCustomer.value.id,
       vehicle: selectedVehicle.value.id,
@@ -118,11 +128,59 @@ class RentalController extends GetxController {
     final Either<Failure, Rental> failureOrRental =
         await addRental(addRentalRequest);
     failureOrRental.fold((Failure failure) {
+      isLoading(false);
       AppSnack.show(message: failure.message, status: SnackStatus.error);
     }, (Rental rental) {
+      isLoading(false);
+      endDate(DateTime.now());
       pagingController.refresh();
       Get.back<dynamic>(result: rental);
     });
+  }
+
+  String displayStringForOption(Customer customer) => customer.name;
+
+  Future<void> onCustomerSearchChanged(String query) async {
+    _debounceTimer?.cancel(); // Cancel any existing timer
+    // wait for 1s before refreshing the controller
+    _debounceTimer = Timer(const Duration(seconds: 1), () async {
+      customerQuery(query);
+      if (query.isNotEmpty &&
+          query.length > 1 &&
+          query != selectedCustomer.value.name) {
+        await getCustomers();
+      }
+    });
+  }
+
+  Future<void> getCustomers() async {
+    isCustomerSearching(true);
+    final Either<Failure, ListPage<Customer>> failureOrCustomers =
+        await fetchCustomers(
+            PageParams(pageIndex: 1, pageSize: 10, query: customerQuery.value));
+    failureOrCustomers.fold((Failure failure) {
+      isCustomerSearching(false);
+      AppSnack.show(message: failure.message, status: SnackStatus.error);
+    }, (ListPage<Customer> newPage) {
+      isCustomerSearching(false);
+      customers(newPage.itemList);
+    });
+  }
+
+  void fetchAllVehicles() async {
+    final Either<Failure, ListPage<Vehicle>> failureOrVehicles =
+    await fetchVehicles(const PageParams(
+      pageIndex: 1,
+      pageSize: 100,
+      query: '',
+    ));
+    failureOrVehicles.fold(
+          (Failure failure) => null,
+          (ListPage<Vehicle> listPage) {
+        vehicles(listPage.itemList);
+      },
+    );
+
   }
 
   void getRentals(int pageKey) async {
@@ -205,6 +263,13 @@ class RentalController extends GetxController {
         ' ($numOfDays Days)';
   }
 
+  void calculateBalance() {
+    final double amtPaid = double.tryParse(amountPaid.value) ?? 0.0;
+    final double rentalCost = double.tryParse(cost.value) ?? 0.0;
+    final double bal =  amtPaid - rentalCost ;
+    balance(bal.toPrecision(2));
+  }
+
   void onNotesInputChanged(String? value) {
     note(value);
   }
@@ -215,10 +280,12 @@ class RentalController extends GetxController {
 
   void onRentalCostInputChanged(String? value) {
     cost(value);
+    calculateBalance();
   }
 
   void onAmountPaidInputChanged(String? value) {
     amountPaid(value);
+    calculateBalance();
   }
 
   void onVehicleSelected(Vehicle vehicle) {
@@ -251,6 +318,6 @@ class RentalController extends GetxController {
   RxBool get rentalFormIsValid => (validateAmount(cost.value) == null &&
           validateField(selectedCustomer.value.id) == null &&
           validateField(selectedVehicle.value.id) == null &&
-      validateField(startingDate.value.toIso8601String()) == null)
+          validateField(startingDate.value.toIso8601String()) == null)
       .obs;
 }

@@ -17,8 +17,9 @@ class AssetImages {
 
 class AssetGifs{
   AssetGifs._();
-  static const String _imageSource = 'assets/gifs';
-  static const String loading = '$_imageSource/loading.gif';
-  static const String success = '$_imageSource/office_done.gif';
-  static const String error = '$_imageSource/error.gif';
+  static const String _gifSource = 'assets/gifs';
+  static const String loading = '$_gifSource/loading.gif';
+  static const String success = '$_gifSource/office_done.gif';
+  static const String error = '$_gifSource/error.gif';
+  static const String loadingDots = '$_gifSource/three_dots.gif';
 }
