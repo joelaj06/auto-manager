@@ -18,9 +18,15 @@ class ModalListCard extends StatelessWidget {
           children: <Widget>[
             Text(title,
                 style: context.body2.copyWith(fontWeight: FontWeight.w400)),
-            Text(
-              value.toString(),
-              style: context.body2.copyWith(fontWeight: FontWeight.w600),
+            const AppSpacing(
+              h: 10,
+            ),
+            Flexible(
+              child: Text(
+                value.toString(),
+                style: context.body2.copyWith(fontWeight: FontWeight.w600),
+                overflow: TextOverflow.ellipsis,
+              ),
             ),
           ],
         ),

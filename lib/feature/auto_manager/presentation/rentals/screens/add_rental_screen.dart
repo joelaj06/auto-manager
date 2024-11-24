@@ -1,9 +1,11 @@
 import 'package:automanager/feature/auto_manager/presentation/presentation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:iconly/iconly.dart';
 
 import '../../../../../core/presentation/utils/utils.dart';
 import '../../../../../core/presentation/widgets/widgets.dart';
+import '../../../../../core/utils/data_formatter.dart';
 import '../../../data/model/model.dart';
 
 class AddRentalScreen extends GetView<RentalController> {
@@ -11,7 +13,7 @@ class AddRentalScreen extends GetView<RentalController> {
 
   @override
   Widget build(BuildContext context) {
-     controller.fetchAllVehicles();
+    controller.fetchAllVehicles();
     final AddRentalArgument? args = Get.arguments as AddRentalArgument?;
 
     controller.clearFields();
@@ -98,10 +100,118 @@ class AddRentalScreen extends GetView<RentalController> {
                   onChanged: controller.onNotesInputChanged,
                   initialValue: args != null ? args.rental.note : '',
                 ),
+                const AppSpacing(v: 10),
+                Visibility(
+                  visible: args != null,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      const Text(
+                        'Extensions',
+                        textAlign: TextAlign.left,
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      const AppSpacing(v: 15),
+                      Obx(
+                        () => ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: controller.rentalExtensions.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              return Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: <Widget>[
+                                  const AppSpacing(h: 10),
+                                  Expanded(
+                                    child: Obx(
+                                      () => _buildExtensionCard(
+                                        context,
+                                        controller.rentalExtensions[index],
+                                      ),
+                                    ),
+                                  ),
+                                  const AppSpacing(h: 10),
+                                  IconButton(
+                                    icon: const Icon(
+                                      IconlyLight.delete,
+                                      color: Colors.red,
+                                    ),
+                                    onPressed: () {
+                                      controller.removeExtension(
+                                        controller.rentalExtensions[index],
+                                      );
+                                    },
+                                  ),
+                                ],
+                              );
+                            }),
+                      )
+                      /* ...List<Widget>.generate(
+                          controller.rentalExtensions.length,
+                              (int index) => Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: <Widget>[
+                              const AppSpacing(h: 10),
+                              Expanded(
+                                child: Obx(() => _buildExtensionCard(
+                                    context,
+                                    controller.rentalExtensions[index],
+                                  ),
+                                ),
+                              ),
+                              const AppSpacing(h: 10),
+                              IconButton(
+                                icon:  const Icon(IconlyLight.delete,
+                                  color: Colors.red,),
+                                onPressed: () {
+                                  controller.removeExtension(
+                                      controller.rentalExtensions[index],
+                                  );
+                                },
+                              ),
+                            ],
+                          ),
+                        ),*/
+                    ],
+                  ),
+                )
               ],
             ),
           ),
         ));
+  }
+
+  Widget _buildExtensionCard(BuildContext context, RentalExtension extension) {
+    return Padding(
+      padding: AppPaddings.sB,
+      child: Container(
+        padding: AppPaddings.mA,
+        decoration: BoxDecoration(
+          border: Border.all(
+            color: Theme.of(context).colorScheme.primary,
+          ),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            ModalListCard(
+              title: 'Extended Date',
+              value: DataFormatter.formatDateToString(
+                  extension.extendedDate ?? ''),
+            ),
+            ModalListCard(
+              title: 'Extended Amount',
+              value: DataFormatter.getLocalCurrencyFormatter(context)
+                  .format(extension.extendedAmount ?? 0),
+            ),
+            ModalListCard(
+              title: 'Notes',
+              value: extension.extendedNote ?? '--',
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _buildCustomerSearchAutoComplete(

@@ -1,5 +1,6 @@
 import 'package:automanager/core/presentation/theme/app_theme.dart';
 import 'package:automanager/feature/auto_manager/presentation/presentation.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:get/get.dart';
@@ -8,7 +9,6 @@ import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
 import '../../../../../core/errors/failure.dart';
 import '../../../../../core/presentation/utils/utils.dart';
-import '../../../../../core/presentation/widgets/exception_indicators/exceptions.dart';
 import '../../../../../core/presentation/widgets/widgets.dart';
 import '../../../../../core/utils/utils.dart';
 import '../../../data/model/model.dart';
@@ -253,9 +253,64 @@ class RentalScreen extends GetView<RentalController> {
               title: 'Purpose',
               value: rental.purpose ?? '--',
             ),
+            const AppSpacing(v: 15),
+            Visibility(
+              visible: (rental.extensions ?? <RentalExtension>[]).isNotEmpty,
+              child: Column(
+                children: <Widget>[
+                  const Text(
+                    'Extensions',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  const AppSpacing(v: 15),
+                  ...List<Widget>.generate(
+                    rental.extensions!.length,
+                    (int index) => Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text(
+                          '${index + 1}.',
+                          style: TextStyle(
+                              color: Theme.of(context).colorScheme.primary,
+                          ),
+                        ),
+                        const AppSpacing(h: 10),
+                        Expanded(
+                          child: _buildExtensionCard(
+                            context,
+                            rental.extensions![index],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            )
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildExtensionCard(BuildContext context, RentalExtension extension) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        ModalListCard(
+          title: 'Extended Date',
+          value: DataFormatter.formatDateToString(extension.extendedDate ?? ''),
+        ),
+        ModalListCard(
+          title: 'Extended Amount',
+          value: DataFormatter.getLocalCurrencyFormatter(context)
+              .format(extension.extendedAmount ?? 0),
+        ),
+        ModalListCard(
+          title: 'Notes',
+          value: extension.extendedNote ?? '--',
+        ),
+      ],
     );
   }
 

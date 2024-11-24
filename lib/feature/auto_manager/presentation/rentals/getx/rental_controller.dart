@@ -63,6 +63,7 @@ class RentalController extends GetxController {
   Rx<DateTime> selectedExtendedDate = DateTime.now().obs;
   RxString extendedAmount = ('0.0').obs;
   RxString extendedNotes = ''.obs;
+  RxList<RentalExtension> rentalExtensions = <RentalExtension>[].obs;
 
   //paging controller
   final PagingController<int, Rental> pagingController =
@@ -101,6 +102,11 @@ class RentalController extends GetxController {
     });
   }
 
+  void removeExtension(RentalExtension extension) {
+    rentalExtensions.value = List<RentalExtension>.from(rentalExtensions);
+    rentalExtensions.remove(extension);
+  }
+
   void deleteTheRental(Rental rental) async {
     final Either<Failure, Rental> failureOrRental =
         await deleteRental(rental.id);
@@ -130,6 +136,7 @@ class RentalController extends GetxController {
       receiptNumber: rental.receiptNumber,
       purpose: purpose.value.isNotEmpty ? purpose.value : null,
       note: note.value.isNotEmpty ? note.value : null,
+      extensions: rentalExtensions,
     );
 
     final Either<Failure, Rental> failureOrRental =
@@ -152,6 +159,7 @@ class RentalController extends GetxController {
     final int numOfDays =
         returnDate.value.difference(startingDate.value).inDays;
     days(numOfDays);
+    rentalExtensions(rental.extensions ?? <RentalExtension>[]);
 
     dateController.value.text =
         '${AppDatePicker.getTextDate(DateRangeValues(startDate: startingDate.value, endDate: returnDate.value))}'

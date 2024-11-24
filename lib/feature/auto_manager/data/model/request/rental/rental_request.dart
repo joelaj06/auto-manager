@@ -1,6 +1,8 @@
 // ignore_for_file: invalid_annotation_target
 import 'package:freezed_annotation/freezed_annotation.dart';
 
+import '../../response/rentals/extension_model.dart';
+
 part 'rental_request.freezed.dart';
 
 part 'rental_request.g.dart';
@@ -21,6 +23,7 @@ class RentalRequest with _$RentalRequest {
     String? receiptNumber,
     String? purpose,
     String? note,
+    List<RentalExtension>? extensions,
   }) = _RentalRequest;
 
   const RentalRequest._();
