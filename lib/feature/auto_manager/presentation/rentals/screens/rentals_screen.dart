@@ -140,6 +140,12 @@ class RentalScreen extends GetView<RentalController> {
               value: rental.renter?.name ?? '--',
             ),
             ModalListCard(
+              title: 'Days',
+              value: controller.getNumberOfDays(
+                  DateTime.parse(rental.startDate!),
+                  DateTime.parse(rental.endDate!)),
+            ),
+            ModalListCard(
               title: 'Amount Paid',
               value: DataFormatter.getLocalCurrencyFormatter(context)
                   .format(rental.amountPaid ?? 0),

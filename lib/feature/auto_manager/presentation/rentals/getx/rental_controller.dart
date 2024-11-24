@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:automanager/core/usecase/usecase.dart';
 import 'package:automanager/feature/auto_manager/domain/domain.dart';
+import 'package:automanager/feature/auto_manager/presentation/presentation.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
@@ -87,18 +88,25 @@ class RentalController extends GetxController {
 
   void updateTheRental(Rental rental) async {
     final RentalRequest updateRentalRequest = RentalRequest(
-        renter: rental.renter!.id,
-        vehicle: rental.vehicle!.id,
-        startDate: rental.startDate,
-        endDate: rental.endDate,
-        cost: rental.cost,
-        status: rental.status,
-        amountPaid: rental.amountPaid,
-        balance: rental.balance,
-        totalAmount: rental.totalAmount,
-        receiptNumber: rental.receiptNumber,
-        purpose: rental.purpose,
-        note: rental.note);
+      id: rental.id,
+      renter: selectedCustomer.value.id!.isNotEmpty
+          ? selectedCustomer.value.id
+          : null,
+      vehicle: selectedVehicle.value.id!.isNotEmpty
+          ? selectedVehicle.value.id
+          : null,
+      startDate: startingDate.value.toIso8601String(),
+      endDate: returnDate.value.toIso8601String(),
+      cost: cost.value.isNotEmpty ? double.parse(cost.value) : null,
+      amountPaid:
+          amountPaid.value.isNotEmpty ? double.parse(amountPaid.value) : null,
+      balance: balance.value > 0 ? balance.value : null,
+      totalAmount: cost.value.isNotEmpty ? double.parse(cost.value) : null,
+      receiptNumber: rental.receiptNumber,
+      purpose: purpose.value.isNotEmpty ? purpose.value : null,
+      note: note.value.isNotEmpty ? note.value : null,
+    );
+
     final Either<Failure, Rental> failureOrRental =
         await updateRental(updateRentalRequest);
     failureOrRental.fold((Failure failure) {
@@ -107,6 +115,26 @@ class RentalController extends GetxController {
       pagingController.refresh();
       Get.back<dynamic>(result: rental);
     });
+  }
+
+  void getRentalDataFromArgs(Rental rental) {
+    selectedCustomer(rental.renter);
+    selectedVehicle(rental.vehicle);
+    cost(rental.cost.toString());
+    amountPaid(rental.amountPaid.toString());
+    startingDate(DateTime.parse(rental.startDate!));
+    returnDate(DateTime.parse(rental.endDate!));
+    final int numOfDays =
+        returnDate.value.difference(startingDate.value).inDays;
+    days(numOfDays);
+
+    dateController.value.text =
+        '${AppDatePicker.getTextDate(DateRangeValues(startDate: startingDate.value, endDate: returnDate.value))}'
+        ' ($numOfDays Days)';
+  }
+
+  String getNumberOfDays(DateTime starting, DateTime ending) {
+    return ending.difference(starting).inDays.toString();
   }
 
   void addNewRental() async {
@@ -169,18 +197,17 @@ class RentalController extends GetxController {
 
   void fetchAllVehicles() async {
     final Either<Failure, ListPage<Vehicle>> failureOrVehicles =
-    await fetchVehicles(const PageParams(
+        await fetchVehicles(const PageParams(
       pageIndex: 1,
       pageSize: 100,
       query: '',
     ));
     failureOrVehicles.fold(
-          (Failure failure) => null,
-          (ListPage<Vehicle> listPage) {
+      (Failure failure) => null,
+      (ListPage<Vehicle> listPage) {
         vehicles(listPage.itemList);
       },
     );
-
   }
 
   void getRentals(int pageKey) async {
@@ -221,8 +248,10 @@ class RentalController extends GetxController {
   }
 
   void navigateToUpdateRentalScreen(Rental rental) async {
-    final dynamic result =
-        await Get.toNamed(AppRoutes.addRental, arguments: rental);
+    final dynamic result = await Get.toNamed(
+      AppRoutes.addRental,
+      arguments: AddRentalArgument(rental),
+    );
     if (result != null) {
       AppSnack.show(
         message: 'Rental updated successfully',
@@ -266,8 +295,22 @@ class RentalController extends GetxController {
   void calculateBalance() {
     final double amtPaid = double.tryParse(amountPaid.value) ?? 0.0;
     final double rentalCost = double.tryParse(cost.value) ?? 0.0;
-    final double bal =  amtPaid - rentalCost ;
+    final double bal = amtPaid - rentalCost;
     balance(bal.toPrecision(2));
+  }
+
+  void clearFields() {
+    dateController.value.clear();
+    note('');
+    purpose('');
+    cost('0.0');
+    amountPaid('0.0');
+    balance(0.0);
+    startingDate(DateTime.now());
+    returnDate(DateTime(
+        DateTime.now().year, DateTime.now().month, DateTime.now().day + 1));
+    selectedCustomer(Customer.empty());
+    selectedVehicle(Vehicle.empty());
   }
 
   void onNotesInputChanged(String? value) {

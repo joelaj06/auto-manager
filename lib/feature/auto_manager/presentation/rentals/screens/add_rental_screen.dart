@@ -11,12 +11,19 @@ class AddRentalScreen extends GetView<RentalController> {
 
   @override
   Widget build(BuildContext context) {
-    controller.fetchAllVehicles();
+     controller.fetchAllVehicles();
+    final AddRentalArgument? args = Get.arguments as AddRentalArgument?;
+
+    controller.clearFields();
+    if (args != null) {
+      controller.getRentalDataFromArgs(args.rental);
+    }
+
     return Scaffold(
         appBar: AppBar(
-          title: const Text('New Rental'),
+          title: Text(args != null ? 'Update Rental' : 'New Rental'),
         ),
-        bottomNavigationBar: _buildBottomBar(context),
+        bottomNavigationBar: _buildBottomBar(context, arg: args),
         body: SingleChildScrollView(
           child: Padding(
             padding: AppPaddings.mA,
@@ -37,14 +44,16 @@ class AddRentalScreen extends GetView<RentalController> {
                   ),
                 ),
                 const AppSpacing(v: 10),
-                _buildCustomerSearchAutoComplete(context),
+                _buildCustomerSearchAutoComplete(context, args),
                 const AppSpacing(v: 10),
                 AppSelectField<Vehicle>(
                   labelText: 'Vehicle',
                   onChanged: (Vehicle vehicle) {
                     controller.onVehicleSelected(vehicle);
                   },
-                  value: controller.selectedVehicle.value,
+                  value: args != null
+                      ? args.rental.vehicle
+                      : controller.selectedVehicle.value,
                   options: controller.vehicles,
                   titleBuilder: (_, Vehicle vehicle) =>
                       ('${vehicle.model ?? ''} ${vehicle.make ?? ''}'
@@ -62,7 +71,8 @@ class AddRentalScreen extends GetView<RentalController> {
                   textInputType: const TextInputType.numberWithOptions(
                     decimal: true,
                   ),
-                  initialValue: '0.0',
+                  initialValue:
+                      args != null ? args.rental.cost.toString() : '0.0',
                 ),
                 const AppSpacing(v: 10),
                 AppTextInputField(
@@ -71,21 +81,22 @@ class AddRentalScreen extends GetView<RentalController> {
                   textInputType: const TextInputType.numberWithOptions(
                     decimal: true,
                   ),
-                  initialValue: '0.0',
+                  initialValue:
+                      args != null ? args.rental.amountPaid.toString() : '0.0',
                 ),
                 const AppSpacing(v: 10),
                 AppTextInputField(
                   labelText: 'Purpose',
                   maxLines: 2,
                   onChanged: controller.onPurposeInputChanged,
-                  initialValue: '',
+                  initialValue: args != null ? args.rental.purpose : '',
                 ),
                 const AppSpacing(v: 10),
                 AppTextInputField(
                   labelText: 'Notes',
                   maxLines: 2,
                   onChanged: controller.onNotesInputChanged,
-                  initialValue: '',
+                  initialValue: args != null ? args.rental.note : '',
                 ),
               ],
             ),
@@ -93,7 +104,8 @@ class AddRentalScreen extends GetView<RentalController> {
         ));
   }
 
-  Widget _buildCustomerSearchAutoComplete(BuildContext context) {
+  Widget _buildCustomerSearchAutoComplete(
+      BuildContext context, AddRentalArgument? args) {
     return Autocomplete<Customer>(
       displayStringForOption: controller.displayStringForOption,
       optionsBuilder: (TextEditingValue textEditingValue) async {
@@ -108,6 +120,9 @@ class AddRentalScreen extends GetView<RentalController> {
           TextEditingController textEditingController,
           FocusNode focusNode,
           VoidCallback onFieldSubmitted) {
+        if (args != null) {
+          textEditingController.text = args.rental.renter?.name ?? '';
+        }
         return Obx(
           () => AppTextInputField(
             controller: textEditingController,
@@ -127,15 +142,23 @@ class AddRentalScreen extends GetView<RentalController> {
     );
   }
 
-  Widget _buildBottomBar(BuildContext context) {
-    return SizedBox(
-      height: 70,
-      child: Obx(
-        () => AppButton(
-          text: 'Save',
-          onPressed: controller.addNewRental,
-          enabled:
-              controller.rentalFormIsValid.value && !controller.isLoading.value,
+  Widget _buildBottomBar(BuildContext context,
+      {required AddRentalArgument? arg}) {
+    return Padding(
+      padding: AppPaddings.mA,
+      child: SizedBox(
+        height: 70,
+        child: Obx(
+          () => AppButton(
+            text: arg != null ? 'Update' : 'Save',
+            onPressed: () {
+              arg != null
+                  ? controller.updateTheRental(arg.rental)
+                  : controller.addNewRental();
+            },
+            enabled: controller.rentalFormIsValid.value &&
+                !controller.isLoading.value,
+          ),
         ),
       ),
     );
