@@ -47,7 +47,7 @@ extension EnvironmentX on Environment {
 
   String get url {
     return <Environment, String>{
-      Environment.development: 'http://192.168.178.182:3000/api/',
+      Environment.development: 'http://192.168.80.32:3000/api/',
       Environment.production: 'http://192.168.100.12:3000/api/',
     }[this]!;
   }

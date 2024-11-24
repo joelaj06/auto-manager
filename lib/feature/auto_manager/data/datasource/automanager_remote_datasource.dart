@@ -79,4 +79,8 @@ abstract interface class AutoManagerRemoteDatasource {
     required int pageSize,
     required String? query,
   });
+
+  Future<Rental> extendRental(
+      {required String rentalId,
+      required ExtendRentalRequest extendRentalRequest});
 }

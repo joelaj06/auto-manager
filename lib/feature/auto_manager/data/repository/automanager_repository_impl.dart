@@ -201,4 +201,13 @@ class AutoManagerRepositoryImpl extends Repository
       query: query,
     ));
   }
+
+  @override
+  Future<Either<Failure, Rental>> extendRental(
+      {required ExtendRentalRequest extendRentalRequest}) {
+    return makeRequest(autoManagerRemoteDataSource.extendRental(
+      rentalId: extendRentalRequest.id!,
+      extendRentalRequest: extendRentalRequest,
+    ));
+  }
 }

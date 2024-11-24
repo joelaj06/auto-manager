@@ -85,4 +85,8 @@ abstract interface class AutoManagerRepository {
     required int pageSize,
     required String? query,
   });
+
+  Future<Either<Failure, Rental>> extendRental(
+      {
+      required ExtendRentalRequest extendRentalRequest});
 }

@@ -267,9 +267,12 @@ class AutoMangerRemoteDatasourceImpl implements AutoManagerRemoteDatasource {
   Future<ListPage<Customer>> fetchCustomers(
       {required int pageIndex,
       required int pageSize,
-      required String? query}) async{
+      required String? query}) async {
     final Map<String, dynamic> json = await _client.get(
-      FilterParams.customerParams(AutoManagerEndpoints.customerList(pageIndex: pageIndex, pageSize: pageSize), query),
+      FilterParams.customerParams(
+          AutoManagerEndpoints.customerList(
+              pageIndex: pageIndex, pageSize: pageSize),
+          query),
     );
     final List<dynamic> items = json['items'] as List<dynamic>;
     final List<Customer> customers =
@@ -281,5 +284,15 @@ class AutoMangerRemoteDatasourceImpl implements AutoManagerRemoteDatasource {
       grandTotalCount: total,
       metaData: metaData,
     );
+  }
+
+  @override
+  Future<Rental> extendRental(
+      {required String rentalId,
+      required ExtendRentalRequest extendRentalRequest}) async {
+    final Map<String, dynamic> json = await _client.put(
+        AutoManagerEndpoints.extendRental(rentalId),
+        body: extendRentalRequest.toJson());
+    return Rental.fromJson(json);
   }
 }

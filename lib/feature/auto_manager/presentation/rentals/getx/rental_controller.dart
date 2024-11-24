@@ -11,6 +11,7 @@ import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import '../../../../../core/errors/failure.dart';
 import '../../../../../core/presentation/routes/routes.dart';
 import '../../../../../core/presentation/utils/utils.dart';
+import '../../../../../core/utils/data_formatter.dart';
 import '../../../data/model/model.dart';
 
 class RentalController extends GetxController {
@@ -20,7 +21,8 @@ class RentalController extends GetxController {
       required this.updateRental,
       required this.deleteRental,
       required this.fetchCustomers,
-      required this.fetchVehicles});
+      required this.fetchVehicles,
+      required this.extendRental});
 
   final FetchRentals fetchRentals;
   final AddRental addRental;
@@ -28,6 +30,7 @@ class RentalController extends GetxController {
   final DeleteRental deleteRental;
   final FetchCustomers fetchCustomers;
   final FetchVehicles fetchVehicles;
+  final ExtendRental extendRental;
 
   //reactive variables
   RxInt totalCount = 0.obs;
@@ -46,6 +49,7 @@ class RentalController extends GetxController {
   RxString amountPaid = ('0.0').obs;
   RxString cost = ('0.0').obs;
   Rx<TextEditingController> dateController = TextEditingController().obs;
+  Rx<TextEditingController> extendedDateController = TextEditingController().obs;
   Rx<DateTime> startingDate = DateTime.now().obs;
   Rx<DateTime> returnDate = DateTime(
           DateTime.now().year, DateTime.now().month, DateTime.now().day + 1)
@@ -56,6 +60,9 @@ class RentalController extends GetxController {
   RxDouble balance = 0.0.obs;
   RxString customerQuery = ''.obs;
   RxBool isCustomerSearching = false.obs;
+  Rx<DateTime> selectedExtendedDate = DateTime.now().obs;
+  RxString extendedAmount = ('0.0').obs;
+  RxString extendedNotes = ''.obs;
 
   //paging controller
   final PagingController<int, Rental> pagingController =
@@ -74,6 +81,24 @@ class RentalController extends GetxController {
   void onClose() {
     pagingController.dispose();
     super.onClose();
+  }
+
+  void extendTheRental(Rental rental) async {
+    final ExtendRentalRequest extendedRentalRequest = ExtendRentalRequest(
+      id: rental.id,
+      extendedAmount: double.tryParse(extendedAmount.value) ?? 0.0,
+      extendedNote: extendedNotes.value,
+      extendedDate: selectedExtendedDate.value.toIso8601String(),
+    );
+    final Either<Failure, Rental> failureOrRental =
+        await extendRental(extendedRentalRequest);
+    failureOrRental.fold((Failure failure) {
+      AppSnack.show(message: failure.message, status: SnackStatus.error);
+    }, (Rental rental) {
+      AppSnack.show(message: 'Rental Extended', status: SnackStatus.success);
+      pagingController.refresh();
+      Get.back();
+    });
   }
 
   void deleteTheRental(Rental rental) async {
@@ -270,6 +295,15 @@ class RentalController extends GetxController {
     }
   }
 
+  void selectExtendedDate(BuildContext context) async {
+    final DateTime? res = await AppDatePicker.showOnlyDatePicker(context);
+    if (res != null) {
+      selectedExtendedDate(res);
+      extendedDateController.value.text =
+          DataFormatter.formatDateToString(res.toIso8601String());
+    }
+  }
+
   void onDateRangeSelected(BuildContext context) async {
     final DateRangeValues dateRangeValues =
         await AppDatePicker.showDateRangePicker(context);
@@ -278,6 +312,7 @@ class RentalController extends GetxController {
     dateText(AppDatePicker.getTextDate(dateRangeValues));
     pagingController.refresh();
   }
+
 
   void selectDate(BuildContext context) async {
     final DateRangeValues dateRangeValues =
@@ -311,6 +346,14 @@ class RentalController extends GetxController {
         DateTime.now().year, DateTime.now().month, DateTime.now().day + 1));
     selectedCustomer(Customer.empty());
     selectedVehicle(Vehicle.empty());
+  }
+
+  void onExtendedNotesInputChanged(String? value){
+    extendedNotes(value);
+  }
+
+  void onExtendedAmountInputChanged(String? value){
+    extendedAmount(value);
   }
 
   void onNotesInputChanged(String? value) {

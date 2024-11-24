@@ -18,10 +18,16 @@ class RentalBindings extends Bindings {
           ),
           deleteRental: DeleteRental(
             autoManagerRepository: Get.find(),
-          ), fetchCustomers: FetchCustomers(
-        autoManagerRepository: Get.find(),
-      ), fetchVehicles: FetchVehicles(
-        autoManagerRepository: Get.find(),)),
+          ),
+          fetchCustomers: FetchCustomers(
+            autoManagerRepository: Get.find(),
+          ),
+          fetchVehicles: FetchVehicles(
+            autoManagerRepository: Get.find(),
+          ),
+          extendRental: ExtendRental(
+            autoManagerRepository: Get.find(),
+          )),
     );
   }
 }

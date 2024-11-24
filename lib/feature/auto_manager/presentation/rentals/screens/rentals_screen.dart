@@ -9,6 +9,7 @@ import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import '../../../../../core/errors/failure.dart';
 import '../../../../../core/presentation/utils/utils.dart';
 import '../../../../../core/presentation/widgets/exception_indicators/exceptions.dart';
+import '../../../../../core/presentation/widgets/widgets.dart';
 import '../../../../../core/utils/utils.dart';
 import '../../../data/model/model.dart';
 
@@ -73,6 +74,20 @@ class RentalScreen extends GetView<RentalController> {
                   itemBuilder:
                       (BuildContext context, Rental rental, int index) {
                     return Slidable(
+                      startActionPane: ActionPane(
+                        motion: const DrawerMotion(),
+                        children: <Widget>[
+                          SlidableAction(
+                            backgroundColor: context.colorScheme.background,
+                            foregroundColor: Colors.red,
+                            icon: IconlyLight.delete,
+                            label: 'Delete',
+                            onPressed: (BuildContext context) {
+                              controller.deleteTheRental(rental);
+                            },
+                          ),
+                        ],
+                      ),
                       endActionPane: ActionPane(
                         motion: const DrawerMotion(),
                         children: <Widget>[
@@ -86,11 +101,18 @@ class RentalScreen extends GetView<RentalController> {
                           ),
                           SlidableAction(
                             backgroundColor: context.colorScheme.background,
-                            foregroundColor: Colors.red,
-                            icon: IconlyLight.delete,
-                            label: 'Delete',
+                            icon: Icons.add,
+                            label: 'Extend',
                             onPressed: (BuildContext context) {
-                              controller.deleteTheRental(rental);
+                              showModalBottomSheet<dynamic>(
+                                context: context,
+                                isScrollControlled: true,
+                                builder: (BuildContext context) =>
+                                    FractionallySizedBox(
+                                  heightFactor: 0.8,
+                                  child: _buildExtensionForm(context, rental),
+                                ),
+                              );
                             },
                           ),
                         ],
@@ -118,6 +140,57 @@ class RentalScreen extends GetView<RentalController> {
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildExtensionForm(BuildContext context, Rental rental) {
+    return SingleChildScrollView(
+      child: Padding(
+        padding: AppPaddings.mA,
+        child: Column(
+          children: <Widget>[
+            const Text('Extension Form',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                )),
+            Obx(
+              () => AppTextInputField(
+                controller: controller.extendedDateController.value,
+                labelText: 'Date',
+                // onChanged: controller.onDateSelected,
+                validator: (String? value) => null,
+                textInputType: TextInputType.datetime,
+                hintText: controller.extendedDateController.value.text,
+                readOnly: true,
+                onTap: () {
+                  controller.selectExtendedDate(context);
+                },
+              ),
+            ),
+            const AppSpacing(v: 10),
+            AppTextInputField(
+              labelText: 'Extended Amount',
+              onChanged: controller.onExtendedAmountInputChanged,
+              textInputType: const TextInputType.numberWithOptions(
+                decimal: true,
+              ),
+              initialValue: '0.0',
+            ),
+            const AppSpacing(v: 10),
+            AppTextInputField(
+              labelText: 'Notes',
+              maxLines: 2,
+              onChanged: controller.onExtendedNotesInputChanged,
+              initialValue: '',
+            ),
+            const AppSpacing(v: 10),
+            AppButton(
+              text: 'Submit',
+              onPressed: () => controller.extendTheRental(rental),
+            ),
+          ],
+        ),
+      ),
     );
   }
 

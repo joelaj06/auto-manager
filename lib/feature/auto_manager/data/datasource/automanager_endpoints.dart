@@ -63,6 +63,8 @@ class AutoManagerEndpoints {
 
   static String rental(String rentalId) => 'rentals/$rentalId';
 
+  static String extendRental(String rentalId) => 'rentals/$rentalId/extend';
+
   static String rentalList({
     required int pageIndex,
     required int pageSize,
@@ -79,6 +81,8 @@ class AutoManagerEndpoints {
     required int pageIndex,
     required int pageSize,
   }) => 'customers?pageIndex=$pageIndex&pageSize=$pageSize';
+
+
 }
 
 
