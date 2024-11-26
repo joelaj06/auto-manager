@@ -1,4 +1,6 @@
 import 'package:automanager/core/core.dart';
+import 'package:automanager/feature/authentication/data/models/request/user/user_request.dart';
+import 'package:automanager/feature/authentication/data/models/response/user/user_model.dart';
 import 'package:automanager/feature/auto_manager/data/data.dart';
 
 class AutoMangerRemoteDatasourceImpl implements AutoManagerRemoteDatasource {
@@ -294,5 +296,23 @@ class AutoMangerRemoteDatasourceImpl implements AutoManagerRemoteDatasource {
         AutoManagerEndpoints.extendRental(rentalId),
         body: extendRentalRequest.toJson());
     return Rental.fromJson(json);
+  }
+
+  @override
+  Future<User> fetchUser(String userId) async {
+    final Map<String, dynamic> json = await _client.get(
+      AutoManagerEndpoints.user(userId),
+    );
+    return User.fromJson(json);
+  }
+
+  @override
+  Future<User> updateUser(
+      {required UserRequest updateUserRequest, required String userId}) async {
+    final Map<String, dynamic> json = await _client.put(
+      AutoManagerEndpoints.user(userId),
+      body: updateUserRequest.toJson(),
+    );
+    return User.fromJson(json);
   }
 }

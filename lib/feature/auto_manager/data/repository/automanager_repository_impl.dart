@@ -1,4 +1,6 @@
 import 'package:automanager/core/errors/failure.dart';
+import 'package:automanager/feature/authentication/data/models/request/user/user_request.dart';
+import 'package:automanager/feature/authentication/data/models/response/user/user_model.dart';
 
 import 'package:dartz/dartz.dart';
 
@@ -208,6 +210,19 @@ class AutoManagerRepositoryImpl extends Repository
     return makeRequest(autoManagerRemoteDataSource.extendRental(
       rentalId: extendRentalRequest.id!,
       extendRentalRequest: extendRentalRequest,
+    ));
+  }
+
+  @override
+  Future<Either<Failure, User>> fetchUser({required String userId}) {
+    return makeRequest(autoManagerRemoteDataSource.fetchUser( userId));
+  }
+
+  @override
+  Future<Either<Failure, User>> updateUser({required UserRequest userRequest}) {
+    return makeRequest(autoManagerRemoteDataSource.updateUser(
+      updateUserRequest: userRequest,
+      userId: userRequest.id!,
     ));
   }
 }

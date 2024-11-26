@@ -83,6 +83,10 @@ class AutoManagerEndpoints {
   }) => 'customers?pageIndex=$pageIndex&pageSize=$pageSize';
 
 
+  static String user(String userId) => 'users/$userId';
+
+  static const String users = 'users';
+
 }
 
 

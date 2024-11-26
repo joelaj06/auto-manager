@@ -12,4 +12,10 @@ class AppRoutes{
   static const String addSale = '/addSale';
   static const String addExpense = '/addExpense';
   static const String addRental = '/addRental';
+  static const String profile = '/profile';
+  static const String drivers = '/drivers';
+  static const String customers = '/customers';
+  static const String vehicle = '/vehicle';
+  static const String userAccounts = '/userAccounts';
+  static const String settings = '/settings';
 }

@@ -1,8 +1,13 @@
 export 'base/base.dart';
 export 'company/company.dart';
+export 'customers/customers.dart';
 export 'dashboard/dashboard.dart';
+export 'drivers/drivers.dart';
 export 'expense/expense.dart';
 export 'more/more.dart';
 export 'onboarding/onboarding.dart';
+export 'profile/profile.dart';
 export 'rentals/rental.dart';
 export 'sales/sales.dart';
+export 'user_accounts/user_account.dart';
+export 'vehicles/vehicle.dart';

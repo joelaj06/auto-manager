@@ -7,7 +7,6 @@ List<IconData> mobileNavIcons = <IconData>[
   Iconsax.wallet_minus,
   Iconsax.key,
   Iconsax.menu,
-
 ];
 
 List<String> mobileNavTexts = <String>[

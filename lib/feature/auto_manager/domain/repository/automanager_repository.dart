@@ -1,6 +1,8 @@
 import 'package:dartz/dartz.dart';
 
 import '../../../../core/errors/failure.dart';
+import '../../../authentication/data/models/request/user/user_request.dart';
+import '../../../authentication/data/models/response/user/user_model.dart';
 import '../../data/model/model.dart';
 
 abstract interface class AutoManagerRepository {
@@ -89,4 +91,8 @@ abstract interface class AutoManagerRepository {
   Future<Either<Failure, Rental>> extendRental(
       {
       required ExtendRentalRequest extendRentalRequest});
+
+  Future<Either<Failure,User>> fetchUser({required String userId});
+
+  Future<Either<Failure,User>> updateUser({required UserRequest userRequest});
 }

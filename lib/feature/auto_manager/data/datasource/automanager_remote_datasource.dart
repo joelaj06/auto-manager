@@ -1,3 +1,5 @@
+import '../../../authentication/data/models/request/user/user_request.dart';
+import '../../../authentication/data/models/response/user/user_model.dart';
 import '../model/model.dart';
 
 abstract interface class AutoManagerRemoteDatasource {
@@ -83,4 +85,8 @@ abstract interface class AutoManagerRemoteDatasource {
   Future<Rental> extendRental(
       {required String rentalId,
       required ExtendRentalRequest extendRentalRequest});
+
+  Future<User> fetchUser(String userId);
+
+  Future<User> updateUser({required UserRequest updateUserRequest, required String userId});
 }

@@ -16,7 +16,7 @@ class DashboardScreen extends GetView<DashboardController> {
 
   @override
   Widget build(BuildContext context) {
-    // controller.getMonthlySales();
+    controller.loadDependencies();
     return Scaffold(
         appBar: AppBar(
           centerTitle: false,
@@ -27,8 +27,10 @@ class DashboardScreen extends GetView<DashboardController> {
               fit: BoxFit.scaleDown,
               alignment: Alignment.centerLeft,
               child: Obx(
-                () => Text(controller.company.value.name ?? 'Auto Manager',
-                textAlign: TextAlign.left,),
+                () => Text(
+                  controller.company.value.name ?? 'Auto Manager',
+                  textAlign: TextAlign.left,
+                ),
               ),
             ),
           ),

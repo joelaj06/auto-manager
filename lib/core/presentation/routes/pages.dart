@@ -13,21 +13,21 @@ class Pages {
       name: AppRoutes.login,
       page: () => const LoginScreen(),
       binding: LoginBindings(),
-    ),GetPage<AppRoutes>(
+    ),
+    GetPage<AppRoutes>(
       name: AppRoutes.signup,
       page: () => const SignUpScreen(),
       binding: SignUpBindings(),
     ),
     GetPage<AppRoutes>(
-      name: AppRoutes.base,
-      page: () => const BaseScreen(),
-      bindings: <Bindings>[
-        DashboardBindings(),
-        SalesBindings(),
-        ExpenseBindings(),
-        RentalBindings(),
-      ]
-    ),
+        name: AppRoutes.base,
+        page: () => const BaseScreen(),
+        bindings: <Bindings>[
+          DashboardBindings(),
+          SalesBindings(),
+          ExpenseBindings(),
+          RentalBindings(),
+        ]),
     GetPage<AppRoutes>(
       name: AppRoutes.addCompany,
       page: () => const AddCompanyScreen(),
@@ -56,7 +56,8 @@ class Pages {
     GetPage<AppRoutes>(
       name: AppRoutes.more,
       page: () => const MoreScreen(),
-    ), GetPage<AppRoutes>(
+    ),
+    GetPage<AppRoutes>(
       name: AppRoutes.addSale,
       page: () => const AddSaleScreen(),
       binding: SalesBindings(),
@@ -70,6 +71,27 @@ class Pages {
       name: AppRoutes.addRental,
       page: () => const AddRentalScreen(),
       binding: RentalBindings(),
+    ),
+    GetPage<AppRoutes>(
+      name: AppRoutes.profile,
+      page: () => const ProfileScreen(),
+      binding: ProfileBindings(),
+    ),
+    GetPage<AppRoutes>(
+      name: AppRoutes.drivers,
+      page: () => const DriversScreen(),
+    ),
+    GetPage<AppRoutes>(
+      name: AppRoutes.customers,
+      page: () => const CustomerScreen(),
+    ),
+    GetPage<AppRoutes>(
+      name: AppRoutes.vehicle,
+      page: () => const VehicleScreen(),
+    ),
+    GetPage<AppRoutes>(
+      name: AppRoutes.userAccounts,
+      page: () => const UserAccountScreen(),
     ),
   ];
 }
