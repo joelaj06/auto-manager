@@ -1,3 +1,4 @@
+import 'package:automanager/feature/authentication/domain/domain.dart';
 import 'package:automanager/feature/auto_manager/domain/domain.dart';
 import 'package:get/get.dart';
 
@@ -12,6 +13,7 @@ class ProfileBindings extends Bindings {
         ),
         updateUserProfile: UpdateUserProfile(
           autoManagerRepository: Get.find(),
-        )));
+        ),
+        loadUser: LoadUser(authRepository: Get.find())));
   }
 }
