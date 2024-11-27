@@ -15,7 +15,7 @@ class User with _$User {
     String? address,
     String? token,
     String? phone,
-    String? imgUrl,
+    @JsonKey(name: 'imageUrl') String? imgUrl,
     String? company,
     bool? isActive,
     String? status,

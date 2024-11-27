@@ -16,7 +16,7 @@ class UserRequest with _$UserRequest {
     String? phone,
     String? password,
     String? confirmPassword,
-    String? image,
+   @JsonKey(name: 'imageUrl') String? image,
     String? company,
    bool? isActive,
     bool? isVerified,

@@ -4,6 +4,8 @@ import 'package:automanager/feature/auto_manager/domain/domain.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import '../../../../authentication/domain/usecase/load_user.dart';
 
@@ -41,6 +43,8 @@ class ProfileController extends GetxController {
   final TextEditingController phoneTextEditingController =
       TextEditingController();
 
+  ImagePicker picker = ImagePicker();
+
   @override
   void onInit() {
     loadUserData();
@@ -57,26 +61,25 @@ class ProfileController extends GetxController {
       email: email.isNotEmpty ? email.value.trim() : null,
       //address: user.value.address.trim(),
       phone: phone.isNotEmpty ? phone.value.trim() : null,
-      image: imgUrl.isNotEmpty ? imgUrl.value : null,
+      image: imgUrl.value,
     );
 
     final Either<Failure, User> failureOrUser =
         await updateUserProfile(userRequest);
     failureOrUser.fold((Failure failure) {
       isLoading(false);
-      AppSnack.show(
-          message: failure.message, status: SnackStatus.error);
+      AppSnack.show(message: failure.message, status: SnackStatus.error);
     }, (User userProfile) {
       isLoading(false);
       user(userProfile);
+
       AppSnack.show(message: 'User updated', status: SnackStatus.success);
     });
   }
 
   void fetchProfile(String userId) async {
     isLoadingUserData(true);
-    final Either<Failure, User> failureOrUser =
-        await fetchUser(userId);
+    final Either<Failure, User> failureOrUser = await fetchUser(userId);
     failureOrUser.fold((Failure failure) {
       isLoadingUserData(false);
       AppSnack.show(message: failure.message, status: SnackStatus.error);
@@ -103,11 +106,52 @@ class ProfileController extends GetxController {
     );
   }
 
-  void updateControllers(User data){
+  void addImage() async {
+    await <Permission>[
+      Permission.storage,
+      Permission.camera,
+    ].request();
+
+    showImagePicker();
+    /* if (statuses[Permission.storage]!.isGranted) {
+      showImagePicker();
+    } else {
+      AppSnack.show(
+        message: 'Permission not granted',
+        status: SnackStatus.info,
+      );
+    }*/
+  }
+
+  void showImagePicker() async {
+    final XFile? imageFile =
+        await picker.pickImage(source: ImageSource.gallery);
+    final double size = await Base64Convertor.checkImageSize(imageFile);
+    if (size > 5) {
+      AppSnack.show(
+        message: 'Image should not exceed 5MB',
+        status: SnackStatus.info,
+      );
+
+    } else{
+      if (imageFile != null) {
+        final String base64StringImage =
+            Base64Convertor().imageToBase64(imageFile.path);
+        imgUrl(base64StringImage.split('base64,').last);
+      }
+    }
+  }
+
+  void removeProfileImage() {
+    imgUrl('');
+  }
+
+  void updateControllers(User data) {
     firstNameTextEditingController.text = data.firstName;
     lastNameTextEditingController.text = data.lastName;
     emailTextEditingController.text = data.email;
     phoneTextEditingController.text = data.phone ?? '';
+    imgUrl(data.imgUrl ?? '');
   }
 
   void onFirstNameInputChanged(String value) {

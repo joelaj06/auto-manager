@@ -13,6 +13,7 @@ class AssetImages {
   static const String noConnectionLight = '$_imageSource/no_connection_light.png';
   static const String error = '$_imageSource/error.png';
   static const String timeOut = '$_imageSource/timeout.png';
+  static const String speedometer = '$_imageSource/speedometer.jpg';
 }
 
 class AssetGifs{
