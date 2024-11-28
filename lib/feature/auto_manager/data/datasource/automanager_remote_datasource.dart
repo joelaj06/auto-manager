@@ -88,5 +88,13 @@ abstract interface class AutoManagerRemoteDatasource {
 
   Future<User> fetchUser(String userId);
 
-  Future<User> updateUser({required UserRequest updateUserRequest, required String userId});
+  Future<User> updateUser({
+    required UserRequest updateUserRequest,
+    required String userId,
+  });
+
+ Future<Company> updateCompany({
+    required Company updateCompanyRequest,
+    required String companyId,
+});
 }

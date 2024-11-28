@@ -315,4 +315,16 @@ class AutoMangerRemoteDatasourceImpl implements AutoManagerRemoteDatasource {
     );
     return User.fromJson(json);
   }
+
+  @override
+  Future<Company> updateCompany({
+    required Company updateCompanyRequest,
+    required String companyId,
+  }) async {
+    final Map<String, dynamic> json = await _client.put(
+      AutoManagerEndpoints.company(companyId),
+      body: updateCompanyRequest.toJson(),
+    );
+    return Company.fromJson(json);
+  }
 }

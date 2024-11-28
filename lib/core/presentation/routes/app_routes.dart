@@ -18,4 +18,5 @@ class AppRoutes{
   static const String vehicle = '/vehicle';
   static const String userAccounts = '/userAccounts';
   static const String settings = '/settings';
+  static const String updateCompany = '/updateCompany';
 }

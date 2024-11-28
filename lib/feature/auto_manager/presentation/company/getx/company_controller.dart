@@ -5,15 +5,24 @@ import 'package:automanager/feature/auto_manager/domain/usecase/usecase.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import '../../../../authentication/data/models/models.dart';
 
 class CompanyController extends GetxController {
-  CompanyController(
-      {required this.addCompany, required this.loadUserSignupData});
+  CompanyController({
+    required this.addCompany,
+    required this.loadUserSignupData,
+    required this.fetchCompany,
+    required this.loadUser,
+    required this.updateCompany,
+  });
 
   final AddCompany addCompany;
   final LoadUserSignupData loadUserSignupData;
+  final FetchCompany fetchCompany;
+  final LoadUser loadUser;
+  final UpdateCompany updateCompany;
 
   //reactive variables
   final RxInt pageIndex = 0.obs;
@@ -36,6 +45,19 @@ class CompanyController extends GetxController {
   final RxString motto = ''.obs;
   final Rx<UserRegistration> registrationResponse =
       UserRegistration.empty().obs;
+  Rx<Company> company = Company.empty().obs;
+  RxBool isLoadingCompanyData = false.obs;
+
+  User loginResponse = User.empty();
+  final TextEditingController companyNameTextEditingController =
+      TextEditingController();
+  final TextEditingController companyMottoTextEditingController =
+      TextEditingController();
+
+  final TextEditingController emailTextEditingController =
+      TextEditingController();
+  final TextEditingController phoneTextEditingController =
+      TextEditingController();
 
   final List<String> industries = <String>[
     'Automotive',
@@ -63,10 +85,96 @@ class CompanyController extends GetxController {
 
   @override
   void onInit() {
-    companyType(companyTypes.first);
-    industry(industries.first);
-    loadUserData();
+    loadDependencies();
     super.onInit();
+  }
+
+  void loadDependencies() {
+    if (Get.previousRoute == AppRoutes.base) {
+      loadUserSavedData();
+    } else {
+      companyType(companyTypes.first);
+      industry(industries.first);
+      loadUserData();
+    }
+  }
+
+  void updateTheCompany() async {
+    final Company companyRequest = Company(
+      id: company.value.id,
+      name: companyName.value.isNotEmpty ? companyName.value : null,
+      email: email.value.isNotEmpty ? email.value : null,
+      phone: phone.value.isNotEmpty ? phone.value : null,
+      motto: motto.value.isNotEmpty ? motto.value : null,
+      logoUrl: logo.value,
+    );
+
+    isLoading(true);
+    final Either<Failure, Company> failureOrCompany =
+        await updateCompany(companyRequest);
+    failureOrCompany.fold((Failure failure) {
+      isLoading(false);
+      AppSnack.show(
+        message: failure.message,
+        status: SnackStatus.error,
+      );
+    }, (Company data) {
+      isLoading(false);
+      AppSnack.show(
+        message: 'Company updated successfully',
+        status: SnackStatus.success,
+      );
+      company(data);
+    });
+  }
+
+  Future<void> loadUserSavedData() async {
+    isLoadingCompanyData(true);
+    final Either<Failure, User> failureOrUser = await loadUser(null);
+    // ignore: unawaited_futures
+    failureOrUser.fold(
+      (Failure failure) {
+        isLoadingCompanyData(false);
+      },
+      (User user) {
+        loginResponse = (user);
+        isLoadingCompanyData(false);
+        getCompany(user.company!);
+      },
+    );
+  }
+
+  void addImage() async {
+    await <Permission>[
+      Permission.storage,
+      Permission.camera,
+    ].request();
+    final String? image = await AppImagePicker.showImagePicker();
+    if (image != null) {
+      logo(image);
+    }
+  }
+
+  void removeProfileImage() {
+    logo('');
+  }
+
+  void getCompany(String companyId) async {
+    isLoadingCompanyData(true);
+    final Either<Failure, Company> failureOrCompany = await fetchCompany(
+      PageParams(companyId: companyId),
+    );
+    failureOrCompany.fold((Failure failure) {
+      isLoadingCompanyData(false);
+      AppSnack.show(
+        message: failure.message,
+        status: SnackStatus.error,
+      );
+    }, (Company data) {
+      isLoadingCompanyData(false);
+      company(data);
+      getAndUpdateCompanyData(data);
+    });
   }
 
   void addNewCompany() async {
@@ -80,24 +188,24 @@ class CompanyController extends GetxController {
     );
 
     final Company companyRequest = Company(
-        name: companyName.value.trim(),
-        companyType: companyType.value.trim(),
-        industry: industry.value.trim(),
-        description: description.value.trim(),
-        website: website.value.trim(),
-        logoUrl: logo.value,
-        address: address,
-        phone: phone.value.trim(),
-        email: email.value.trim(),
-        registrationNumber: registrationNumber.value.trim(),
-        taxIdentificationNumber: taxIdentificationNumber.value.trim(),
-        motto: motto.value.trim(),
-        id: null,
-        ownerId: registrationResponse.value.data?.userId ?? '',
-        createdBy: registrationResponse.value.data?.userId ?? '',
-        isActive: true,
-        isVerified: false,
-        subscriptionPlan: 'basic',
+      name: companyName.value.trim(),
+      companyType: companyType.value.trim(),
+      industry: industry.value.trim(),
+      description: description.value.trim(),
+      website: website.value.trim(),
+      logoUrl: logo.value,
+      address: address,
+      phone: phone.value.trim(),
+      email: email.value.trim(),
+      registrationNumber: registrationNumber.value.trim(),
+      taxIdentificationNumber: taxIdentificationNumber.value.trim(),
+      motto: motto.value.trim(),
+      id: null,
+      ownerId: registrationResponse.value.data?.userId ?? '',
+      createdBy: registrationResponse.value.data?.userId ?? '',
+      isActive: true,
+      isVerified: false,
+      subscriptionPlan: 'basic',
     );
 
     final Either<Failure, Company> failureOrCompany =
@@ -147,6 +255,14 @@ class CompanyController extends GetxController {
     } else {
       addNewCompany();
     }
+  }
+
+  void getAndUpdateCompanyData(Company company){
+    companyNameTextEditingController.text = company.name ?? '';
+    companyMottoTextEditingController.text = company.motto ?? '';
+    emailTextEditingController.text = company.email ?? '';
+    phoneTextEditingController.text = company.phone ?? '';
+    logo(company.logoUrl ?? '');
   }
 
   void onCompanyNameInputChanged(String? value) {

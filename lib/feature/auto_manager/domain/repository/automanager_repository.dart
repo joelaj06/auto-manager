@@ -89,10 +89,13 @@ abstract interface class AutoManagerRepository {
   });
 
   Future<Either<Failure, Rental>> extendRental(
-      {
-      required ExtendRentalRequest extendRentalRequest});
+      {required ExtendRentalRequest extendRentalRequest});
 
-  Future<Either<Failure,User>> fetchUser({required String userId});
+  Future<Either<Failure, User>> fetchUser({required String userId});
 
-  Future<Either<Failure,User>> updateUser({required UserRequest userRequest});
+  Future<Either<Failure, User>> updateUser({required UserRequest userRequest});
+
+  Future<Either<Failure, Company>> updateCompany({
+    required Company companyRequest,
+  });
 }

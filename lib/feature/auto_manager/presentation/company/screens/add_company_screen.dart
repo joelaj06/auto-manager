@@ -9,6 +9,7 @@ class AddCompanyScreen extends GetView<CompanyController> {
   @override
   Widget build(BuildContext context) {
     controller.loadUserData();
+
     return Scaffold(
       appBar: AppBar(
         title: const Text(

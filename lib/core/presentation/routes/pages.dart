@@ -93,5 +93,10 @@ class Pages {
       name: AppRoutes.userAccounts,
       page: () => const UserAccountScreen(),
     ),
+    GetPage<AppRoutes>(
+      name: AppRoutes.updateCompany,
+      page: () => const UpdateCompanyScreen(),
+      binding: CompanyBindings(),
+    ),
   ];
 }

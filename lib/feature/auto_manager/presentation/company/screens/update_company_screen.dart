@@ -1,23 +1,23 @@
-
 import 'package:automanager/core/presentation/theme/app_theme.dart';
+import 'package:automanager/feature/auto_manager/presentation/company/company.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:iconly/iconly.dart';
+
 import '../../../../../core/presentation/utils/utils.dart';
 import '../../../../../core/presentation/widgets/widgets.dart';
 import '../../../../../core/utils/utils.dart';
-import '../getx/profile_controller.dart';
-import '../widgets/image_modal_list_card.dart';
+import '../../profile/widgets/image_modal_list_card.dart';
 
-class ProfileScreen extends GetView<ProfileController> {
-  const ProfileScreen({super.key});
+class UpdateCompanyScreen extends GetView<CompanyController> {
+  const UpdateCompanyScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Profile'),
+        title: const Text('Manage Business'),
       ),
       bottomNavigationBar: _buildBottomBar(context),
       body: Padding(
@@ -27,16 +27,11 @@ class ProfileScreen extends GetView<ProfileController> {
             children: <Widget>[
               _buildUserProfile(context),
               AppTextInputField(
-                  labelText: 'First Name',
-                  onChanged: controller.onFirstNameInputChanged,
-                  controller: controller.firstNameTextEditingController
+                  labelText: 'Commpany Name',
+                  onChanged: controller.onCompanyNameInputChanged,
+                  controller: controller.companyNameTextEditingController
                   //  initialValue: controller.user.value.firstName,
                   ),
-              AppTextInputField(
-                labelText: 'Last Name',
-                onChanged: controller.onLastNameInputChanged,
-                controller: controller.lastNameTextEditingController,
-              ),
               AppTextInputField(
                 labelText: 'Email',
                 onChanged: controller.onEmailInputChanged,
@@ -46,6 +41,12 @@ class ProfileScreen extends GetView<ProfileController> {
                 labelText: 'Phone',
                 onChanged: controller.onPhoneInputChanged,
                 controller: controller.phoneTextEditingController,
+                textInputType: TextInputType.phone,
+              ),
+              AppTextInputField(
+                labelText: 'Motto',
+                onChanged: controller.onMottoInputChanged,
+                controller: controller.companyMottoTextEditingController,
                 textInputType: TextInputType.phone,
               )
             ],
@@ -68,21 +69,22 @@ class ProfileScreen extends GetView<ProfileController> {
           ),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(100),
-            child: Obx(() => Container(
-              height: 180,
-              width: 180,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(100),
-              ),
-                child: controller.imgUrl.value.isEmpty
+            child: Obx(
+              () => Container(
+                height: 180,
+                width: 180,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(100),
+                ),
+                child: controller.logo.value.isEmpty
                     ? Image.asset(
                         AssetImages.speedometer,
                         fit: BoxFit.cover,
                       )
-                    : controller.imgUrl.value.contains('http')
+                    : controller.logo.value.contains('http')
                         ? CachedNetworkImage(
                             fit: BoxFit.cover,
-                            imageUrl: controller.imgUrl.value,
+                            imageUrl: controller.logo.value,
                             placeholder: (BuildContext context, String url) =>
                                 Image.asset(AssetImages.speedometer),
                             errorWidget: (BuildContext context, String url,
@@ -92,7 +94,7 @@ class ProfileScreen extends GetView<ProfileController> {
                         : Image.memory(
                             fit: BoxFit.cover,
                             Base64Convertor().base64toImage(
-                              controller.imgUrl.value,
+                              controller.logo.value,
                             ),
                           ),
               ),
@@ -161,22 +163,20 @@ class ProfileScreen extends GetView<ProfileController> {
     );
   }
 
-
-
   Widget _buildBottomBar(BuildContext context) {
     return SizedBox(
       height: 70,
       child: Obx(
         () => AppButton(
           enabled: !controller.isLoading.value &&
-              !controller.isLoadingUserData.value,
+              !controller.isLoadingCompanyData.value,
           text: controller.isLoading.value
               ? 'Updating...'
-              : controller.isLoadingUserData.value
+              : controller.isLoadingCompanyData.value
                   ? 'Loading Data...'
                   : 'Update',
           onPressed: () {
-            controller.updateProfile();
+            controller.updateTheCompany();
           },
         ),
       ),

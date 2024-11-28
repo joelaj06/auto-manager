@@ -215,7 +215,7 @@ class AutoManagerRepositoryImpl extends Repository
 
   @override
   Future<Either<Failure, User>> fetchUser({required String userId}) {
-    return makeRequest(autoManagerRemoteDataSource.fetchUser( userId));
+    return makeRequest(autoManagerRemoteDataSource.fetchUser(userId));
   }
 
   @override
@@ -224,5 +224,16 @@ class AutoManagerRepositoryImpl extends Repository
       updateUserRequest: userRequest,
       userId: userRequest.id!,
     ));
+  }
+
+  @override
+  Future<Either<Failure, Company>> updateCompany(
+      {required Company companyRequest}) {
+    return makeRequest(
+      autoManagerRemoteDataSource.updateCompany(
+        updateCompanyRequest: companyRequest,
+        companyId: companyRequest.id!,
+      ),
+    );
   }
 }

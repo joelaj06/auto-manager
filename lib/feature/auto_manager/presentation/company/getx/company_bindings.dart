@@ -8,11 +8,18 @@ class CompanyBindings extends Bindings {
   @override
   void dependencies() {
     Get.lazyPut<CompanyController>(() => CompanyController(
-      addCompany: AddCompany(
-        autoManagerRepository: Get.find(),
-      ), loadUserSignupData: LoadUserSignupData(
-      authRepository: Get.find()
-    )
-    ));
+        addCompany: AddCompany(
+          autoManagerRepository: Get.find(),
+        ),
+        loadUserSignupData: LoadUserSignupData(authRepository: Get.find()),
+        fetchCompany: FetchCompany(
+          autoManagerRepository: Get.find(),
+        ),
+        loadUser: LoadUser(
+          authRepository: Get.find(),
+        ),
+        updateCompany: UpdateCompany(
+          autoManagerRepository: Get.find(),
+        )));
   }
 }

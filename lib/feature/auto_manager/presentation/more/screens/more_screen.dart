@@ -53,7 +53,9 @@ class _MoreScreenState extends State<MoreScreen> {
             ),
             CustomTile(
               icon: IconlyLight.work,
-              onPressed: () {},
+              onPressed: () => Navigator.of(context).pushNamed(
+                AppRoutes.updateCompany,
+              ),
               text: 'Company',
             ),
             CustomTile(
@@ -77,7 +79,7 @@ class _MoreScreenState extends State<MoreScreen> {
             CustomTile(
               icon: IconlyLight.user,
               onPressed: () =>
-                  Navigator.of(context).pushNamed(AppRoutes.profile),
+                  Navigator.of(context).pushNamed(AppRoutes.userAccounts),
               text: 'User Accounts',
             ),
             CustomTile(
