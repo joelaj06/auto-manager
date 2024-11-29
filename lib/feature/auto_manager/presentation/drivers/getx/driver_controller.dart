@@ -9,16 +9,19 @@ import 'package:get/get.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
 class DriverController extends GetxController {
-  DriverController(
-      {required this.fetchDrivers,
-      required this.updateDriver,
-      required this.deleteDriver,
-      required this.addUser});
+  DriverController({
+    required this.fetchDrivers,
+    required this.updateDriver,
+    required this.deleteDriver,
+    required this.addUser,
+    required this.fetchVehicles,
+  });
 
   final FetchDrivers fetchDrivers;
   final UpdateUser updateDriver;
   final DeleteDriver deleteDriver;
   final AddUser addUser;
+  final FetchVehicles fetchVehicles;
 
   //reactive variables
   RxBool isLoading = false.obs;
@@ -46,6 +49,7 @@ class DriverController extends GetxController {
     pagingController.addPageRequestListener((int pageKey) {
       getDrivers(pageKey);
     });
+    fetchAllVehicles();
     super.onInit();
   }
 
@@ -156,6 +160,29 @@ class DriverController extends GetxController {
     });
   }
 
+  void fetchAllVehicles() async {
+    final Either<Failure, ListPage<Vehicle>> failureOrVehicles =
+        await fetchVehicles(const PageParams(
+      pageIndex: 1,
+      pageSize: 100,
+      query: '',
+    ));
+    failureOrVehicles.fold(
+      (Failure failure) => null,
+      (ListPage<Vehicle> listPage) {
+        vehicles(listPage.itemList);
+      },
+    );
+  }
+
+  void navigateToAddDriverScreen() async {
+    final dynamic res = await Get.toNamed(AppRoutes.addDriver);
+    if (res != null) {
+      AppSnack.show(
+          message: 'Driver added successfully', status: SnackStatus.success);
+    }
+  }
+
   void navigateToUpdateDriverScreen(Driver driver) async {
     final dynamic res = await Get.toNamed(
       AppRoutes.addDriver,
@@ -228,7 +255,25 @@ class DriverController extends GetxController {
     return errorMessage;
   }
 
+  String? validateEmail(String? email) {
+    String? errorMessage;
+
+    // Check if email is empty
+    if (email == null || email.isEmpty) {
+      errorMessage = 'Please enter an email address';
+    }
+
+    // Regular expression for validating an email address
+    final RegExp emailPattern = RegExp(
+        r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
+    if (!emailPattern.hasMatch(email!)) {
+      errorMessage = 'Please enter a valid email address';
+    }
+    return errorMessage;
+  }
+
   RxBool get driverFormIsValid => (validateField(firstName.value) == null &&
-          validateField(lastName.value) == null)
+          validateField(lastName.value) == null &&
+          validateEmail(email.value) == null)
       .obs;
 }

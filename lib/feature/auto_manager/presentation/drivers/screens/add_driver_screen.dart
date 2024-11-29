@@ -24,71 +24,78 @@ class AddDriverScreen extends GetView<DriverController> {
         title:  Text( args != null ? 'Update Driver' : 'New Driver'),
       ),
       bottomNavigationBar: _buildBottomBar(context, arg: args),
-      body: Column(
-        children: <Widget>[
-          AppTextInputField(
-            labelText: 'First Name',
-            onChanged: controller.onFirstNameInputChanged,
-            validator: controller.validateField,
-            initialValue: args != null ? args.driver.user.firstName : '',
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: AppPaddings.mA,
+          child: Column(
+            children: <Widget>[
+              AppTextInputField(
+                labelText: 'First Name',
+                onChanged: controller.onFirstNameInputChanged,
+                validator: controller.validateField,
+                initialValue: args != null ? args.driver.user.firstName : '',
+              ),
+              const AppSpacing(v: 10),
+              AppTextInputField(
+                labelText: 'Last Name',
+                onChanged: controller.onLastNameInputChanged,
+                validator: controller.validateField,
+                initialValue: args != null ? args.driver.user.lastName : '',
+              ),
+              const AppSpacing(v: 10),
+              AppTextInputField(
+                labelText: 'Email',
+                onChanged: controller.onEmailInputChanged,
+                validator: controller.validateEmail,
+                initialValue: args != null ? args.driver.user.email : '',
+              ),
+              const AppSpacing(v: 10),
+              AppTextInputField(
+                labelText: 'Phone',
+                onChanged: controller.onPhoneInputChanged,
+                textInputType: TextInputType.phone,
+                initialValue: args != null ? args.driver.user.phone : '',
+              ),
+              const AppSpacing(v: 10),
+              AppSelectField<Vehicle>(
+                labelText: 'Assigned Vehicle',
+                onChanged: (Vehicle vehicle) {
+                  controller.onVehicleSelected(vehicle);
+                },
+                value: args != null
+                    ? args.driver.vehicle
+                    : controller.selectedVehicle.value,
+                options: controller.vehicles,
+                titleBuilder: (_, Vehicle vehicle) =>
+                    ('${vehicle.model ?? ''} ${vehicle.make ?? ''}'
+                            ' ${vehicle.color ?? ''} '
+                            '${vehicle.year ?? ''}')
+                        .toTitleCase(),
+                validator: (Vehicle vehicle) =>
+                    controller.validateField(vehicle.model),
+              ),
+              const AppSpacing(v: 10),
+              AppTextInputField(
+                labelText: 'License Number',
+                onChanged: controller.onLicenseNumberInputChanged,
+                initialValue: args != null ? args.driver.licenseNumber : '',
+              ),
+              Obx(
+                () => AppTextInputField(
+                  controller: controller.licenseExpiryDateController.value,
+                  labelText: 'License Expiry Date',
+                  validator: (String? value) => null,
+                  textInputType: TextInputType.datetime,
+                  hintText: controller.licenseExpiryDateController.value.text,
+                  readOnly: true,
+                  onTap: () {
+                    controller.selectExtendedDate(context);
+                  },
+                ),
+              ),
+            ],
           ),
-          const AppSpacing(v: 10),
-          AppTextInputField(
-            labelText: 'Last Name',
-            onChanged: controller.onLastNameInputChanged,
-            validator: controller.validateField,
-            initialValue: args != null ? args.driver.user.lastName : '',
-          ),
-          const AppSpacing(v: 10),
-          AppTextInputField(
-            labelText: 'Email',
-            onChanged: controller.onEmailInputChanged,
-            initialValue: args != null ? args.driver.user.email : '',
-          ),
-          const AppSpacing(v: 10),
-          AppTextInputField(
-            labelText: 'Phone',
-            onChanged: controller.onPhoneInputChanged,
-            initialValue: args != null ? args.driver.user.phone : '',
-          ),
-          const AppSpacing(v: 10),
-          AppSelectField<Vehicle>(
-            labelText: 'Assigned Vehicle',
-            onChanged: (Vehicle vehicle) {
-              controller.onVehicleSelected(vehicle);
-            },
-            value: args != null
-                ? args.driver.vehicle
-                : controller.selectedVehicle.value,
-            options: controller.vehicles,
-            titleBuilder: (_, Vehicle vehicle) =>
-                ('${vehicle.model ?? ''} ${vehicle.make ?? ''}'
-                        ' ${vehicle.color ?? ''} '
-                        '${vehicle.year ?? ''}')
-                    .toTitleCase(),
-            validator: (Vehicle vehicle) =>
-                controller.validateField(vehicle.model),
-          ),
-          const AppSpacing(v: 10),
-          AppTextInputField(
-            labelText: 'License Number',
-            onChanged: controller.onLicenseNumberInputChanged,
-            initialValue: args != null ? args.driver.licenseNumber : '',
-          ),
-          Obx(
-            () => AppTextInputField(
-              controller: controller.licenseExpiryDateController.value,
-              labelText: 'License Expiry Date',
-              validator: (String? value) => null,
-              textInputType: TextInputType.datetime,
-              hintText: controller.licenseExpiryDateController.value.text,
-              readOnly: true,
-              onTap: () {
-                controller.selectExtendedDate(context);
-              },
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }

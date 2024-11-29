@@ -19,6 +19,9 @@ class DriverBindings extends Bindings {
           addUser: AddUser(
             autoManagerRepository: Get.find(),
           ),
+          fetchVehicles: FetchVehicles(
+            autoManagerRepository: Get.find(),
+          ),
         ));
   }
 }

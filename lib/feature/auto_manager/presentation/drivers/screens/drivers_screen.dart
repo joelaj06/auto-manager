@@ -6,8 +6,6 @@ import 'package:get/get.dart';
 import 'package:iconly/iconly.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
-import '../../../../../core/errors/failure.dart';
-import '../../../../../core/presentation/widgets/exception_indicators/exceptions.dart';
 import '../../../data/model/response/driver/driver_model.dart';
 import '../../sales/widgets/modal_list_card.dart';
 import '../getx/driver_controller.dart';
@@ -23,6 +21,10 @@ class DriversScreen extends GetView<DriverController> {
           () => Text(
               'Drivers${controller.totalCount.value == 0 ? '' : '(${controller.totalCount.value})'}'),
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: controller.navigateToAddDriverScreen,
+        child: const Icon(IconlyLight.plus),
       ),
       body: SizedBox(
         child: _buildDriversList(context),
