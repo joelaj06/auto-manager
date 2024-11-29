@@ -16,7 +16,7 @@ class ProfileController extends GetxController {
       required this.loadUser});
 
   final FetchUser fetchUser;
-  final UpdateUserProfile updateUserProfile;
+  final UpdateUser updateUserProfile;
   final LoadUser loadUser;
 
   //reactive variables
@@ -149,7 +149,7 @@ class ProfileController extends GetxController {
   void updateControllers(User data) {
     firstNameTextEditingController.text = data.firstName;
     lastNameTextEditingController.text = data.lastName;
-    emailTextEditingController.text = data.email;
+    emailTextEditingController.text = data.email ?? '';
     phoneTextEditingController.text = data.phone ?? '';
     imgUrl(data.imgUrl ?? '');
   }

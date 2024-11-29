@@ -80,6 +80,7 @@ class Pages {
     GetPage<AppRoutes>(
       name: AppRoutes.drivers,
       page: () => const DriversScreen(),
+      binding: DriverBindings(),
     ),
     GetPage<AppRoutes>(
       name: AppRoutes.customers,
@@ -97,6 +98,11 @@ class Pages {
       name: AppRoutes.updateCompany,
       page: () => const UpdateCompanyScreen(),
       binding: CompanyBindings(),
+    ),
+    GetPage<AppRoutes>(
+      name: AppRoutes.addDriver,
+      page: () => const AddDriverScreen(),
+      binding: DriverBindings(),
     ),
   ];
 }

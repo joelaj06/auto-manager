@@ -236,4 +236,18 @@ class AutoManagerRepositoryImpl extends Repository
       ),
     );
   }
+
+  @override
+  Future<Either<Failure,Driver>> deleteDriver({required String driverId}) {
+    return makeRequest(autoManagerRemoteDataSource.deleteDriver(
+      driverId: driverId,
+    ));
+  }
+
+  @override
+  Future<Either<Failure, User>> addUser({required UserRequest userRequest}) {
+    return makeRequest(autoManagerRemoteDataSource.addUser(
+      userRequest: userRequest,
+    ));
+  }
 }

@@ -16,6 +16,7 @@ class Driver with _$Driver {
     @JsonKey(name: 'lisenceExpiryDate')String? licenceExpiryDate,
     String? status,
     String? userId,
+    Vehicle? vehicle,
     required User user,
     List<Sale>? salesHistory,
     String? createdAt,

@@ -22,6 +22,11 @@ class UserRequest with _$UserRequest {
     bool? isVerified,
     String? status,
     String? createdBy,
+    String? vehicleId,
+    String? licenseNumber,
+    int? experienceYears,
+    String? role,
+    @JsonKey(name: 'lisenceExpiryDate')String? licenceExpiryDate,
   }) = _UserRequest;
 
   const UserRequest._();

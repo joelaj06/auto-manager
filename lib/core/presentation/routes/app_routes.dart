@@ -19,4 +19,6 @@ class AppRoutes{
   static const String userAccounts = '/userAccounts';
   static const String settings = '/settings';
   static const String updateCompany = '/updateCompany';
+  static const String addDriver = '/addDriver';
+
 }

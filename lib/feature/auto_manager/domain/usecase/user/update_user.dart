@@ -5,8 +5,8 @@ import '../../../../../core/errors/failure.dart';
 import '../../../../../core/usecase/usecase.dart';
 import '../../repository/automanager_repository.dart';
 
-class UpdateUserProfile implements UseCase<User, UserRequest> {
-  UpdateUserProfile({required this.autoManagerRepository});
+class UpdateUser implements UseCase<User, UserRequest> {
+  UpdateUser({required this.autoManagerRepository});
   final AutoManagerRepository autoManagerRepository;
   @override
   Future<Either<Failure, User>> call(UserRequest updateUserRequest) {

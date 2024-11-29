@@ -98,4 +98,8 @@ abstract interface class AutoManagerRepository {
   Future<Either<Failure, Company>> updateCompany({
     required Company companyRequest,
   });
+
+  Future<Either<Failure,Driver>> deleteDriver({required String driverId});
+
+  Future<Either<Failure, User>> addUser({required UserRequest userRequest});
 }

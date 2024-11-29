@@ -93,8 +93,12 @@ abstract interface class AutoManagerRemoteDatasource {
     required String userId,
   });
 
+  Future<User> addUser({required UserRequest userRequest});
+
  Future<Company> updateCompany({
     required Company updateCompanyRequest,
     required String companyId,
 });
+
+ Future<Driver> deleteDriver({required String driverId});
 }

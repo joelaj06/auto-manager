@@ -11,7 +11,7 @@ class User with _$User {
     @JsonKey(name:'_id') required String id,
      required String firstName,
    required String lastName,
-    required String email,
+    required String? email,
     String? address,
     String? token,
     String? phone,

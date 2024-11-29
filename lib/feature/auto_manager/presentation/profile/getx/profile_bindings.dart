@@ -11,7 +11,7 @@ class ProfileBindings extends Bindings {
         fetchUser: FetchUser(
           autoManagerRepository: Get.find(),
         ),
-        updateUserProfile: UpdateUserProfile(
+        updateUserProfile: UpdateUser(
           autoManagerRepository: Get.find(),
         ),
         loadUser: LoadUser(authRepository: Get.find())));
