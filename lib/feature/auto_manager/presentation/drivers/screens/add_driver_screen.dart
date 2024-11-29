@@ -21,7 +21,7 @@ class AddDriverScreen extends GetView<DriverController> {
     }
     return Scaffold(
       appBar: AppBar(
-        title:  Text( args != null ? 'Update Driver' : 'New Driver'),
+        title: Text(args != null ? 'Update Driver' : 'New Driver'),
       ),
       bottomNavigationBar: _buildBottomBar(context, arg: args),
       body: SingleChildScrollView(
@@ -68,8 +68,8 @@ class AddDriverScreen extends GetView<DriverController> {
                 options: controller.vehicles,
                 titleBuilder: (_, Vehicle vehicle) =>
                     ('${vehicle.model ?? ''} ${vehicle.make ?? ''}'
-                            ' ${vehicle.color ?? ''} '
-                            '${vehicle.year ?? ''}')
+                        ' ${vehicle.color ?? ''} '
+                        '${vehicle.year ?? ''}')
                         .toTitleCase(),
                 validator: (Vehicle vehicle) =>
                     controller.validateField(vehicle.model),
@@ -81,17 +81,19 @@ class AddDriverScreen extends GetView<DriverController> {
                 initialValue: args != null ? args.driver.licenseNumber : '',
               ),
               Obx(
-                () => AppTextInputField(
-                  controller: controller.licenseExpiryDateController.value,
-                  labelText: 'License Expiry Date',
-                  validator: (String? value) => null,
-                  textInputType: TextInputType.datetime,
-                  hintText: controller.licenseExpiryDateController.value.text,
-                  readOnly: true,
-                  onTap: () {
-                    controller.selectExtendedDate(context);
-                  },
-                ),
+                    () =>
+                    AppTextInputField(
+                      controller: controller.licenseExpiryDateController.value,
+                      labelText: 'License Expiry Date',
+                      validator: (String? value) => null,
+                      textInputType: TextInputType.datetime,
+                      hintText: controller.licenseExpiryDateController.value
+                          .text,
+                      readOnly: true,
+                      onTap: () {
+                        controller.selectExtendedDate(context);
+                      },
+                    ),
               ),
             ],
           ),
@@ -107,16 +109,18 @@ class AddDriverScreen extends GetView<DriverController> {
       child: SizedBox(
         height: 70,
         child: Obx(
-              () => AppButton(
-            text: arg != null ? 'Update' : 'Save',
-            onPressed: () {
-              arg != null
-                  ? controller.updateTheDriver(arg.driver.id!)
-                  : controller.addADriver();
-            },
-            enabled: controller.driverFormIsValid.value &&
-                !controller.isLoading.value,
-          ),
+              () =>
+              AppButton(
+                text: arg != null ? 'Update' : 'Save',
+                onPressed: () {
+                  arg != null
+                      ? controller.updateTheDriver(arg.driver.user.id)
+                      : controller.addADriver();
+                },
+                enabled: arg != null ? !controller.isLoading.value : controller
+                    .driverFormIsValid.value &&
+                    !controller.isLoading.value,
+              ),
         ),
       ),
     );
