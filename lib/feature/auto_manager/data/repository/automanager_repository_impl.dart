@@ -250,4 +250,26 @@ class AutoManagerRepositoryImpl extends Repository
       userRequest: userRequest,
     ));
   }
+
+  @override
+  Future<Either<Failure, Customer>> addCustomer({required CustomerRequest customerRequest}) {
+    return makeRequest(autoManagerRemoteDataSource.addCustomer(
+      customerRequest: customerRequest,
+    ));
+  }
+
+  @override
+  Future<Either<Failure, Customer>> deleteCustomer({required String customerId}) {
+    return makeRequest(autoManagerRemoteDataSource.deleteCustomer(
+      customerId: customerId,
+    ));
+  }
+
+  @override
+  Future<Either<Failure, Customer>> updateCustomer({required CustomerRequest customerRequest,}) {
+    return makeRequest(autoManagerRemoteDataSource.updateCustomer(
+      updateCustomerRequest: customerRequest,
+      customerId: customerRequest.id!,
+    ));
+  }
 }

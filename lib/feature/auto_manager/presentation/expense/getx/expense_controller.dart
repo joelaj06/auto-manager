@@ -213,6 +213,7 @@ class ExpenseController extends GetxController {
 
     failureOrExpense.fold((Failure failure) {
       isLoading(false);
+      pagingController.error = failure.message;
       AppSnack.show(message: failure.message, status: SnackStatus.error);
     }, (ListPage<Expense> newPage) {
       isLoading(false);

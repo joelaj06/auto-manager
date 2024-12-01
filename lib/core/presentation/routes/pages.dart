@@ -85,6 +85,7 @@ class Pages {
     GetPage<AppRoutes>(
       name: AppRoutes.customers,
       page: () => const CustomerScreen(),
+      binding: CustomerBindings(),
     ),
     GetPage<AppRoutes>(
       name: AppRoutes.vehicle,
@@ -103,6 +104,10 @@ class Pages {
       name: AppRoutes.addDriver,
       page: () => const AddDriverScreen(),
       binding: DriverBindings(),
+    ),GetPage<AppRoutes>(
+      name: AppRoutes.addCustomer,
+      page: () => const AddCustomerScreen(),
+      binding: CustomerBindings(),
     ),
   ];
 }

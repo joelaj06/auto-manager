@@ -342,4 +342,28 @@ class AutoMangerRemoteDatasourceImpl implements AutoManagerRemoteDatasource {
     );
     return User.fromJson(json);
   }
+
+  @override
+  Future<Customer> addCustomer({required CustomerRequest customerRequest}) async {
+    final Map<String, dynamic> json = await _client.post(
+      AutoManagerEndpoints.customers,
+      body: customerRequest.toJson(),
+    );
+    return Customer.fromJson(json);
+  }
+
+  @override
+  Future<Customer> deleteCustomer({required String customerId}) async {
+    await _client.delete(AutoManagerEndpoints.customer(customerId));
+    return Customer.empty();
+  }
+
+  @override
+  Future<Customer> updateCustomer({required CustomerRequest updateCustomerRequest, required String customerId}) async {
+    final Map<String, dynamic> json = await _client.put(
+      AutoManagerEndpoints.customer(customerId),
+      body: updateCustomerRequest.toJson(),
+    );
+    return Customer.fromJson(json);
+  }
 }

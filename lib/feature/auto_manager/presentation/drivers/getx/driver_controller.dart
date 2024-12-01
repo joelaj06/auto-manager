@@ -89,7 +89,8 @@ class DriverController extends GetxController {
                 : null,
         vehicleId: (selectedVehicle.value.id ?? '').isNotEmpty
             ? selectedVehicle.value.id
-            : null);
+            : null,
+    );
 
     final Either<Failure, User> failureOrDriver =
         await updateDriver(userRequest);

@@ -101,4 +101,13 @@ abstract interface class AutoManagerRemoteDatasource {
 });
 
  Future<Driver> deleteDriver({required String driverId});
+
+ Future<Customer> addCustomer({required CustomerRequest customerRequest});
+
+ Future<Customer> updateCustomer({
+    required CustomerRequest updateCustomerRequest,
+    required String customerId,
+  });
+
+ Future<Customer> deleteCustomer({required String customerId});
 }
