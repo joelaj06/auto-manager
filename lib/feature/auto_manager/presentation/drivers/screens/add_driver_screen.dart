@@ -91,7 +91,7 @@ class AddDriverScreen extends GetView<DriverController> {
                           .text,
                       readOnly: true,
                       onTap: () {
-                        controller.selectExtendedDate(context);
+                        controller.selectLicenseDate(context);
                       },
                     ),
               ),

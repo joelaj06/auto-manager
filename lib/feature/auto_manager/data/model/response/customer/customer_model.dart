@@ -9,7 +9,7 @@ part 'customer_model.g.dart';
 @freezed
 class Customer with _$Customer {
   const factory Customer({
-    @JsonKey(name: '_id') String? id,
+    @JsonKey(name: '_id')required String id,
     required String name,
     String? email,
     String? phone,

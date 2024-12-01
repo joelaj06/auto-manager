@@ -8,7 +8,6 @@ import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
 import '../../../../../core/errors/failure.dart';
 import '../../../../../core/presentation/utils/utils.dart';
-import '../../../../../core/presentation/widgets/exception_indicators/exceptions.dart';
 import '../../../../../core/presentation/widgets/widgets.dart';
 import '../../../../../core/utils/data_formatter.dart';
 import '../../../data/model/response/customer/customer_model.dart';
@@ -27,7 +26,7 @@ class CustomerScreen extends GetView<CustomerController> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: controller.navigateToAddCustomerScreen,
         child: const Icon(IconlyLight.plus),
       ),
       body: Column(
@@ -48,7 +47,7 @@ class CustomerScreen extends GetView<CustomerController> {
         onChanged: controller.onSearchFieldInputChanged,
         hintText: 'Search Customer',
         suffixIcon: GestureDetector(
-          onTap: (){
+          onTap: () {
             controller.onSearchQuerySubmitted();
           },
           child: const Icon(
@@ -67,7 +66,7 @@ class CustomerScreen extends GetView<CustomerController> {
       child: PagedListView<int, Customer>(
           pagingController: controller.pagingController,
           builderDelegate: PagedChildBuilderDelegate<Customer>(
-            itemBuilder: (BuildContext context, Customer driver, int index) {
+            itemBuilder: (BuildContext context, Customer customer, int index) {
               return Slidable(
                 endActionPane: ActionPane(
                   motion: const DrawerMotion(),
@@ -76,18 +75,22 @@ class CustomerScreen extends GetView<CustomerController> {
                       backgroundColor: context.colorScheme.background,
                       icon: IconlyLight.edit,
                       label: 'Edit',
-                      onPressed: (BuildContext context) {},
+                      onPressed: (BuildContext context) {
+                        controller.navigateToUpdateCustomerScreen(customer);
+                      },
                     ),
                     SlidableAction(
                       backgroundColor: context.colorScheme.background,
                       foregroundColor: Colors.red,
                       icon: IconlyLight.delete,
                       label: 'Delete',
-                      onPressed: (BuildContext context) {},
+                      onPressed: (BuildContext context) {
+                        controller.deleteTheCustomer(customer.id);
+                      },
                     ),
                   ],
                 ),
-                child: _buildRentalsListTile(context, index, driver),
+                child: _buildRentalsListTile(context, index, customer),
               );
             },
             firstPageErrorIndicatorBuilder: (BuildContext context) =>
@@ -186,6 +189,10 @@ class CustomerScreen extends GetView<CustomerController> {
             ModalListCard(
               title: 'Business',
               value: customer.business ?? '--',
+            ),
+            ModalListCard(
+              title: 'Occupation',
+              value: customer.occupation ?? '--',
             ),
             ModalListCard(
               title: 'ID Number',

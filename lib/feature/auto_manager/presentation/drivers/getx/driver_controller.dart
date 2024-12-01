@@ -211,7 +211,7 @@ class DriverController extends GetxController {
         DataFormatter.formatDateToString(driver.licenceExpiryDate!);
   }
 
-  void selectExtendedDate(BuildContext context) async {
+  void selectLicenseDate(BuildContext context) async {
     final DateTime? res = await AppDatePicker.showOnlyDatePicker(context);
     if (res != null) {
       selectedLicenseExpiryDate(res);
