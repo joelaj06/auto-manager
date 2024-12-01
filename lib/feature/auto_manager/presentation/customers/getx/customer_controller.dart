@@ -42,7 +42,7 @@ class CustomerController extends GetxController {
         await fetchCustomers(PageParams(
       pageIndex: pageKey,
       pageSize: 10,
-      search: query.value,
+      query: query.value,
     ));
 
     failureOrCustomers.fold((Failure failure) {
@@ -73,10 +73,10 @@ class CustomerController extends GetxController {
 
   void onSearchFieldInputChanged(String value) {
     query(value);
+
   }
 
-  void onSearchQuerySubmitted(String value) {
-    query(value);
+  void onSearchQuerySubmitted() {
     pagingController.refresh();
   }
 }

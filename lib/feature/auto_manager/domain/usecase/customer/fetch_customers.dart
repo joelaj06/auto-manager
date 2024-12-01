@@ -11,9 +11,11 @@ class FetchCustomers implements UseCase<ListPage<Customer>, PageParams> {
 
   @override
   Future<Either<Failure, ListPage<Customer>>> call(PageParams params) {
+
     return autoManagerRepository.fetchCustomers(
         pageIndex: params.pageIndex!,
         pageSize: params.pageSize!,
-        query: params.query);
+        query: params.query,
+    );
   }
 }

@@ -15,7 +15,7 @@ class PageParams {
     this.startDate,
     this.endDate,
     this.userId,
-    this.search,
+
     this.companyId,
     this.year,
     this.month,
@@ -32,7 +32,6 @@ class PageParams {
   final String? startDate;
   final String? endDate;
   final String? userId;
-  final String? search;
   final String? companyId;
   final String? driverId;
   final int? year;

@@ -9,6 +9,7 @@ import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import '../../../../../core/errors/failure.dart';
 import '../../../../../core/presentation/utils/utils.dart';
 import '../../../../../core/presentation/widgets/exception_indicators/exceptions.dart';
+import '../../../../../core/presentation/widgets/widgets.dart';
 import '../../../../../core/utils/data_formatter.dart';
 import '../../../data/model/response/customer/customer_model.dart';
 import '../../sales/widgets/modal_list_card.dart';
@@ -31,8 +32,29 @@ class CustomerScreen extends GetView<CustomerController> {
       ),
       body: Column(
         children: <Widget>[
-          _buildDriversList(context),
+          _buildCustomerSearchField(context),
+          Expanded(
+            child: _buildDriversList(context),
+          ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildCustomerSearchField(BuildContext context) {
+    return Padding(
+      padding: AppPaddings.mA,
+      child: AppTextInputField(
+        onChanged: controller.onSearchFieldInputChanged,
+        hintText: 'Search Customer',
+        suffixIcon: GestureDetector(
+          onTap: (){
+            controller.onSearchQuerySubmitted();
+          },
+          child: const Icon(
+            IconlyLight.search,
+          ),
+        ),
       ),
     );
   }
