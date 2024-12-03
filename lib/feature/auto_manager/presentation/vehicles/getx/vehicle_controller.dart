@@ -102,6 +102,7 @@ class VehicleController extends GetxController {
     failureOrVehicle.fold((Failure failure) {
       AppSnack.show(message: failure.message, status: SnackStatus.error);
     }, (Vehicle vehicle) {
+      pagingController.refresh();
       AppSnack.show(
         message: 'Vehicle deleted successfully',
         status: SnackStatus.success,

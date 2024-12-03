@@ -87,7 +87,9 @@ class VehicleScreen extends GetView<VehicleController> {
                       foregroundColor: Colors.red,
                       icon: IconlyLight.delete,
                       label: 'Delete',
-                      onPressed: (BuildContext context) {},
+                      onPressed: (BuildContext context) {
+                        controller.deleteTheVehicle(vehicle.id!);
+                      },
                     ),
                   ],
                 ),
@@ -110,7 +112,8 @@ class VehicleScreen extends GetView<VehicleController> {
               child: CircularProgressIndicator.adaptive(),
             ),
           ),
-          shrinkWrap: true),
+          shrinkWrap: true,
+      ),
     );
   }
 
