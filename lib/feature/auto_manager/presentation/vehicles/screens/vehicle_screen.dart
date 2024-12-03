@@ -178,6 +178,7 @@ class VehicleScreen extends GetView<VehicleController> {
                       width: 100.0,
                       //  height: 100.0,
                       decoration: BoxDecoration(
+                        color: Colors.white,
                         shape: BoxShape.rectangle,
                         borderRadius: AppBorderRadius.card,
                         image: DecorationImage(

@@ -73,6 +73,7 @@ class VehicleController extends GetxController {
 
   void updateTheVehicle(String vehicleId) async {
     final VehicleRequest vehicleRequest = VehicleRequest(
+      id: vehicleId,
       make: make.value.isNotEmpty ? make.value : null,
       model: model.value.isNotEmpty ? model.value : null,
       year: year.value.isNotEmpty ? int.parse(year.value) : null,
