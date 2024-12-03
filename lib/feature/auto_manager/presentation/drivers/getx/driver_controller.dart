@@ -139,7 +139,7 @@ class DriverController extends GetxController {
 
     failureOrDrivers.fold((Failure failure) {
       isLoading(false);
-      pagingController.error = failure.message;
+      pagingController.error = failure;
     }, (ListPage<Driver> newPage) {
       isLoading(false);
       final Map<String, dynamic>? meta = newPage.metaData;

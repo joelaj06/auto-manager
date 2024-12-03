@@ -19,7 +19,7 @@ class AddCustomerScreen extends GetView<CustomerController> {
     }
     return Scaffold(
       appBar: AppBar(
-        title: const Text('New Customer'),
+        title:  Text(args != null ? 'Edit Customer' : 'New Customer',),
       ),
       bottomNavigationBar: _buildBottomBar(context, arg: args),
       body: SingleChildScrollView(

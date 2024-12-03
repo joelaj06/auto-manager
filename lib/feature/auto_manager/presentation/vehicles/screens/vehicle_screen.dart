@@ -25,7 +25,7 @@ class VehicleScreen extends GetView<VehicleController> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: controller.navigateToAddVehicleScreen,
         child: const Icon(IconlyLight.plus),
       ),
       body: Column(
@@ -78,7 +78,9 @@ class VehicleScreen extends GetView<VehicleController> {
                       backgroundColor: context.colorScheme.background,
                       icon: IconlyLight.edit,
                       label: 'Edit',
-                      onPressed: (BuildContext context) {},
+                      onPressed: (BuildContext context) {
+                        controller.navigateToUpdateVehicleScreen(vehicle);
+                      },
                     ),
                     SlidableAction(
                       backgroundColor: context.colorScheme.background,

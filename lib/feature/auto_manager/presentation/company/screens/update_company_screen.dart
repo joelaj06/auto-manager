@@ -25,9 +25,9 @@ class UpdateCompanyScreen extends GetView<CompanyController> {
         child: SingleChildScrollView(
           child: Column(
             children: <Widget>[
-              _buildUserProfile(context),
+              _buildCompanyLogo(context),
               AppTextInputField(
-                  labelText: 'Commpany Name',
+                  labelText: 'Company Name',
                   onChanged: controller.onCompanyNameInputChanged,
                   controller: controller.companyNameTextEditingController
                   //  initialValue: controller.user.value.firstName,
@@ -56,7 +56,7 @@ class UpdateCompanyScreen extends GetView<CompanyController> {
     );
   }
 
-  Widget _buildUserProfile(BuildContext context) {
+  Widget _buildCompanyLogo(BuildContext context) {
     return Stack(
       children: <Widget>[
         Container(

@@ -257,7 +257,7 @@ class RentalController extends GetxController {
 
     failureOrRentals.fold((Failure failure) {
       isLoading(false);
-      pagingController.error = failure.message;
+      pagingController.error = failure;
     }, (ListPage<Rental> newPage) {
       isLoading(false);
       final Map<String, dynamic>? meta = newPage.metaData;

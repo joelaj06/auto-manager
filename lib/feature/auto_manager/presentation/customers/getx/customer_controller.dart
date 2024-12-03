@@ -148,7 +148,7 @@ class CustomerController extends GetxController {
 
     failureOrCustomers.fold((Failure failure) {
       isLoading(false);
-      pagingController.error = failure.message;
+      pagingController.error = failure;
     }, (ListPage<Customer> newPage) {
       isLoading(false);
 
