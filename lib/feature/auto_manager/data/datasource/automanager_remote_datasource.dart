@@ -95,19 +95,26 @@ abstract interface class AutoManagerRemoteDatasource {
 
   Future<User> addUser({required UserRequest userRequest});
 
- Future<Company> updateCompany({
+  Future<Company> updateCompany({
     required Company updateCompanyRequest,
     required String companyId,
-});
+  });
 
- Future<Driver> deleteDriver({required String driverId});
+  Future<Driver> deleteDriver({required String driverId});
 
- Future<Customer> addCustomer({required CustomerRequest customerRequest});
+  Future<Customer> addCustomer({required CustomerRequest customerRequest});
 
- Future<Customer> updateCustomer({
+  Future<Customer> updateCustomer({
     required CustomerRequest updateCustomerRequest,
     required String customerId,
   });
 
- Future<Customer> deleteCustomer({required String customerId});
+  Future<Customer> deleteCustomer({required String customerId});
+
+  Future<Vehicle> deleteVehicle({required String vehicleId});
+
+  Future<Vehicle> addVehicle({required VehicleRequest vehicleRequest});
+
+  Future<Vehicle> updateVehicle(
+      {required VehicleRequest vehicleRequest, required String vehicleId});
 }

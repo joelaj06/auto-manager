@@ -37,13 +37,15 @@ class AutoManagerEndpoints {
       'drivers?pageIndex=$pageIndex&pageSize=$pageSize&query=$query';
 
   static const String vehicles = 'vehicles';
+
   static String vehicle(String vehicleId) => 'vehicles/$vehicleId';
+
   static String vehiclesList({
     required int pageIndex,
     required int pageSize,
     required String? query,
   }) =>
-      'vehicles?pageIndex=$pageIndex&pageSize=$pageSize&query=$query';
+      'vehicles?pageIndex=$pageIndex&pageSize=$pageSize&search=$query';
 
   static String expenseList({
     required int pageIndex,

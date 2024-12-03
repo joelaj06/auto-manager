@@ -272,4 +272,26 @@ class AutoManagerRepositoryImpl extends Repository
       customerId: customerRequest.id!,
     ));
   }
+
+  @override
+  Future<Either<Failure, Vehicle>> addVehicle({required VehicleRequest vehicleRequest}) {
+    return makeRequest(autoManagerRemoteDataSource.addVehicle(
+      vehicleRequest: vehicleRequest,
+    ));
+  }
+
+  @override
+  Future<Either<Failure, Vehicle>> deleteVehicle({required String vehicleId}) {
+    return makeRequest(autoManagerRemoteDataSource.deleteVehicle(
+      vehicleId: vehicleId,
+    ));
+  }
+
+  @override
+  Future<Either<Failure, Vehicle>> updateVehicle({required VehicleRequest vehicleRequest}) {
+    return makeRequest(autoManagerRemoteDataSource.updateVehicle(
+      vehicleRequest: vehicleRequest,
+      vehicleId: vehicleRequest.id!,
+    ));
+  }
 }

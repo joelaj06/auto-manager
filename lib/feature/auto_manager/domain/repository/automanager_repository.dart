@@ -113,5 +113,11 @@ abstract interface class AutoManagerRepository {
     required CustomerRequest customerRequest,
   });
 
+  Future<Either<Failure,Vehicle>> addVehicle({required VehicleRequest vehicleRequest});
+
+  Future<Either<Failure,Vehicle>> updateVehicle({required VehicleRequest vehicleRequest});
+
+  Future<Either<Failure,Vehicle>> deleteVehicle({required String vehicleId});
+
 
 }

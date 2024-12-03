@@ -329,8 +329,8 @@ class AutoMangerRemoteDatasourceImpl implements AutoManagerRemoteDatasource {
   }
 
   @override
-  Future<Driver> deleteDriver({required String driverId}) async{
-     await _client.delete(AutoManagerEndpoints.driver(driverId));
+  Future<Driver> deleteDriver({required String driverId}) async {
+    await _client.delete(AutoManagerEndpoints.driver(driverId));
     return Driver.empty();
   }
 
@@ -344,7 +344,8 @@ class AutoMangerRemoteDatasourceImpl implements AutoManagerRemoteDatasource {
   }
 
   @override
-  Future<Customer> addCustomer({required CustomerRequest customerRequest}) async {
+  Future<Customer> addCustomer(
+      {required CustomerRequest customerRequest}) async {
     final Map<String, dynamic> json = await _client.post(
       AutoManagerEndpoints.customers,
       body: customerRequest.toJson(),
@@ -359,11 +360,40 @@ class AutoMangerRemoteDatasourceImpl implements AutoManagerRemoteDatasource {
   }
 
   @override
-  Future<Customer> updateCustomer({required CustomerRequest updateCustomerRequest, required String customerId}) async {
+  Future<Customer> updateCustomer(
+      {required CustomerRequest updateCustomerRequest,
+      required String customerId}) async {
     final Map<String, dynamic> json = await _client.put(
       AutoManagerEndpoints.customer(customerId),
       body: updateCustomerRequest.toJson(),
     );
     return Customer.fromJson(json);
+  }
+
+  @override
+  Future<Vehicle> addVehicle({required VehicleRequest vehicleRequest}) async {
+    final Map<String, dynamic> json = await _client.post(
+      AutoManagerEndpoints.vehicles,
+      body: vehicleRequest.toJson(),
+    );
+    return Vehicle.fromJson(json);
+  }
+
+  @override
+  Future<Vehicle> deleteVehicle({required String vehicleId}) async{
+    await _client.delete(AutoManagerEndpoints.vehicle(vehicleId));
+    return Vehicle.empty();
+
+  }
+
+  @override
+  Future<Vehicle> updateVehicle(
+      {required VehicleRequest vehicleRequest,
+      required String vehicleId}) async {
+    final Map<String, dynamic> json = await _client.put(
+      AutoManagerEndpoints.vehicle(vehicleId),
+      body: vehicleRequest.toJson(),
+    );
+    return Vehicle.fromJson(json);
   }
 }

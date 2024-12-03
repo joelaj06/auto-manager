@@ -90,7 +90,7 @@ class CustomerScreen extends GetView<CustomerController> {
                     ),
                   ],
                 ),
-                child: _buildRentalsListTile(context, index, customer),
+                child: _buildCustomersListTile(context, index, customer),
               );
             },
             firstPageErrorIndicatorBuilder: (BuildContext context) =>
@@ -113,7 +113,7 @@ class CustomerScreen extends GetView<CustomerController> {
     );
   }
 
-  Widget _buildRentalsListTile(
+  Widget _buildCustomersListTile(
       BuildContext context, int index, Customer customer) {
     return Padding(
       padding: AppPaddings.mH,

@@ -142,7 +142,7 @@ class _AppTextInputFieldState extends State<AppTextInputField> {
                   cursorColor: widget.textColor,
                   textInputAction: widget.textInputAction,
                   maxLength: widget.maxLength,
-                  maxLines: widget.maxLines,
+                  maxLines: widget.maxLines ?? 1,
                   autofocus: widget.autoFocus ?? false,
                   textAlignVertical: widget.textAlignVertical,
                   minLines: widget.minLines,

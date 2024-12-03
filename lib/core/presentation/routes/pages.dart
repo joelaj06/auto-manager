@@ -90,6 +90,11 @@ class Pages {
     GetPage<AppRoutes>(
       name: AppRoutes.vehicle,
       page: () => const VehicleScreen(),
+      binding: VehicleBindings(),
+    ), GetPage<AppRoutes>(
+      name: AppRoutes.addVehicle,
+      page: () => const AddVehicleScreen(),
+      binding: VehicleBindings(),
     ),
     GetPage<AppRoutes>(
       name: AppRoutes.userAccounts,
