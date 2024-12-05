@@ -33,7 +33,7 @@ class CustomerScreen extends GetView<CustomerController> {
         children: <Widget>[
           _buildCustomerSearchField(context),
           Expanded(
-            child: _buildDriversList(context),
+            child: _buildCustomerList(context),
           ),
         ],
       ),
@@ -58,7 +58,7 @@ class CustomerScreen extends GetView<CustomerController> {
     );
   }
 
-  Widget _buildDriversList(BuildContext context) {
+  Widget _buildCustomerList(BuildContext context) {
     return RefreshIndicator(
       onRefresh: () {
         return Future<void>.sync(() => controller.pagingController.refresh());

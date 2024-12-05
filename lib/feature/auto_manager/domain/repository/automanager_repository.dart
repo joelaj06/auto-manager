@@ -119,5 +119,13 @@ abstract interface class AutoManagerRepository {
 
   Future<Either<Failure,Vehicle>> deleteVehicle({required String vehicleId});
 
+  Future<Either<Failure, User>> deleteUser({required String userId});
+
+  Future<Either<Failure, ListPage<User>>> fetchUsers({
+    required int pageIndex,
+    required int pageSize,
+    required String? query,
+  });
+
 
 }

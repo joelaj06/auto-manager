@@ -2,6 +2,7 @@ import 'package:automanager/core/core.dart';
 import 'package:automanager/feature/authentication/data/models/request/user/user_request.dart';
 import 'package:automanager/feature/authentication/data/models/response/user/user_model.dart';
 import 'package:automanager/feature/auto_manager/data/data.dart';
+import 'package:automanager/feature/auto_manager/data/datasource/automanager_endpoints.dart';
 
 class AutoMangerRemoteDatasourceImpl implements AutoManagerRemoteDatasource {
   AutoMangerRemoteDatasourceImpl({required AppHTTPClient client})
@@ -380,10 +381,9 @@ class AutoMangerRemoteDatasourceImpl implements AutoManagerRemoteDatasource {
   }
 
   @override
-  Future<Vehicle> deleteVehicle({required String vehicleId}) async{
+  Future<Vehicle> deleteVehicle({required String vehicleId}) async {
     await _client.delete(AutoManagerEndpoints.vehicle(vehicleId));
     return Vehicle.empty();
-
   }
 
   @override
@@ -395,5 +395,34 @@ class AutoMangerRemoteDatasourceImpl implements AutoManagerRemoteDatasource {
       body: vehicleRequest.toJson(),
     );
     return Vehicle.fromJson(json);
+  }
+
+  @override
+  Future<User> deleteUser({required String userId}) async {
+    await _client.delete(AutoManagerEndpoints.user(userId));
+    return User.empty();
+  }
+
+  @override
+  Future<ListPage<User>> fetchUsers(
+      {required int pageIndex,
+      required int pageSize,
+      required String? query}) async {
+    final Map<String, dynamic> json = await _client.get(
+      FilterParams.userParams(
+          AutoManagerEndpoints.usersList(
+              pageIndex: pageIndex, pageSize: pageSize),
+          query),
+    );
+    final List<dynamic> items = json['items'] as List<dynamic>;
+    final List<User> users =
+        items.map((dynamic user) => User.fromJson(user)).toList();
+    final int total = json['totalCount'] as int;
+    final Map<String, dynamic> metaData = json['meta'] as Map<String, dynamic>;
+    return ListPage<User>(
+      itemList: users,
+      grandTotalCount: total,
+      metaData: metaData,
+    );
   }
 }

@@ -99,6 +99,7 @@ class Pages {
     GetPage<AppRoutes>(
       name: AppRoutes.userAccounts,
       page: () => const UserAccountScreen(),
+      binding: UserAccountBindings(),
     ),
     GetPage<AppRoutes>(
       name: AppRoutes.updateCompany,

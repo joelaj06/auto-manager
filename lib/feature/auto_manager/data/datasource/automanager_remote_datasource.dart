@@ -88,6 +88,14 @@ abstract interface class AutoManagerRemoteDatasource {
 
   Future<User> fetchUser(String userId);
 
+  Future<ListPage<User>> fetchUsers({
+    required int pageIndex,
+    required int pageSize,
+    required String? query,
+  });
+
+  Future<User> deleteUser({required String userId});
+
   Future<User> updateUser({
     required UserRequest updateUserRequest,
     required String userId,

@@ -294,4 +294,20 @@ class AutoManagerRepositoryImpl extends Repository
       vehicleId: vehicleRequest.id!,
     ));
   }
+
+  @override
+  Future<Either<Failure, User>> deleteUser({required String userId}) {
+    return makeRequest(autoManagerRemoteDataSource.deleteUser(
+      userId: userId,
+    ));
+  }
+
+  @override
+  Future<Either<Failure, ListPage<User>>> fetchUsers({required int pageIndex, required int pageSize, required String? query}) {
+    return makeRequest(autoManagerRemoteDataSource.fetchUsers(
+      pageIndex: pageIndex,
+      pageSize: pageSize,
+      query: query,
+    ));
+  }
 }

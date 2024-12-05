@@ -89,11 +89,30 @@ class AutoManagerEndpoints {
 
   static const String users = 'users';
 
+  static  String usersList({
+    required int pageIndex,
+    required int pageSize,
+  }) => 'users?pageIndex=$pageIndex&pageSize=$pageSize';
+
+
+
 }
 
 
 
 class FilterParams{
+
+  static String userParams(
+      String endpoint,
+      final String? search){
+
+    String allParams = '';
+    if(search != null && search.isNotEmpty){
+      allParams = '$allParams&search=$search';
+    }
+    endpoint += allParams;
+    return endpoint;
+  }
 
   static String customerParams(
       String endpoint,

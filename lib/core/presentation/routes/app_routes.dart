@@ -22,5 +22,6 @@ class AppRoutes{
   static const String addDriver = '/addDriver';
   static const String addCustomer = '/addCustomer';
   static const String addVehicle = '/addVehicle';
+  static const String addUser = '/addUser';
 
 }
