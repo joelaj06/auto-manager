@@ -35,6 +35,8 @@ class UserAccountController extends GetxController {
   RxString phone = ''.obs;
   RxString address = ''.obs;
   RxString password = ''.obs;
+  RxString passwordConfirmation = ''.obs;
+  RxBool showPassword = false.obs;
 
   //paging controller
   final PagingController<int, User> pagingController =
@@ -178,4 +180,95 @@ class UserAccountController extends GetxController {
       );
     }
   }
+
+  void togglePassword() {
+    showPassword(!showPassword.value);
+  }
+
+  void onFirstNameInputChanged(String value) {
+    firstName(value);
+  }
+
+  void onLastNameInputChanged(String value) {
+    lastName(value);
+  }
+
+  void onEmailInputChanged(String value) {
+    email(value);
+  }
+
+  void onPhoneInputChanged(String value) {
+    phone(value);
+  }
+
+  void onAddressInputChanged(String value) {
+    address(value);
+  }
+
+  void onPasswordInputChanged(String value) {
+    password(value);
+  }
+
+  void onConfirmPasswordInputChanged(String value) {
+    passwordConfirmation(value);
+  }
+
+
+  String? validatePasswordConfirmation(String? value) {
+    String? errorMessage;
+    if (value!.isEmpty || value != password.value) {
+      errorMessage = 'Password do not match';
+    }
+    return errorMessage;
+  }
+
+  String? validatePassword(String? password) {
+    String? errorMessage;
+    if (password!.isNotEmpty) {
+      if (password.length < 8) {
+        errorMessage = 'Password must be 8 characters or more';
+      }
+    } else {
+      errorMessage = 'Please enter password';
+    }
+    return errorMessage;
+  }
+
+  String? validateEmail(String? email) {
+    String? errorMessage;
+    // Check if email is empty
+    if (email == null || email.isEmpty) {
+      errorMessage = 'Please enter an email address';
+    }
+
+    // Regular expression for validating an email address
+    final RegExp emailPattern = RegExp(
+        r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
+
+    // Check if email is valid using regex
+    if (!emailPattern.hasMatch(email!)) {
+      errorMessage = 'Please enter a valid email address';
+    }
+
+    return errorMessage;
+  }
+
+
+
+  String? validateField(String? value) {
+    String? errorMessage;
+    if (value!.isEmpty) {
+      errorMessage = 'Field is required';
+    }
+    return errorMessage;
+  }
+
+
+  RxBool get clientFormIsValid => (validateEmail(email.value) == null &&
+      validatePasswordConfirmation(passwordConfirmation.value) == null &&
+      validateField(firstName.value) == null &&
+      validateField(phone.value) == null &&
+      validateField(lastName.value) == null &&
+      validatePassword(password.value) == null)
+      .obs;
 }

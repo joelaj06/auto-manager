@@ -100,6 +100,10 @@ class Pages {
       name: AppRoutes.userAccounts,
       page: () => const UserAccountScreen(),
       binding: UserAccountBindings(),
+    ), GetPage<AppRoutes>(
+      name: AppRoutes.addUser,
+      page: () => const AddUserScreen(),
+      binding: UserAccountBindings(),
     ),
     GetPage<AppRoutes>(
       name: AppRoutes.updateCompany,

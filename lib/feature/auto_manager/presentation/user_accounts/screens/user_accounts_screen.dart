@@ -186,6 +186,10 @@ class UserAccountScreen extends GetView<UserAccountController> {
               title: 'Phone',
               value: user.phone ?? '--',
             ),
+           /* ModalListCard(
+              title: 'Address',
+              value: user.address ?? '--',
+            ),*/
           ],
         ),
       ),
