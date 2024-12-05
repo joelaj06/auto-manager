@@ -44,12 +44,6 @@ class AddUserScreen extends GetView<UserAccountController> {
               ),
               const AppSpacing(v: 10),
               AppTextInputField(
-                labelText: 'Address',
-                initialValue: args != null ? args.user.address : '',
-                onChanged: controller.onAddressInputChanged,
-              ),
-              const AppSpacing(v: 10),
-              AppTextInputField(
                 labelText: 'Phone',
                 onChanged: controller.onPhoneInputChanged,
                 textInputType: TextInputType.phone,
@@ -57,7 +51,7 @@ class AddUserScreen extends GetView<UserAccountController> {
                 initialValue: args != null ? args.user.phone : '',
               ),
               const AppSpacing(v: 10),
-              Obx(
+             if (args != null) const SizedBox.shrink() else Obx(
                 () => AppTextInputField(
                   maxLines: 1,
                   labelText: 'Password',
@@ -96,7 +90,7 @@ class AddUserScreen extends GetView<UserAccountController> {
               const AppSpacing(
                 v: 10,
               ),
-              Obx(
+              if (args != null) const SizedBox.shrink() else Obx(
                 () => AppTextInputField(
                   maxLines: 1,
                   labelText: 'Confirm Password',
