@@ -1,31 +1,17 @@
-import 'package:automanager/core/core.dart';
 import 'package:automanager/core/presentation/theme/app_theme.dart';
+import 'package:automanager/core/presentation/utils/app_dialogs.dart';
+import 'package:automanager/feature/auto_manager/presentation/more/getx/more_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:iconly/iconly.dart';
 import 'package:ionicons/ionicons.dart';
 
-import '../../../../../core/presentation/routes/app_routes.dart';
+import '../../../../../core/presentation/routes/routes.dart';
+import '../../../../../core/presentation/utils/utils.dart';
 import '../widgets/custom_tile.dart';
 
-class MoreScreen extends StatefulWidget {
+class MoreScreen extends GetView<MoreController> {
   const MoreScreen({super.key});
-
-  @override
-  State<MoreScreen> createState() => _MoreScreenState();
-}
-
-class _MoreScreenState extends State<MoreScreen> {
-  bool _isDarkMode = Get.isDarkMode;
-
-  bool get isDarkMode => _isDarkMode;
-
-  void toggleTheme() {
-    Get.changeThemeMode(isDarkMode ? ThemeMode.light : ThemeMode.dark);
-    setState(() {
-      _isDarkMode = !_isDarkMode; // Update the state
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,9 +20,9 @@ class _MoreScreenState extends State<MoreScreen> {
         title: const Text('More'),
         actions: [
           IconButton(
-            onPressed: toggleTheme,
+            onPressed: controller.toggleTheme,
             icon: Icon(
-              isDarkMode ? Icons.light_mode : Icons.dark_mode,
+              controller.isDarkMode.value ? Icons.light_mode : Icons.dark_mode,
             ),
           ),
         ],
@@ -84,7 +70,17 @@ class _MoreScreenState extends State<MoreScreen> {
             ),
             CustomTile(
               icon: IconlyLight.logout,
-              onPressed: () {},
+              onPressed: () async {
+                await AppDialogs.showDialogWithButtons(
+                  context,
+                  onConfirmPressed: () => controller.logUserOut(),
+                  content: const Text(
+                    'Are you sure you want to logout?',
+                    textAlign: TextAlign.center,
+                  ),
+                  confirmText: 'Logout',
+                );
+              },
               text: 'Logout',
               iconColor: context.colorScheme.error,
               textColor: context.colorScheme.error,

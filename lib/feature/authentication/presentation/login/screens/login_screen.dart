@@ -135,6 +135,17 @@ class LoginScreen extends GetView<LoginController> {
                   !controller.isLoading.value && controller.formIsValid.value,
             ),
           ),
+          Center(
+            child: GestureDetector(
+              onTap: () => controller.navigateToPasswordResetScreen(),
+              child: const Text(
+                'Forgot your password?',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
         ],
       ),
     );

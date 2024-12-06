@@ -14,6 +14,8 @@ class AssetImages {
   static const String error = '$_imageSource/error.png';
   static const String timeOut = '$_imageSource/timeout.png';
   static const String speedometer = '$_imageSource/speedometer.jpg';
+  static const String passwordReset = '$_imageSource/password_reset.png';
+  static const String otp = '$_imageSource/otp.png';
 }
 
 class AssetGifs{

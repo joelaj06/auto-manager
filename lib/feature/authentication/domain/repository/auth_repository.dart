@@ -38,5 +38,8 @@ abstract class AuthRepository {
 
   Future<Either<Failure, UserRegistration>> loadUserSignUpData();
 
+  Future<Either<Failure, MessageResponse>> verifyPasswordReset(
+      {required PasswordResetRequest resetRequest});
+
 
 }

@@ -128,4 +128,14 @@ class AuthRepositoryImpl extends Repository implements AuthRepository {
   Future<Either<Failure, UserRegistration>> loadUserSignUpData() async {
     return makeLocalRequest(authLocalDataSource.getUserSignUpResponse);
   }
+
+  @override
+  Future<Either<Failure, MessageResponse>> verifyPasswordReset(
+      {required PasswordResetRequest resetRequest}) {
+    return makeRequest(
+      authRemoteDataSource.verifyPasswordReset(
+        resetRequest: resetRequest,
+      ),
+    );
+  }
 }

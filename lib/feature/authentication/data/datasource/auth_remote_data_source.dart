@@ -1,4 +1,3 @@
-
 import '../models/models.dart';
 
 abstract class AuthRemoteDataSource {
@@ -18,4 +17,7 @@ abstract class AuthRemoteDataSource {
 
   Future<UserRegistration> verifyOtp({required OtpVerificationRequest request});
 
+  Future<MessageResponse> verifyPasswordReset({
+    required PasswordResetRequest resetRequest,
+  });
 }

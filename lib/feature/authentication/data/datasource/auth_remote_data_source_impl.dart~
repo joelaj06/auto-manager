@@ -65,7 +65,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   @override
   Future<MessageResponse> verifyPasswordReset({required PasswordResetRequest resetRequest}) async {
     final Map<String, dynamic> json = await _client
-        .put(AuthEndpoints.verifyPasswordReset, body: resetRequest.toJson());
+        .post(AuthEndpoints.verifyPasswordReset, body: resetRequest.toJson());
     return MessageResponse.fromJson(json);
   }
 }

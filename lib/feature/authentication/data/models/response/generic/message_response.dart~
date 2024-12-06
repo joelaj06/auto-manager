@@ -2,6 +2,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 import '../registration/registration_response_data_model.dart';
+import '../user/user_model.dart';
 
 part 'message_response.freezed.dart';
 part 'message_response.g.dart';

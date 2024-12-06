@@ -27,6 +27,7 @@ class Pages {
           SalesBindings(),
           ExpenseBindings(),
           RentalBindings(),
+          MoreBindings(),
         ]),
     GetPage<AppRoutes>(
       name: AppRoutes.addCompany,
@@ -56,6 +57,7 @@ class Pages {
     GetPage<AppRoutes>(
       name: AppRoutes.more,
       page: () => const MoreScreen(),
+      binding: MoreBindings(),
     ),
     GetPage<AppRoutes>(
       name: AppRoutes.addSale,
@@ -118,6 +120,10 @@ class Pages {
       name: AppRoutes.addCustomer,
       page: () => const AddCustomerScreen(),
       binding: CustomerBindings(),
+    ),GetPage<AppRoutes>(
+      name: AppRoutes.passwordReset,
+      page: () => const PasswordResetScreen(),
+      binding: LoginBindings(),
     ),
   ];
 }
