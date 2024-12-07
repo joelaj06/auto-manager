@@ -138,4 +138,11 @@ class AuthRepositoryImpl extends Repository implements AuthRepository {
       ),
     );
   }
+
+  @override
+  Future<Either<Failure, User>> changePassword(
+      {required ChangePasswordRequest changePasswordRequest}) {
+    return makeRequest(
+        authRemoteDataSource.changePassword(request: changePasswordRequest));
+  }
 }

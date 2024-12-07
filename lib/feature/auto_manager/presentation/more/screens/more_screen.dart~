@@ -112,7 +112,7 @@ class MoreScreen extends GetView<MoreController> {
       child: Column(
         children: <Widget>[
           const AppSpacing(
-            v: 30,
+            v: 20,
           ),
           Text(
             'Change Password',

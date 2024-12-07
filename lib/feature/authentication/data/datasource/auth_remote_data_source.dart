@@ -20,4 +20,6 @@ abstract class AuthRemoteDataSource {
   Future<MessageResponse> verifyPasswordReset({
     required PasswordResetRequest resetRequest,
   });
+
+  Future<User> changePassword({required ChangePasswordRequest request});
 }

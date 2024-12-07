@@ -68,4 +68,11 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         .put(AuthEndpoints.verifyPasswordReset, body: resetRequest.toJson());
     return MessageResponse.fromJson(json);
   }
+
+  @override
+  Future<User> changePassword({required ChangePasswordRequest request}) async{
+     await _client
+        .put(AuthEndpoints.changePassword, body: request.toJson());
+    return User.empty();
+  }
 }

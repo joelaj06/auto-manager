@@ -6,5 +6,6 @@ class AuthEndpoints {
   static const String passwordReset = 'auth/resetPassword';
   static const String verifyOtp = 'auth/verifyOtp';
   static const String verifyPasswordReset = 'auth/verifyPasswordReset';
+  static const String changePassword = 'auth/changePassword';
 
 }

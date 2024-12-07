@@ -41,5 +41,6 @@ abstract class AuthRepository {
   Future<Either<Failure, MessageResponse>> verifyPasswordReset(
       {required PasswordResetRequest resetRequest});
 
-
+  Future<Either<Failure, User>> changePassword(
+      {required ChangePasswordRequest changePasswordRequest});
 }
