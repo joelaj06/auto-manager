@@ -1,0 +1,16 @@
+# dart run icons_launcher:create --flavor prod
+
+icons_launcher:
+  platforms:
+    android:
+      enable: true
+      image_path: "assets/images/auto_manager_launcher_icon.png"
+      notification_image: "assets/images/auto_manager_launcher_icon.png"
+      adaptive_round_image: "assets/images/auto_manager_launcher_icon.png"
+
+    ios:
+      enable: true
+      image_path: "assets/images/auto_manager_icon_launcher_ios.png"
+      # For iOS 18+ (support dark and tinted)
+      dark_path: "images/assets/auto_manager_icon_launcher_ios.png"
+
