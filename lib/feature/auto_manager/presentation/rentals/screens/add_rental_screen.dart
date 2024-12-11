@@ -155,32 +155,6 @@ class AddRentalScreen extends GetView<RentalController> {
                               );
                             }),
                       )
-                      /* ...List<Widget>.generate(
-                          controller.rentalExtensions.length,
-                              (int index) => Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: <Widget>[
-                              const AppSpacing(h: 10),
-                              Expanded(
-                                child: Obx(() => _buildExtensionCard(
-                                    context,
-                                    controller.rentalExtensions[index],
-                                  ),
-                                ),
-                              ),
-                              const AppSpacing(h: 10),
-                              IconButton(
-                                icon:  const Icon(IconlyLight.delete,
-                                  color: Colors.red,),
-                                onPressed: () {
-                                  controller.removeExtension(
-                                      controller.rentalExtensions[index],
-                                  );
-                                },
-                              ),
-                            ],
-                          ),
-                        ),*/
                     ],
                   ),
                 )

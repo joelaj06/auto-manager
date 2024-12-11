@@ -4,6 +4,8 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 
 enum Environment { development, production }
 
+
+
 bool isTesting = kIsWeb? false:Platform.environment.containsKey('FLUTTER_TEST');
 
 const String _env =
@@ -52,5 +54,9 @@ extension EnvironmentX on Environment {
     }[this]!;
   }
 }
+
+
+
+
 
 
