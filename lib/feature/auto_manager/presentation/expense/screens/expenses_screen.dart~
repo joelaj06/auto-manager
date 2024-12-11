@@ -93,10 +93,11 @@ class ExpensesScreen extends GetView<ExpenseController> {
                             icon: IconlyLight.delete,
                             label: 'Delete',
                             onPressed: (BuildContext context) async {
+
                               await AppDialogs.showDialogWithButtons(
                                 context,
                                 onConfirmPressed: () =>
-                                    controller.deleteExpense(expense.id),
+                                   controller.deleteExpense(expense.id),
                                 content: const Text(
                                   'Are you sure you want to delete this expense?',
                                   textAlign: TextAlign.center,
@@ -194,19 +195,20 @@ class ExpensesScreen extends GetView<ExpenseController> {
               child: Row(
                 children: <Widget>[
                   Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text(
-                          expense.expenseId,
-                          textAlign: TextAlign.left,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                          ),
+                    child:
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Text(
+                              expense.expenseId,
+                              textAlign: TextAlign.left,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Text(DataFormatter.formatDate(expense.createdAt ?? '')),
+                          ],
                         ),
-                        Text(DataFormatter.formatDate(expense.createdAt ?? '')),
-                      ],
-                    ),
                   ),
                   Expanded(
                     child: Text(

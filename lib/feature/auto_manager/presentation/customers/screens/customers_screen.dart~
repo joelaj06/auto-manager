@@ -1,17 +1,20 @@
-import 'package:automanager/core/core.dart';
 import 'package:automanager/core/presentation/theme/app_theme.dart';
+import 'package:automanager/feature/auto_manager/presentation/customers/customers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:get/get.dart';
 import 'package:iconly/iconly.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
-import '../../../data/model/response/driver/driver_model.dart';
+import '../../../../../core/errors/failure.dart';
+import '../../../../../core/presentation/utils/utils.dart';
+import '../../../../../core/presentation/widgets/widgets.dart';
+import '../../../../../core/utils/data_formatter.dart';
+import '../../../data/model/response/customer/customer_model.dart';
 import '../../sales/widgets/modal_list_card.dart';
-import '../getx/driver_controller.dart';
 
-class DriversScreen extends GetView<DriverController> {
-  const DriversScreen({super.key});
+class CustomerScreen extends GetView<CustomerController> {
+  const CustomerScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -19,28 +22,51 @@ class DriversScreen extends GetView<DriverController> {
       appBar: AppBar(
         title: Obx(
           () => Text(
-              'Drivers${controller.totalCount.value == 0 ? '' : '(${controller.totalCount.value})'}'),
+              'Customers${controller.totalCount.value == 0 ? '' : '(${controller.totalCount.value})'}'),
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: controller.navigateToAddDriverScreen,
+        onPressed: controller.navigateToAddCustomerScreen,
         child: const Icon(IconlyLight.plus),
       ),
-      body: SizedBox(
-        child: _buildDriversList(context),
+      body: Column(
+        children: <Widget>[
+          _buildCustomerSearchField(context),
+          Expanded(
+            child: _buildCustomerList(context),
+          ),
+        ],
       ),
     );
   }
 
-  Widget _buildDriversList(BuildContext context) {
+  Widget _buildCustomerSearchField(BuildContext context) {
+    return Padding(
+      padding: AppPaddings.mA,
+      child: AppTextInputField(
+        onChanged: controller.onSearchFieldInputChanged,
+        hintText: 'Search Customer',
+        suffixIcon: GestureDetector(
+          onTap: () {
+            controller.onSearchQuerySubmitted();
+          },
+          child: const Icon(
+            IconlyLight.search,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCustomerList(BuildContext context) {
     return RefreshIndicator(
       onRefresh: () {
         return Future<void>.sync(() => controller.pagingController.refresh());
       },
-      child: PagedListView<int, Driver>(
+      child: PagedListView<int, Customer>(
           pagingController: controller.pagingController,
-          builderDelegate: PagedChildBuilderDelegate<Driver>(
-            itemBuilder: (BuildContext context, Driver driver, int index) {
+          builderDelegate: PagedChildBuilderDelegate<Customer>(
+            itemBuilder: (BuildContext context, Customer customer, int index) {
               return Slidable(
                 endActionPane: ActionPane(
                   motion: const DrawerMotion(),
@@ -50,7 +76,7 @@ class DriversScreen extends GetView<DriverController> {
                       icon: IconlyLight.edit,
                       label: 'Edit',
                       onPressed: (BuildContext context) {
-                        controller.navigateToUpdateDriverScreen(driver);
+                        controller.navigateToUpdateCustomerScreen(customer);
                       },
                     ),
                     SlidableAction(
@@ -62,18 +88,18 @@ class DriversScreen extends GetView<DriverController> {
                         await AppDialogs.showDialogWithButtons(
                           context,
                           onConfirmPressed: () =>
-                              controller.deleteTheDriver(driver),
+                              controller.deleteTheCustomer(customer.id),
                           content: const Text(
-                            'Are you sure you want to delete this driver?',
+                            'Are you sure you want to delete this customer?',
                             textAlign: TextAlign.center,
                           ),
-                          confirmText: 'Delete',
+                          confirmText: 'Logout',
                         );
                       },
                     ),
                   ],
                 ),
-                child: _buildRentalsListTile(context, index, driver),
+                child: _buildCustomersListTile(context, index, customer),
               );
             },
             firstPageErrorIndicatorBuilder: (BuildContext context) =>
@@ -96,7 +122,8 @@ class DriversScreen extends GetView<DriverController> {
     );
   }
 
-  Widget _buildRentalsListTile(BuildContext context, int index, Driver driver) {
+  Widget _buildCustomersListTile(
+      BuildContext context, int index, Customer customer) {
     return Padding(
       padding: AppPaddings.mH,
       child: Column(
@@ -106,20 +133,38 @@ class DriversScreen extends GetView<DriverController> {
               showModalBottomSheet<dynamic>(
                 context: context,
                 builder: (BuildContext context) => SizedBox(
-                  child: _buildDriverDetailModal(context, driver),
+                  child: _buildCustomerDetailModal(context, customer),
                 ),
               );
             },
             title: Text(
-              '${driver.user.firstName} ${driver.user.lastName}',
+              customer.name,
               style: const TextStyle(fontWeight: FontWeight.bold),
             ),
             subtitle: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Text(driver.user.email ?? 'No Email'),
-                Text(
-                  driver.user.phone ?? 'No Phone',
+                Row(
+                  children: <Widget>[
+                    const Icon(
+                      IconlyLight.message,
+                      size: 16,
+                    ),
+                    const AppSpacing(h: 5),
+                    Text(customer.email ?? 'No Email'),
+                  ],
+                ),
+                Row(
+                  children: <Widget>[
+                    const Icon(
+                      IconlyLight.call,
+                      size: 16,
+                    ),
+                    const AppSpacing(h: 5),
+                    Text(
+                      customer.phone ?? 'No Phone',
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -131,9 +176,9 @@ class DriversScreen extends GetView<DriverController> {
     );
   }
 
-  Widget _buildDriverDetailModal(
+  Widget _buildCustomerDetailModal(
     BuildContext context,
-    Driver driver,
+    Customer customer,
   ) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
@@ -141,32 +186,35 @@ class DriversScreen extends GetView<DriverController> {
         physics: const BouncingScrollPhysics(),
         child: Column(
           children: <Widget>[
-            ModalListCard(
-                title: 'First Name', value: driver.user.firstName ?? '--'),
-            ModalListCard(
-                title: 'Last Name', value: driver.user.lastName ?? '--'),
+            ModalListCard(title: 'Name', value: customer.name ?? '--'),
             ModalListCard(
               title: 'Email',
-              value: driver.user.email ?? '--',
+              value: customer.email ?? '--',
             ),
             ModalListCard(
               title: 'Phone',
-              value: driver.user.phone ?? '--',
+              value: customer.phone ?? '--',
             ),
             ModalListCard(
-              title: 'License',
-              value: driver.licenseNumber ?? '--',
+              title: 'Business',
+              value: customer.business ?? '--',
             ),
             ModalListCard(
-              title: 'License Expiry',
+              title: 'Occupation',
+              value: customer.occupation ?? '--',
+            ),
+            ModalListCard(
+              title: 'ID Number',
+              value: customer.identificationNumber ?? '--',
+            ),
+            ModalListCard(
+              title: 'Address',
+              value: customer.address ?? '--',
+            ),
+            ModalListCard(
+              title: 'Date of Birth',
               value: DataFormatter.formatDateToString(
-                  driver.licenceExpiryDate ?? '--'),
-            ),
-            ModalListCard(
-              title: 'Vehicle',
-              value:
-                  '${driver.vehicle?.make ?? ''} ${driver.vehicle?.model ?? ''} ${driver.vehicle?.color ?? ''} '
-                  '${driver.vehicle?.year ?? ''}',
+                  customer.dateOfBirth ?? '--'),
             ),
           ],
         ),

@@ -81,8 +81,17 @@ class RentalScreen extends GetView<RentalController> {
                             foregroundColor: Colors.red,
                             icon: IconlyLight.delete,
                             label: 'Delete',
-                            onPressed: (BuildContext context) {
-                              controller.deleteTheRental(rental);
+                            onPressed: (BuildContext context) async {
+                              await AppDialogs.showDialogWithButtons(
+                                context,
+                                onConfirmPressed: () =>
+                                    controller.deleteTheRental(rental),
+                                content: const Text(
+                                  'Are you sure you want to delete this rental?',
+                                  textAlign: TextAlign.center,
+                                ),
+                                confirmText: 'Delete',
+                              );
                             },
                           ),
                         ],

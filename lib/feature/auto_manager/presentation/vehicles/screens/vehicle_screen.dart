@@ -87,8 +87,18 @@ class VehicleScreen extends GetView<VehicleController> {
                       foregroundColor: Colors.red,
                       icon: IconlyLight.delete,
                       label: 'Delete',
-                      onPressed: (BuildContext context) {
-                        controller.deleteTheVehicle(vehicle.id!);
+                      onPressed: (BuildContext context) async {
+
+                        await AppDialogs.showDialogWithButtons(
+                          context,
+                          onConfirmPressed: () =>
+                              controller.deleteTheVehicle(vehicle.id!),
+                          content: const Text(
+                            'Are you sure you want to delete this vehicle?',
+                            textAlign: TextAlign.center,
+                          ),
+                          confirmText: 'Delete',
+                        );
                       },
                     ),
                   ],

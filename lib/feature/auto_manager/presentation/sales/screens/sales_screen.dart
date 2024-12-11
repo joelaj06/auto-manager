@@ -151,8 +151,17 @@ class SalesScreen extends GetView<SalesController> {
                             foregroundColor: Colors.red,
                             icon: IconlyLight.delete,
                             label: 'Delete',
-                            onPressed: (BuildContext context) {
-                              controller.deleteASale(sale.id);
+                            onPressed: (BuildContext context) async {
+                              await AppDialogs.showDialogWithButtons(
+                                context,
+                                onConfirmPressed: () =>
+                                    controller.deleteASale(sale.id),
+                                content: const Text(
+                                  'Are you sure you want to delete this sale?',
+                                  textAlign: TextAlign.center,
+                                ),
+                                confirmText: 'Delete',
+                              );
                             },
                           ),
                         ],

@@ -135,9 +135,19 @@ class AddRentalScreen extends GetView<RentalController> {
                                       IconlyLight.delete,
                                       color: Colors.red,
                                     ),
-                                    onPressed: () {
-                                      controller.removeExtension(
-                                        controller.rentalExtensions[index],
+                                    onPressed: () async {
+                                      await AppDialogs.showDialogWithButtons(
+                                        context,
+                                        onConfirmPressed: () =>
+                                            controller.removeExtension(
+                                          controller.rentalExtensions[index],
+                                        ),
+                                        content: const Text(
+                                          'Are you sure you want to remove this '
+                                              'extension?',
+                                          textAlign: TextAlign.center,
+                                        ),
+                                        confirmText: 'Remove',
                                       );
                                     },
                                   ),

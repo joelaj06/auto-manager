@@ -58,17 +58,8 @@ class DriversScreen extends GetView<DriverController> {
                       foregroundColor: Colors.red,
                       icon: IconlyLight.delete,
                       label: 'Delete',
-                      onPressed: (BuildContext context) async {
-                        await AppDialogs.showDialogWithButtons(
-                          context,
-                          onConfirmPressed: () =>
-                              controller.deleteTheDriver(driver),
-                          content: const Text(
-                            'Are you sure you want to delete this driver?',
-                            textAlign: TextAlign.center,
-                          ),
-                          confirmText: 'Delete',
-                        );
+                      onPressed: (BuildContext context) {
+                        controller.deleteTheDriver(driver);
                       },
                     ),
                   ],
