@@ -49,7 +49,9 @@ class DashboardScreen extends GetView<DashboardController> {
             Obx(
               () => _logoWrapper(
                 context,
-                child: controller.company.value.logoUrl != null &&
+                child: AppFlavorEnvironment.appFlavor ==
+                            FlavorEnvironment.automanager.name &&
+                        controller.company.value.logoUrl != null &&
                         controller.company.value.logoUrl != ''
                     ? CachedNetworkImage(
                         imageUrl: controller.company.value.logoUrl!,
@@ -336,15 +338,18 @@ class DashboardScreen extends GetView<DashboardController> {
   Widget _logoWrapper(BuildContext context, {required Widget child}) {
     return Padding(
       padding: AppPaddings.mA,
-      child: Container(
-        height: 50,
-        width: 50,
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(15),
-            border: Border.all(
-              color: context.colorScheme.secondary.withOpacity(0.4),
-            )),
-        child: child,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(15),
+        child: Container(
+          height: 50,
+          width: 50,
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(15),
+              border: Border.all(
+                color: context.colorScheme.secondary.withOpacity(0.4),
+              )),
+          child: child,
+        ),
       ),
     );
   }

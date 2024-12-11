@@ -84,6 +84,13 @@ flutter:
     - assets/
     - assets/images/
     - assets/gifs/
+    - assets/images/common/
+    - path: assets/images/automanager/
+      flavors:
+        - automanager
+    - path: assets/images/junat/
+      flavors:
+        - junat
 
   fonts:
     - family: Poppins

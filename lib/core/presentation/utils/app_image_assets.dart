@@ -1,10 +1,20 @@
 class AssetImages {
   AssetImages._();
-  static const String _imageSource = 'assets/images';
+
+  //junat images
+  static const String _junatSource = 'assets/images/junat';
+  static const String junatLogo = '$_junatSource/junat_logo.jpg';
+
+  //auto manager images
+  static const String _autoManagerSource = 'assets/images/automanager';
+  static const String appLogoBlack = '$_autoManagerSource/auto_manager_logo.png';
+  static const String appLogoWhite = '$_autoManagerSource/auto_manager_logoBW.png';
+
+
+  //shared images
+  static const String _imageSource = 'assets/images/common';
   static const String blackBmw = '$_imageSource/black-bmw.jpg';
   static const String openDoorCar = '$_imageSource/high-angle-new-car-with-back-door-open.jpg';
-  static const String appLogoBlack = '$_imageSource/automanager/auto_manager_logo.png';
-  static const String appLogoWhite = '$_imageSource/automanager/auto_manager_logoBW.png';
   static const String loginBackground = '$_imageSource/patten_bg.png';
   static const String success = '$_imageSource/done.png';
   static const String emptyList = '$_imageSource/empty_list.png';
