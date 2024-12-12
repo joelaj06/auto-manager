@@ -1,6 +1,5 @@
 import 'dart:async';
 
-
 import 'package:automanager/core/core.dart';
 import 'package:automanager/core/presentation/theme/app_theme.dart';
 import 'package:flutter/material.dart';
@@ -8,25 +7,25 @@ import 'package:get/get.dart';
 
 import '../utils/app_padding.dart';
 
-final Color primaryColor = Get.context!.colorScheme.primary;
+final Color primaryColor = Get.context!.colorScheme.secondaryContainer;
 
 class AppButton extends StatefulWidget {
-     AppButton(
+  AppButton(
       {required this.onPressed,
       this.loading = false,
       this.enabled = true,
       required this.text,
-        this.fontSize,
-        this.backgroundColor,
-        this.padding,
-        this.textColor,
+      this.fontSize,
+      this.backgroundColor,
+      this.padding,
+      this.textColor,
       super.key});
 
   final VoidCallback onPressed;
   final bool loading;
   final bool enabled;
   final String text;
-  late  Color? backgroundColor;
+  late Color? backgroundColor;
   final double? fontSize;
   final EdgeInsets? padding;
   final Color? textColor;
@@ -36,7 +35,6 @@ class AppButton extends StatefulWidget {
 }
 
 class _AppButtonState extends State<AppButton> {
-
   late Color backupColor;
 
   @override
@@ -45,7 +43,7 @@ class _AppButtonState extends State<AppButton> {
     super.initState();
   }
 
-  void changeColor(){
+  void changeColor() {
     setState(() {
       widget.backgroundColor = Colors.white;
     });
@@ -53,19 +51,21 @@ class _AppButtonState extends State<AppButton> {
 
   @override
   Widget build(BuildContext context) {
-    widget.backgroundColor = widget.backgroundColor ?? Color(primaryColor.value);
+    widget.backgroundColor =
+        widget.backgroundColor ?? Color(primaryColor.value);
     return Padding(
       padding: AppPaddings.mA,
       child: GestureDetector(
         onTap: () {
-           if(widget.loading || !widget.enabled){
-             return;
-           }
-           widget.onPressed();
+          if (widget.loading || !widget.enabled) {
+            return;
+          }
+          widget.onPressed();
           changeColor();
           Future<dynamic>.delayed(const Duration(milliseconds: 100), () {
             setState(() {
-              widget.backgroundColor = backupColor; // Restore to default color after tapping
+              widget.backgroundColor =
+                  backupColor; // Restore to default color after tapping
             });
           });
         },
@@ -75,7 +75,7 @@ class _AppButtonState extends State<AppButton> {
           decoration: BoxDecoration(
             color: widget.enabled
                 ? widget.backgroundColor
-                : context.colorScheme.inversePrimary,
+                : context.colorScheme.inversePrimary.withOpacity(0.4),
             borderRadius: BorderRadius.circular(15),
           ),
           duration: const Duration(
@@ -87,11 +87,11 @@ class _AppButtonState extends State<AppButton> {
               child: Text(
                 widget.text,
                 style: TextStyle(
-                    fontWeight: FontWeight.w400,
-                    color: widget.enabled || widget.loading
-                        ? Colors.white
-                        : context.colorScheme.onInverseSurface,
-                    fontSize: widget.fontSize?? 20,
+                  fontWeight: FontWeight.w400,
+                  color: widget.enabled && !widget.loading
+                      ? Colors.white
+                      : context.colorScheme.onPrimaryContainer.withOpacity(0.4),
+                  fontSize: widget.fontSize ?? 20,
                 ),
               ),
             ),

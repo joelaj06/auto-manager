@@ -34,6 +34,7 @@ class DashboardController extends GetxController {
   RxInt year = DateTime.now().year.obs;
   Rx<DateTime> selectedMonthYear = DateTime.now().obs;
   Rx<Company> company = Company.empty().obs;
+  RxString junatCompanyName = 'Junat Transport & Logistics'.obs;
 
   User loginResponse = User.empty();
 

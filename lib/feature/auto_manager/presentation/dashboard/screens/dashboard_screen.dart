@@ -1,4 +1,3 @@
-import 'package:automanager/core/core.dart';
 import 'package:automanager/core/presentation/theme/app_theme.dart';
 import 'package:automanager/feature/auto_manager/presentation/dashboard/dashboard.dart';
 import 'package:automanager/feature/auto_manager/presentation/dashboard/widget/dashboard_cards.dart';
@@ -10,6 +9,10 @@ import 'package:iconsax/iconsax.dart';
 import 'package:intl/intl.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
+
+import '../../../../../core/presentation/utils/utils.dart';
+import '../../../../../core/presentation/widgets/widgets.dart';
+import '../../../../../core/utils/utils.dart';
 
 class DashboardScreen extends GetView<DashboardController> {
   const DashboardScreen({super.key});
@@ -28,7 +31,10 @@ class DashboardScreen extends GetView<DashboardController> {
               alignment: Alignment.centerLeft,
               child: Obx(
                 () => Text(
-                  controller.company.value.name ?? 'Auto Manager',
+                  AppFlavorEnvironment.appFlavor ==
+                          FlavorEnvironment.automanager.name
+                      ? controller.company.value.name ?? 'Auto Manager'
+                      : controller.junatCompanyName.value,
                   textAlign: TextAlign.left,
                 ),
               ),
@@ -46,22 +52,24 @@ class DashboardScreen extends GetView<DashboardController> {
                 ),
               ),
             ),
-            Obx(
-              () => _logoWrapper(
-                context,
-                child: AppFlavorEnvironment.appFlavor ==
-                            FlavorEnvironment.automanager.name &&
-                        controller.company.value.logoUrl != null &&
-                        controller.company.value.logoUrl != ''
-                    ? CachedNetworkImage(
-                        imageUrl: controller.company.value.logoUrl!,
-                        errorWidget:
-                            (BuildContext context, String url, dynamic error) =>
-                                const Icon(Icons.error),
-                      )
-                    : const AppLogo(),
-              ),
-            ),
+            if (AppFlavorEnvironment.appFlavor ==
+                FlavorEnvironment.automanager.name)
+              Obx(
+                () => _logoWrapper(
+                  context,
+                  child: controller.company.value.logoUrl != null &&
+                          controller.company.value.logoUrl != ''
+                      ? CachedNetworkImage(
+                          imageUrl: controller.company.value.logoUrl!,
+                          errorWidget: (BuildContext context, String url,
+                                  dynamic error) =>
+                              const Icon(Icons.error),
+                        )
+                      : const AppLogo(),
+                ),
+              )
+            else
+              _logoWrapper(context, child: const AppLogo()),
           ],
         ),
         body: Column(

@@ -1,4 +1,6 @@
+import 'package:automanager/core/core.dart';
 import 'package:automanager/core/presentation/theme/app_color_scheme.dart';
+import 'package:automanager/core/presentation/theme/app_color_scheme_junat.dart';
 import 'package:automanager/core/presentation/theme/fonts.dart';
 import 'package:flutter/material.dart';
 
@@ -7,9 +9,18 @@ class AppTheme {
 
   static const TextTheme textTheme = TextTheme();
 
-  static ThemeData get light => _theme(AppColorScheme.lightScheme());
+  static bool isJunat =
+      AppFlavorEnvironment.appFlavor == FlavorEnvironment.junat.name;
 
-  static ThemeData get dark => _theme(AppColorScheme.darkScheme());
+  static ThemeData get light => _theme(isJunat
+      ? AppColorSchemeJunat.lightScheme()
+      : AppColorScheme.lightScheme());
+
+  static ThemeData get dark => _theme(
+        isJunat
+            ? AppColorSchemeJunat.darkScheme()
+            : AppColorScheme.darkScheme(),
+      );
 
   static ThemeData _theme(ColorScheme colorScheme) => ThemeData(
         useMaterial3: true,
@@ -29,12 +40,10 @@ class AppTheme {
             fontFamily: AppFonts.poppins,
           ),
         ),
-
         dividerTheme: DividerThemeData(
           color: colorScheme.outline.withOpacity(0.6),
           thickness: 1,
         ),
-
         scaffoldBackgroundColor: colorScheme.background,
         canvasColor: colorScheme.surface,
       );
