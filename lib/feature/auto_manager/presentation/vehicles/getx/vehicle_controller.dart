@@ -35,6 +35,8 @@ class VehicleController extends GetxController {
   RxString color = ''.obs;
   RxString plateNumber = ''.obs;
   RxString image = ''.obs;
+  RxBool isVehicleReleased = false.obs;
+  RxString status = ''.obs;
 
   //paging controller
   final PagingController<int, Vehicle> pagingController =
@@ -80,6 +82,7 @@ class VehicleController extends GetxController {
       color: color.value.isNotEmpty ? color.value : null,
       licensePlate: plateNumber.value.isNotEmpty ? plateNumber.value : null,
       image: image.value,
+      status: isVehicleReleased.value ? VehicleStatus.available.name : null,
     );
     isLoading(true);
     final Either<Failure, Vehicle> failureOrVehicle =
@@ -200,6 +203,10 @@ class VehicleController extends GetxController {
     image(vehicle.image);
   }
 
+  void toggleVehicleRelease(bool value) {
+    isVehicleReleased(value);
+  }
+
   void onMakeInputChanged(String value) {
     make(value);
   }
@@ -242,4 +249,9 @@ class VehicleController extends GetxController {
           validateField(model.value) == null &&
           validateField(year.value) == null)
       .obs;
+}
+
+enum VehicleStatus{
+  available,
+  rented,
 }

@@ -1,6 +1,7 @@
 import 'package:automanager/core/presentation/theme/app_theme.dart';
 import 'package:automanager/feature/auto_manager/presentation/presentation.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:iconly/iconly.dart';
@@ -33,6 +34,26 @@ class AddVehicleScreen extends GetView<VehicleController> {
           child: Column(
             children: <Widget>[
               _buildVehicleImage(context),
+              const AppSpacing(v: 10),
+              Visibility(
+                visible: args != null
+                    ? args.vehicle.status == VehicleStatus.rented.name
+                    : false,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    const Text(
+                      'Release Vehicle',
+                    ),
+                    Obx(
+                      () => Switch(
+                        value: controller.isVehicleReleased.value,
+                        onChanged: controller.toggleVehicleRelease,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
               const AppSpacing(v: 10),
               AppTextInputField(
                 labelText: 'Make',
