@@ -1,8 +1,8 @@
-import 'package:automanager/core/core.dart';
 import 'package:automanager/feature/authentication/data/models/request/user/user_request.dart';
 import 'package:automanager/feature/authentication/data/models/response/user/user_model.dart';
 import 'package:automanager/feature/auto_manager/data/data.dart';
-import 'package:automanager/feature/auto_manager/data/datasource/automanager_endpoints.dart';
+
+import '../../../../core/utils/app_http_client.dart';
 
 class AutoMangerRemoteDatasourceImpl implements AutoManagerRemoteDatasource {
   AutoMangerRemoteDatasourceImpl({required AppHTTPClient client})
@@ -424,5 +424,18 @@ class AutoMangerRemoteDatasourceImpl implements AutoManagerRemoteDatasource {
       grandTotalCount: total,
       metaData: metaData,
     );
+  }
+
+  @override
+  Future<Rental> removeExtension(
+      {required String rentalId,
+      required RemoveExtensionRequest removeExtensionRequest}) async {
+    final Map<String, dynamic> json = await _client.patch(
+      AutoManagerEndpoints.removeExtension(
+        rentalId,
+      ),
+      body: removeExtensionRequest.toJson(),
+    );
+    return Rental.fromJson(json);
   }
 }

@@ -22,7 +22,9 @@ class RentalController extends GetxController {
       required this.deleteRental,
       required this.fetchCustomers,
       required this.fetchVehicles,
-      required this.extendRental});
+      required this.extendRental,
+        required this.removeExtension,
+      });
 
   final FetchRentals fetchRentals;
   final AddRental addRental;
@@ -31,6 +33,7 @@ class RentalController extends GetxController {
   final FetchCustomers fetchCustomers;
   final FetchVehicles fetchVehicles;
   final ExtendRental extendRental;
+  final RemoveExtension removeExtension;
 
   //reactive variables
   RxInt totalCount = 0.obs;
@@ -64,6 +67,7 @@ class RentalController extends GetxController {
   RxString extendedAmount = ('0.0').obs;
   RxString extendedNotes = ''.obs;
   RxList<RentalExtension> rentalExtensions = <RentalExtension>[].obs;
+  RxBool isExtLoading = false.obs;
 
   //paging controller
   final PagingController<int, Rental> pagingController =
@@ -96,15 +100,32 @@ class RentalController extends GetxController {
     failureOrRental.fold((Failure failure) {
       AppSnack.show(message: failure.message, status: SnackStatus.error);
     }, (Rental rental) {
-      AppSnack.show(message: 'Rental Extended', status: SnackStatus.success);
       pagingController.refresh();
       Get.back();
+      AppSnack.show(message: 'Rental Extended', status: SnackStatus.success);
     });
   }
 
-  void removeExtension(RentalExtension extension) {
-    rentalExtensions.value = List<RentalExtension>.from(rentalExtensions);
-    rentalExtensions.remove(extension);
+  void removeTheExtension(RentalExtension extension, int index,String rentalId) async{
+    Get.back();
+    isLoading(true);
+    final RemoveExtensionRequest request = RemoveExtensionRequest(
+      rentalId: rentalId,
+      indexes: <int>[index],
+    );
+    final Either<Failure, Rental> failureOrRental =
+        await removeExtension(request);
+    failureOrRental.fold((Failure failure) {
+      isLoading(false);
+      AppSnack.show(message: failure.message, status: SnackStatus.error);
+    }, (Rental rental) {
+      isLoading(false);
+     rentalExtensions.value = List<RentalExtension>.from(rentalExtensions);
+     rentalExtensions.remove(extension);
+      AppSnack.show(message: 'Extension removed', status: SnackStatus.success);
+      pagingController.refresh();
+
+    });
   }
 
   void deleteTheRental(Rental rental) async {
@@ -136,7 +157,7 @@ class RentalController extends GetxController {
       receiptNumber: rental.receiptNumber,
       purpose: purpose.value.isNotEmpty ? purpose.value : null,
       note: note.value.isNotEmpty ? note.value : null,
-      extensions: rentalExtensions,
+    //  extensions: rentalExtensions,
     );
 
     final Either<Failure, Rental> failureOrRental =

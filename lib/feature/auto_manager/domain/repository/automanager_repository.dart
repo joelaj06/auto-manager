@@ -113,11 +113,13 @@ abstract interface class AutoManagerRepository {
     required CustomerRequest customerRequest,
   });
 
-  Future<Either<Failure,Vehicle>> addVehicle({required VehicleRequest vehicleRequest});
+  Future<Either<Failure, Vehicle>> addVehicle(
+      {required VehicleRequest vehicleRequest});
 
-  Future<Either<Failure,Vehicle>> updateVehicle({required VehicleRequest vehicleRequest});
+  Future<Either<Failure, Vehicle>> updateVehicle(
+      {required VehicleRequest vehicleRequest});
 
-  Future<Either<Failure,Vehicle>> deleteVehicle({required String vehicleId});
+  Future<Either<Failure, Vehicle>> deleteVehicle({required String vehicleId});
 
   Future<Either<Failure, User>> deleteUser({required String userId});
 
@@ -127,5 +129,6 @@ abstract interface class AutoManagerRepository {
     required String? query,
   });
 
-
+  Future<Either<Failure, Rental>> removeExtension(
+      {required String rentalId, required RemoveExtensionRequest removeExtensionRequest});
 }

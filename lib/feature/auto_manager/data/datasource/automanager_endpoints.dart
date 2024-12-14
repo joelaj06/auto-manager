@@ -18,7 +18,9 @@ class AutoManagerEndpoints {
   static String company(String companyId) => 'companies/$companyId';
 
   static const String sales = 'sales';
+
   static String sale(String saleId) => 'sales/$saleId';
+
   static String salesList({
     required int pageIndex,
     required int pageSize,
@@ -28,7 +30,9 @@ class AutoManagerEndpoints {
       'sales?pageIndex=$pageIndex&pageSize=$pageSize&startDate=$startDate&endDate=$endDate';
 
   static const String drivers = 'drivers';
+
   static String driver(String driverId) => 'drivers/$driverId';
+
   static String driversList({
     required int pageIndex,
     required int pageSize,
@@ -53,7 +57,8 @@ class AutoManagerEndpoints {
     required String? startDate,
     required String? endDate,
     required String? categoryId,
-  }) => 'expenses?pageIndex=$pageIndex&pageSize=$pageSize&startDate=$startDate&endDate=$endDate';
+  }) =>
+      'expenses?pageIndex=$pageIndex&pageSize=$pageSize&startDate=$startDate&endDate=$endDate';
 
   static String expense(String expenseId) => 'expenses/$expenseId';
 
@@ -67,12 +72,16 @@ class AutoManagerEndpoints {
 
   static String extendRental(String rentalId) => 'rentals/$rentalId/extend';
 
+  static String removeExtension(String rentalId) =>
+      'rentals/$rentalId/removeExtension';
+
   static String rentalList({
     required int pageIndex,
     required int pageSize,
     required String? startDate,
     required String? endDate,
-  }) => 'rentals?pageIndex=$pageIndex&pageSize=$pageSize&startDate='
+  }) =>
+      'rentals?pageIndex=$pageIndex&pageSize=$pageSize&startDate='
       '$startDate&endDate=$endDate';
 
   static const String customers = 'customers';
@@ -82,32 +91,24 @@ class AutoManagerEndpoints {
   static String customerList({
     required int pageIndex,
     required int pageSize,
-  }) => 'customers?pageIndex=$pageIndex&pageSize=$pageSize';
-
+  }) =>
+      'customers?pageIndex=$pageIndex&pageSize=$pageSize';
 
   static String user(String userId) => 'users/$userId';
 
   static const String users = 'users';
 
-  static  String usersList({
+  static String usersList({
     required int pageIndex,
     required int pageSize,
-  }) => 'users?pageIndex=$pageIndex&pageSize=$pageSize';
-
-
-
+  }) =>
+      'users?pageIndex=$pageIndex&pageSize=$pageSize';
 }
 
-
-
-class FilterParams{
-
-  static String userParams(
-      String endpoint,
-      final String? search){
-
+class FilterParams {
+  static String userParams(String endpoint, final String? search) {
     String allParams = '';
-    if(search != null && search.isNotEmpty){
+    if (search != null && search.isNotEmpty) {
       allParams = '$allParams&search=$search';
     }
     endpoint += allParams;
@@ -115,11 +116,11 @@ class FilterParams{
   }
 
   static String customerParams(
-      String endpoint,
-      final String? search,
-      ){
+    String endpoint,
+    final String? search,
+  ) {
     String allParams = '';
-    if(search != null && search.isNotEmpty){
+    if (search != null && search.isNotEmpty) {
       allParams = '$allParams&search=$search';
     }
     endpoint += allParams;
@@ -128,64 +129,55 @@ class FilterParams{
   }
 
   static String rentalParams(
-      String endpoint,
-      final String? search,
-      final String? vehicleId,
-      final String? customerId,
-      ){
-
+    String endpoint,
+    final String? search,
+    final String? vehicleId,
+    final String? customerId,
+  ) {
     String allParams = '';
-    if(search != null && search.isNotEmpty){
+    if (search != null && search.isNotEmpty) {
       allParams = '$allParams&search=$search';
     }
-    if(vehicleId != null && vehicleId.isNotEmpty){
+    if (vehicleId != null && vehicleId.isNotEmpty) {
       allParams = '$allParams&vehicleId=$vehicleId';
     }
-    if(customerId != null && customerId.isNotEmpty){
+    if (customerId != null && customerId.isNotEmpty) {
       allParams = '$allParams&renter=$customerId';
     }
 
     endpoint += allParams;
 
     return endpoint;
+  }
 
-      }
+  static String expenseParams(String endpoint, final String? categoryId) {
+    String allParams = '';
 
+    if (categoryId != null && categoryId.isNotEmpty) {
+      allParams = '$allParams&categoryId=$categoryId';
+    }
 
-  static String expenseParams(
-      String endpoint,
-      final String? categoryId
-      ){
-        String allParams = '';
+    endpoint += allParams;
 
-        if(categoryId != null && categoryId.isNotEmpty){
-          allParams = '$allParams&categoryId=$categoryId';
-        }
+    return endpoint;
+  }
 
-        endpoint += allParams;
+  static String salesParams(String endpoint, final String? driverId,
+      final String? search, final String? status) {
+    String allParams = '';
 
-        return endpoint;
-      }
- static String salesParams(
-      String endpoint,
-      final String? driverId,
-      final String? search,
-      final String? status
-      ){
-   String allParams = '';
+    if (driverId != null && driverId.isNotEmpty) {
+      allParams = '$allParams&driverId=$driverId';
+    }
+    if (search != null && search.isNotEmpty) {
+      allParams = '$allParams&search=$search';
+    }
+    if (status != null && status.isNotEmpty) {
+      allParams = '$allParams&status=$status';
+    }
 
-   if(driverId != null && driverId.isNotEmpty){
-     allParams = '$allParams&driverId=$driverId';
-   }
-   if(search != null && search.isNotEmpty){
-     allParams = '$allParams&search=$search';
-   }
-   if(status != null && status.isNotEmpty){
-     allParams = '$allParams&status=$status';
-   }
+    endpoint += allParams;
 
-   endpoint += allParams;
-
-   return endpoint;
+    return endpoint;
   }
 }

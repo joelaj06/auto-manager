@@ -4,7 +4,8 @@ import 'package:iconly/iconly.dart';
 class AppDialogs {
   AppDialogs._();
 
-  static Future<void> showDialogWithButtons(BuildContext context,{
+  static Future<void> showDialogWithButtons(
+    BuildContext context, {
     required VoidCallback onConfirmPressed,
     String? confirmText,
     required Widget content,
@@ -55,5 +56,58 @@ class AppDialogs {
         );
       },
     );
+  }
+
+  static Future<void> showLoadingDialog(
+    BuildContext context, {
+    required String content,
+    required bool isLoading,
+  }) async {
+    if (isLoading) {
+      await showGeneralDialog(
+        context: context,
+        barrierDismissible: false,
+        barrierLabel:
+            MaterialLocalizations.of(context).modalBarrierDismissLabel,
+        barrierColor: Colors.black54,
+        // Background color
+        transitionDuration: const Duration(milliseconds: 300),
+        // Animation duration
+        pageBuilder: (BuildContext context, Animation<double> animation,
+            Animation<double> secondaryAnimation) {
+          return Center(
+            child: Material(
+              color: Colors.transparent, // Makes the background transparent
+              child: AlertDialog(
+                content: Text(content),
+                icon: isLoading
+                    ? const CircularProgressIndicator()
+                    : const Icon(
+                        IconlyBold.info_circle,
+                        size: 50,
+                      ),
+                actions: <Widget>[
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Text('Close'),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+        transitionBuilder: (BuildContext context, Animation<double> animation,
+            Animation<double> secondaryAnimation, Widget child) {
+          // Custom transition animation
+          return ScaleTransition(
+            scale: CurvedAnimation(
+              parent: animation,
+              curve: Curves.easeInOut,
+            ),
+            child: child,
+          );
+        },
+      );
+    }
   }
 }

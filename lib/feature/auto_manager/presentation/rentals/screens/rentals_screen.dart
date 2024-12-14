@@ -227,6 +227,10 @@ class RentalScreen extends GetView<RentalController> {
                   DateTime.parse(rental.endDate!)),
             ),
             ModalListCard(
+              title: 'Rent Cost',
+              value: DataFormatter.getLocalCurrencyFormatter(context)
+                  .format(rental.cost ?? 0),
+            ),  ModalListCard(
               title: 'Amount Paid',
               value: DataFormatter.getLocalCurrencyFormatter(context)
                   .format(rental.amountPaid ?? 0),

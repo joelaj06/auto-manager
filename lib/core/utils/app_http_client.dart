@@ -85,6 +85,8 @@ class AppHTTPClient {
     }
   }
 
+
+
   //PUT
   Future<Map<String, dynamic>> put(String endpoint, {dynamic body}) async {
     // Filter out null values from the body
@@ -98,6 +100,30 @@ class AppHTTPClient {
     try {
       final http.Response response =
           await _client.put(uri, body: jsonEncode(filteredBody));
+      return _processResponse(response, endpoint);
+    } on SocketException {
+      throw FetchDataException('Connection problem', uri.toString());
+    } on TimeoutException {
+      throw ApiNotRespondingException('Request Timeout', uri.toString());
+    } on HttpException catch (_) {
+      throw ApiNotRespondingException(
+          'Server Cannot Be Reached', uri.toString());
+    }
+  }
+
+  //PATCH
+  Future<Map<String, dynamic>> patch(String endpoint, {dynamic body}) async {
+    // Filter out null values from the body
+    final Map<String, dynamic> filteredBody = filterNull(body);
+
+    final Uri uri = Uri.parse(baseUrl + endpoint);
+    AppLog.i('============================ ENDPOINT ========================');
+    AppLog.i(endpoint);
+    AppLog.i('====================== BODY SENT =========================');
+    AppLog.i(filteredBody);
+    try {
+      final http.Response response =
+      await _client.patch(uri, body: jsonEncode(filteredBody));
       return _processResponse(response, endpoint);
     } on SocketException {
       throw FetchDataException('Connection problem', uri.toString());

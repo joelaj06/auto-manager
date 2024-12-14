@@ -125,4 +125,7 @@ abstract interface class AutoManagerRemoteDatasource {
 
   Future<Vehicle> updateVehicle(
       {required VehicleRequest vehicleRequest, required String vehicleId});
+
+  Future<Rental> removeExtension(
+      {required String rentalId, required RemoveExtensionRequest removeExtensionRequest});
 }

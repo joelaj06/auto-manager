@@ -1,6 +1,4 @@
 import 'package:automanager/core/core.dart';
-import 'package:automanager/core/presentation/theme/app_color_scheme.dart';
-import 'package:automanager/core/presentation/theme/app_color_scheme_junat.dart';
 import 'package:automanager/core/presentation/theme/fonts.dart';
 import 'package:flutter/material.dart';
 

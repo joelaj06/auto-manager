@@ -139,12 +139,14 @@ class AddRentalScreen extends GetView<RentalController> {
                                       await AppDialogs.showDialogWithButtons(
                                         context,
                                         onConfirmPressed: () =>
-                                            controller.removeExtension(
+                                            controller.removeTheExtension(
                                           controller.rentalExtensions[index],
+                                          index,
+                                          args?.rental.id ?? '',
                                         ),
                                         content: const Text(
                                           'Are you sure you want to remove this '
-                                              'extension?',
+                                          'extension?',
                                           textAlign: TextAlign.center,
                                         ),
                                         confirmText: 'Remove',
@@ -244,7 +246,11 @@ class AddRentalScreen extends GetView<RentalController> {
         height: 70,
         child: Obx(
           () => AppButton(
-            text: arg != null ? 'Update' : 'Save',
+            text: controller.isLoading.value
+                ? 'Loading...'
+                : arg != null
+                    ? 'Update'
+                    : 'Save',
             onPressed: () {
               arg != null
                   ? controller.updateTheRental(arg.rental)
