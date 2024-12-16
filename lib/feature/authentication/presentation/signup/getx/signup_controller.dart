@@ -8,7 +8,8 @@ import '../../../data/models/models.dart';
 
 class SignUpController extends GetxController {
   SignUpController(
-      {required this.userSignUp, required this.verifyRegistrationOtp,
+      {required this.userSignUp,
+      required this.verifyRegistrationOtp,
       required this.loadUserSignupData});
 
   final UserSignUp userSignUp;
@@ -78,16 +79,19 @@ class SignUpController extends GetxController {
       (Failure failure) {
         wrongOtp(true);
         isLoading(false);
-        AppSnack.show(
-            message: failure.message, status: SnackStatus.error);
+        AppSnack.show(message: failure.message, status: SnackStatus.error);
       },
       (UserRegistration userRes) {
         wrongOtp(false);
         isLoading(false);
-        AppSnack.show(
-             message: userRes.message, status: SnackStatus.success);
-        saveCurrentRoute(AppRoutes.addCompany);
-        Get.toNamed<dynamic>(AppRoutes.addCompany);
+        AppSnack.show(message: userRes.message, status: SnackStatus.success);
+        if (AppFlavorEnvironment.appFlavor ==
+            FlavorEnvironment.automanager.name) {
+          saveCurrentRoute(AppRoutes.addCompany);
+          Get.toNamed<dynamic>(AppRoutes.addCompany);
+        } else {
+          Get.toNamed<dynamic>(AppRoutes.login);
+        }
       },
     );
   }
@@ -95,7 +99,8 @@ class SignUpController extends GetxController {
   Future<String> getCurrentPage() async {
     final String currentRoute =
         await _sharedPreferencesWrapper.getString(SharedPrefsKeys.currentRoute);
-    pageController = PageController(initialPage: currentRoute == AppRoutes.signup ? 1 : 0);
+    pageController =
+        PageController(initialPage: currentRoute == AppRoutes.signup ? 1 : 0);
     return currentRoute;
   }
 
@@ -112,6 +117,10 @@ class SignUpController extends GetxController {
       email: email.value.trim(),
       phone: phone.value.trim(),
       password: password.value,
+      company:
+          AppFlavorEnvironment.appFlavor == FlavorEnvironment.automanager.name
+              ? null
+              : '67602dc4c6d7de0a9dd8c284',
       confirmPassword: null,
       isActive: true,
       isVerified: false,
@@ -121,14 +130,12 @@ class SignUpController extends GetxController {
     failureOrUser.fold(
       (Failure failure) {
         isLoading(false);
-        AppSnack.show(
-             message: failure.message, status: SnackStatus.error);
+        AppSnack.show(message: failure.message, status: SnackStatus.error);
       },
       (UserRegistration userRes) {
         isLoading(false);
         registrationResponse(userRes);
-        AppSnack.show(
-           message: userRes.message, status: SnackStatus.success);
+        AppSnack.show(message: userRes.message, status: SnackStatus.success);
         navigatePages(1);
         saveCurrentRoute(AppRoutes.signup);
       },
@@ -151,7 +158,7 @@ class SignUpController extends GetxController {
   void otpVerificationCode(String value) {
     otpCode(value);
     if (otpCode.value.length == 6) {
-        verifyUserOtp();
+      verifyUserOtp();
     }
   }
 
