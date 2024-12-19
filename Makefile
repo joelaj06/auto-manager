@@ -1,5 +1,5 @@
 build_junat:
-	flutter build apk --release --split-per-abi --flavor junat
+	flutter build apk -t lib/main_junat.dart --release --split-per-abi --flavor junat
 
 get:
 	flutter pub get

@@ -4,12 +4,10 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 
 enum Environment { development, production }
 
+bool isTesting =
+    kIsWeb ? false : Platform.environment.containsKey('FLUTTER_TEST');
 
-
-bool isTesting = kIsWeb? false:Platform.environment.containsKey('FLUTTER_TEST');
-
-const String _env =
-    String.fromEnvironment('env.mode', defaultValue: 'dev');
+const String _env = String.fromEnvironment('env.mode', defaultValue: 'dev');
 
 Environment get environment {
   const Map<String, Environment> _envs = <String, Environment>{
@@ -26,7 +24,6 @@ Environment get environment {
 }
 
 extension EnvironmentX on Environment {
-
   bool get isDev => this == Environment.development;
 
   bool get isProduction => this == Environment.production;
@@ -49,14 +46,10 @@ extension EnvironmentX on Environment {
 
   String get url {
     return <Environment, String>{
-      Environment.development: 'http://192.168.100.12:3000/api/',
+      Environment.development:
+          'https://auto-manager-api-6yxs.onrender.com/api/',
+      // 'http://192.168.100.12:3000/api/',
       Environment.production: 'https://auto-manager-api-6yxs.onrender.com/api/',
     }[this]!;
   }
 }
-
-
-
-
-
-

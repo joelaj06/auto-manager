@@ -130,7 +130,7 @@ class LoginScreen extends GetView<LoginController> {
             () => AppButton(
               key: const Key('loginButton'),
               onPressed: () => controller.login(),
-              text: 'Login',
+              text: controller.isLoading.value ? 'Loading...' : 'Login',
               enabled:
                   !controller.isLoading.value && controller.formIsValid.value,
             ),
