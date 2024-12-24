@@ -42,7 +42,7 @@ class DashboardScreen extends GetView<DashboardController> {
           ),
           toolbarHeight: kToolbarHeight * 1.3,
           actions: <Widget>[
-            _logoWrapper(
+           /* _logoWrapper(
               context,
               child: IconButton(
                 onPressed: () {},
@@ -51,7 +51,7 @@ class DashboardScreen extends GetView<DashboardController> {
                   size: 28,
                 ),
               ),
-            ),
+            ),*/
             if (AppFlavorEnvironment.appFlavor ==
                 FlavorEnvironment.automanager.name)
               Obx(
