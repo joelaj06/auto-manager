@@ -265,27 +265,32 @@ class DashboardScreen extends GetView<DashboardController> {
   }
 
   Widget _buildWeeklyChart(BuildContext context) {
-    return SfCartesianChart(
-      plotAreaBorderWidth: 0,
-      title: const ChartTitle(
-        text: 'Weekly Sales',
-        alignment: ChartAlignment.near,
-      ),
-      primaryXAxis: const NumericAxis(
-        axisLine: AxisLine(width: 0),
-        labelPosition: ChartDataLabelPosition.outside,
-        majorTickLines: MajorTickLines(width: 0),
-        majorGridLines: MajorGridLines(width: 0),
-        labelFormat: 'Week {value}',
-      ),
-      primaryYAxis: NumericAxis(
-        isVisible: false,
-        numberFormat: NumberFormat.compactCurrency(
-          symbol: '',
-        ),
-      ),
-      series: _getRoundedColumnSeries(context),
-      tooltipBehavior: controller.tooltipBehavior,
+    return GetBuilder<DashboardController>(
+      id: 'salesForTheMonthData',
+      builder: (DashboardController controller) {
+        return SfCartesianChart(
+          plotAreaBorderWidth: 0,
+          title: const ChartTitle(
+            text: 'Weekly Sales',
+            alignment: ChartAlignment.near,
+          ),
+          primaryXAxis: const NumericAxis(
+            axisLine: AxisLine(width: 0),
+            labelPosition: ChartDataLabelPosition.outside,
+            majorTickLines: MajorTickLines(width: 0),
+            majorGridLines: MajorGridLines(width: 0),
+            labelFormat: 'Week {value}',
+          ),
+          primaryYAxis: NumericAxis(
+            isVisible: false,
+            numberFormat: NumberFormat.compactCurrency(
+              symbol: '',
+            ),
+          ),
+          series: _getRoundedColumnSeries(context),
+          tooltipBehavior: controller.tooltipBehavior,
+        );
+      }
     );
   }
 

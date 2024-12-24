@@ -160,6 +160,7 @@ class DashboardController extends GetxController {
         chartSeriesController
             ?.updateDataSource(); // Update data after generating
       }
+      update(<Object>['salesForTheMonthData']);
       isDateFilter(false);
     });
   }
