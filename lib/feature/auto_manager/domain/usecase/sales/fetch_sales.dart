@@ -16,6 +16,7 @@ class FetchSales implements UseCase<ListPage<Sale>, PageParams>{
       startDate: params.startDate,
       endDate: params.endDate,
       driverId: params.driverId,
+      vehicleId: params.vehicleId,
       status: params.status,
       query: params.query
     );

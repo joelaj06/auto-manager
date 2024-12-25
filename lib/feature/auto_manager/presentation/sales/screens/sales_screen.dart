@@ -1,6 +1,7 @@
 import 'package:automanager/core/core.dart';
 import 'package:automanager/core/presentation/theme/app_theme.dart';
 import 'package:automanager/feature/auto_manager/presentation/sales/getx/sales_controller.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:get/get.dart';
@@ -389,8 +390,8 @@ class SalesScreen extends GetView<SalesController> {
           children: <Widget>[
             const Align(
               alignment: Alignment.center,
-              child: Text('Filter',
-                  style: TextStyle(fontWeight: FontWeight.bold)),
+              child:
+                  Text('Filter', style: TextStyle(fontWeight: FontWeight.bold)),
             ),
             const AppSpacing(
               v: 20,
@@ -411,19 +412,37 @@ class SalesScreen extends GetView<SalesController> {
                               context,
                               isExpanded:
                                   controller.expandableList.first.isExpanded,
-                              title: controller.expandableList.first.headerValue,
+                              title:
+                                  controller.expandableList.first.headerValue,
                               icon: controller.expandableList.first.icon,
                               body: Obx(
                                 () => ListView.separated(
                                   shrinkWrap: true,
-                                  itemCount:
-                                      controller.expandableList.first.body.length,
-                                  itemBuilder: (BuildContext context, int index) {
-                                    return ListTile(
-                                      title: Text(
-                                        '${controller.expandableList.first.body[index].user.firstName} '
-                                        '${controller.expandableList.first.body[index].user.lastName}',
-                                        style: const TextStyle(fontSize: 12),),
+                                  itemCount: controller
+                                      .expandableList.first.body.length,
+                                  itemBuilder:
+                                      (BuildContext context, int index) {
+                                    return Obx(
+                                      () => ListTile(
+                                        onTap: () {
+                                          controller.onFilteredDriverSelected(
+                                              controller.expandableList.first
+                                                  .body[index].id);
+                                        },
+                                        trailing:
+                                        controller.filteredDriverId.value ==
+                                            controller.expandableList.first
+                                                .body[index].id
+                                                ? const Icon(
+                                                    Icons.check_circle,
+                                                  )
+                                                : null,
+                                        title: Text(
+                                          '${controller.expandableList.first.body[index].user.firstName} '
+                                          '${controller.expandableList.first.body[index].user.lastName}',
+                                          style: const TextStyle(fontSize: 12),
+                                        ),
+                                      ),
                                     );
                                   },
                                   separatorBuilder:
@@ -443,18 +462,38 @@ class SalesScreen extends GetView<SalesController> {
                               body: Obx(
                                 () => ListView.separated(
                                   shrinkWrap: true,
-                                  itemCount:
-                                      controller.expandableList.last.body.length,
-                                  itemBuilder: (BuildContext context, int index) {
-                                    return ListTile(
-                                      visualDensity: const VisualDensity(vertical: -4,
-                                      horizontal: -4,),
+                                  itemCount: controller
+                                      .expandableList.last.body.length,
+                                  itemBuilder:
+                                      (BuildContext context, int index) {
+                                    return Obx(
+                                      () => ListTile(
+                                        onTap: () {
+                                          controller.onFilteredVehicleSelected(
+                                            controller.expandableList.last
+                                                .body[index].id,
+                                          );
+                                        },
+                                        trailing: controller
+                                                    .filteredVehicleId.value ==
+                                                controller.expandableList.last
+                                                    .body[index].id
+                                            ? const Icon(
+                                                Icons.check_circle,
+                                              )
+                                            : null,
+                                        visualDensity: const VisualDensity(
+                                          vertical: -4,
+                                          horizontal: -4,
+                                        ),
                                         title: Text(
-                                            '${controller.expandableList.last.body[index].model ?? ''} '
-                                                '${controller.expandableList.last.body[index].make ?? ''}'
-                                            ' ${controller.expandableList.last.body[index].color ?? ''} '
-                                            '${controller.expandableList.last.body[index].year ?? ''}',
-                                        style: const TextStyle(fontSize: 12),),
+                                          '${controller.expandableList.last.body[index].model ?? ''} '
+                                          '${controller.expandableList.last.body[index].make ?? ''}'
+                                          ' ${controller.expandableList.last.body[index].color ?? ''} '
+                                          '${controller.expandableList.last.body[index].year ?? ''}',
+                                          style: const TextStyle(fontSize: 12),
+                                        ),
+                                      ),
                                     );
                                   },
                                   separatorBuilder:
@@ -468,6 +507,34 @@ class SalesScreen extends GetView<SalesController> {
                           ],
                   );
                 }),
+            const AppSpacing(
+              v: 20,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Expanded(
+                  child: OutlinedButton(
+                    onPressed: controller.resetFilters,
+                    child: const Text('Reset'),
+                  ),
+                ),
+                const AppSpacing(
+                  h: 10,
+                ),
+                Expanded(
+                  child: AppButton(
+                    padding: const EdgeInsets.all(12),
+                    onPressed: () {
+                      controller.pagingController.refresh();
+                      Get.back();
+                    },
+                    text: 'Apply',
+                    fontSize: 12,
+                  ),
+                ),
+              ],
+            )
           ],
         ),
       ),

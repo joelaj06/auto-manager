@@ -53,6 +53,7 @@ class AutoMangerRemoteDatasourceImpl implements AutoManagerRemoteDatasource {
       required String? startDate,
       required String? endDate,
       required String? driverId,
+      required String? vehicleId,
       required String? status,
       required String? query}) async {
     final Map<String, dynamic> json = await _client.get(
@@ -64,7 +65,7 @@ class AutoMangerRemoteDatasourceImpl implements AutoManagerRemoteDatasource {
               endDate: endDate),
           driverId,
           query,
-          status),
+          status,vehicleId),
     );
     final List<dynamic> items = json['items'] as List<dynamic>;
     final List<Sale> sales =
@@ -141,6 +142,7 @@ class AutoMangerRemoteDatasourceImpl implements AutoManagerRemoteDatasource {
     required String? startDate,
     required String? endDate,
     required String? categoryId,
+    required String? vehicleId,
   }) async {
     final Map<String, dynamic> json = await _client.get(
       FilterParams.expenseParams(
@@ -150,7 +152,8 @@ class AutoMangerRemoteDatasourceImpl implements AutoManagerRemoteDatasource {
               startDate: startDate,
               endDate: endDate,
               categoryId: categoryId),
-          categoryId),
+          categoryId,vehicleId,
+      ),
     );
     final List<dynamic> items = json['items'] as List<dynamic>;
     final List<Expense> expenses =

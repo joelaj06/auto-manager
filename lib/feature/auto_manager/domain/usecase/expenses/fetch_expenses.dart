@@ -15,6 +15,7 @@ class FetchExpenses implements UseCase<ListPage<Expense>, PageParams> {
       startDate: params.startDate,
       endDate: params.endDate,
       categoryId: params.categoryId,
+      vehicleId: params.vehicleId,
     );
   }
 

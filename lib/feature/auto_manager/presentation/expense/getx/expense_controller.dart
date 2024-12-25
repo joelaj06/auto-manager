@@ -3,8 +3,10 @@ import 'package:automanager/feature/auto_manager/presentation/expense/arguments/
 import 'package:automanager/feature/auto_manager/presentation/presentation.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
+import 'package:ionicons/ionicons.dart';
 
 import '../../../data/model/model.dart';
 import '../../../domain/usecase/expenses/expense.dart';
@@ -39,6 +41,12 @@ class ExpenseController extends GetxController {
   RxList<ExpenseCategory> expenseCategories = <ExpenseCategory>[].obs;
   Rx<TextEditingController> dateController = TextEditingController().obs;
   Rx<Expense> expense = Expense.empty().obs;
+  RxBool isDriversLoading = false.obs;
+  RxBool isVehiclesLoading = false.obs;
+  RxList<ExpandableItem<dynamic>> expandableList =
+      <ExpandableItem<dynamic>>[].obs;
+  RxString filteredVehicleId = ''.obs;
+  RxString filteredCategoryId = ''.obs;
 
   //paging controller
   final PagingController<int, Expense> pagingController =
@@ -48,6 +56,7 @@ class ExpenseController extends GetxController {
 
   @override
   void onInit() {
+    generateExpandableItems();
     pagingController.addPageRequestListener((int pageKey) {
       getAllExpenses(pageKey);
     });
@@ -65,6 +74,39 @@ class ExpenseController extends GetxController {
     clearFields();
   }
 
+  void resetFilters() {
+    filteredCategoryId('');
+    filteredVehicleId('');
+    //Get.back();
+  }
+
+  void onFilteredVehicleSelected(String vehicleId) {
+    filteredVehicleId(vehicleId);
+  }
+
+  void onFilteredCategorySelected(String categoryId) {
+    filteredCategoryId(categoryId);
+  }
+
+  void onExpansionCallBack(int index) {
+    expandableList[index].isExpanded = !expandableList[index].isExpanded;
+    update(<Object>['filter']);
+  }
+
+  void generateExpandableItems() {
+    expandableList.value = <ExpandableItem<dynamic>>[
+      ExpandableItem<List<Vehicle>>(
+          body: salesController.vehicles,
+          headerValue: 'Vehicle',
+          icon: Ionicons.speedometer),
+      ExpandableItem<List<ExpenseCategory>>(
+        body: expenseCategories,
+        headerValue: 'Expense Category',
+        icon: Icons.category,
+      ),
+    ];
+  }
+
   void getExpenseData(Expense exp) {
     expense(exp);
     dateController.value.text = DataFormatter.formatDateToString(
@@ -73,11 +115,11 @@ class ExpenseController extends GetxController {
   }
 
   void updateTheExpense(String expenseId) async {
-
     isLoading(true);
     final UpdateExpenseRequest expenseRequest = UpdateExpenseRequest(
       id: expenseId,
-      description: description.value.isNotEmpty ? description.value.trim() : null,
+      description:
+          description.value.isNotEmpty ? description.value.trim() : null,
       amount: amount.value > 0 ? amount.value : null,
       vehicleId: (selectedVehicle.value.id ?? '').isNotEmpty
           ? selectedVehicle.value.id
@@ -89,7 +131,6 @@ class ExpenseController extends GetxController {
           ? selectedDate.value.toIso8601String()
           : null,
     );
-    print(expenseRequest);
 
     final Either<Failure, Expense> failureOrExpense =
         await updateExpense(expenseRequest);
@@ -141,7 +182,9 @@ class ExpenseController extends GetxController {
       amount: amount.value,
       description: description.value,
       incurredBy: null,
-      vehicleId: (selectedVehicle.value.id?? '').isEmpty ? null : selectedVehicle.value.id,
+      vehicleId: (selectedVehicle.value.id ?? '').isEmpty
+          ? null
+          : selectedVehicle.value.id,
       date: selectedDate.value.toIso8601String(),
     );
     final Either<Failure, Expense> failureOrExpense =
@@ -207,7 +250,11 @@ class ExpenseController extends GetxController {
         pageSize: 10,
         startDate: startDate.value.toIso8601String(),
         endDate: endDate.value.toIso8601String(),
-        categoryId: null,
+        categoryId: filteredCategoryId.value.isNotEmpty
+            ? filteredCategoryId.value
+            : null,
+        vehicleId:
+            filteredVehicleId.value.isNotEmpty ? filteredVehicleId.value : null,
       ),
     );
 
@@ -328,7 +375,8 @@ class ExpenseController extends GetxController {
 
   RxBool get amountIsValid =>
       (validateAmount(amount.value.toStringAsFixed(2)) == null ||
-      expense.value.amount! >= 0).obs;
+              expense.value.amount! >= 0)
+          .obs;
 
   RxBool get expenseFormIsValid =>
       (validateAmount(amount.value.toStringAsFixed(2)) == null &&

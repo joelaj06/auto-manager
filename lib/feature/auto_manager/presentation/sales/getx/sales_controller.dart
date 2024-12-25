@@ -47,6 +47,8 @@ class SalesController extends GetxController
   RxBool isVehiclesLoading = false.obs;
   RxList<ExpandableItem<dynamic>> expandableList =
       <ExpandableItem<dynamic>>[].obs;
+  RxString filteredVehicleId = ''.obs;
+  RxString filteredDriverId = ''.obs;
 
   //paging controller
   final PagingController<int, Sale> pagingController =
@@ -88,6 +90,21 @@ class SalesController extends GetxController
     resetFields();
   }
 
+  void resetFilters() {
+    filteredDriverId('');
+    filteredVehicleId('');
+    //Get.back();
+  }
+
+  void onFilteredVehicleSelected(String vehicleId) {
+    filteredVehicleId(vehicleId);
+
+  }
+
+  void onFilteredDriverSelected(String driverId) {
+    filteredDriverId(driverId);
+  }
+
   void onExpansionCallBack(int index) {
     expandableList[index].isExpanded = !expandableList[index].isExpanded;
     update(<Object>['filter']);
@@ -96,13 +113,9 @@ class SalesController extends GetxController
   void generateExpandableItems() {
     expandableList.value = <ExpandableItem<dynamic>>[
       ExpandableItem<List<Driver>>(
-          body: drivers,
-          headerValue: 'Driver',
-          icon: IconlyBold.discovery),
+          body: drivers, headerValue: 'Driver', icon: IconlyBold.discovery),
       ExpandableItem<List<Vehicle>>(
-          body: vehicles,
-          headerValue: 'Vehicle',
-          icon: Ionicons.speedometer),
+          body: vehicles, headerValue: 'Vehicle', icon: Ionicons.speedometer),
     ];
   }
 
@@ -243,10 +256,11 @@ class SalesController extends GetxController
       pageSize: 10,
       startDate: startDate.value.toIso8601String(),
       endDate: endDate.value.toIso8601String(),
-      // driverId: driverId.value,
-      // status: status.value,
+      driverId: filteredDriverId.value,
+      vehicleId: filteredVehicleId.value,
       query: query.value,
     ));
+
     failureOrSales.fold((Failure failure) {
       pagingController.error = (failure);
     }, (ListPage<Sale> newPage) {

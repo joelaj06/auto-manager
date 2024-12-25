@@ -47,6 +47,7 @@ class AutoManagerRepositoryImpl extends Repository
     required String? startDate,
     required String? endDate,
     required String? driverId,
+    required String? vehicleId,
     required String? status,
     required String? query}) {
     return makeRequest(
@@ -56,6 +57,7 @@ class AutoManagerRepositoryImpl extends Repository
         startDate: startDate,
         endDate: endDate,
         driverId: driverId,
+        vehicleId: vehicleId,
         status: status,
         query: query,
       ),
@@ -101,13 +103,16 @@ class AutoManagerRepositoryImpl extends Repository
         required int pageSize,
         required String? startDate,
         required String? endDate,
-        required String? categoryId}) {
+        required String? categoryId,
+        required String? vehicleId,
+      }) {
     return makeRequest(autoManagerRemoteDataSource.fetchExpenses(
       pageIndex: pageIndex,
       pageSize: pageSize,
       startDate: startDate,
       endDate: endDate,
       categoryId: categoryId,
+      vehicleId: vehicleId,
     ));
   }
 

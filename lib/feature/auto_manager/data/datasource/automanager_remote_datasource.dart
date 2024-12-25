@@ -21,6 +21,7 @@ abstract interface class AutoManagerRemoteDatasource {
     required String? startDate,
     required String? endDate,
     required String? driverId,
+    required String? vehicleId,
     required String? status,
     required String? query,
   });
@@ -47,6 +48,7 @@ abstract interface class AutoManagerRemoteDatasource {
     required String? startDate,
     required String? endDate,
     required String? categoryId,
+    required String? vehicleId,
   });
 
   Future<List<ExpenseCategory>> fetchExpenseCategories();

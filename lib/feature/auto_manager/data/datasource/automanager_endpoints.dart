@@ -150,8 +150,13 @@ class FilterParams {
     return endpoint;
   }
 
-  static String expenseParams(String endpoint, final String? categoryId) {
+  static String expenseParams(String endpoint, final String? categoryId,
+      final String? vehicleId) {
     String allParams = '';
+
+    if(vehicleId != null && vehicleId.isNotEmpty) {
+      allParams = '$allParams&vehicleId=$vehicleId';
+    }
 
     if (categoryId != null && categoryId.isNotEmpty) {
       allParams = '$allParams&categoryId=$categoryId';
@@ -163,8 +168,12 @@ class FilterParams {
   }
 
   static String salesParams(String endpoint, final String? driverId,
-      final String? search, final String? status) {
+      final String? search, final String? status, final String? vehicleId) {
     String allParams = '';
+
+    if(vehicleId != null && vehicleId.isNotEmpty) {
+      allParams = '$allParams&vehicleId=$vehicleId';
+    }
 
     if (driverId != null && driverId.isNotEmpty) {
       allParams = '$allParams&driverId=$driverId';
