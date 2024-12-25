@@ -173,7 +173,9 @@ class VehicleScreen extends GetView<VehicleController> {
                   ),
                   child: Text(
                     vehicle.rentalStatus == true ? 'Rented' : 'Available',
-                    style: const TextStyle(fontSize: 12),
+                    style: const TextStyle(fontSize: 12,
+                    color: Colors.white,
+                    ),
                   ),
                 ),
               ],

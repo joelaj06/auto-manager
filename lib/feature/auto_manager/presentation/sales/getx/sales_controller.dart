@@ -4,7 +4,9 @@ import 'package:automanager/feature/auto_manager/domain/domain.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:iconly/iconly.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
+import 'package:ionicons/ionicons.dart';
 
 class SalesController extends GetxController
     with GetSingleTickerProviderStateMixin {
@@ -41,6 +43,10 @@ class SalesController extends GetxController
   RxString vehicleId = ''.obs;
   RxList<Driver> drivers = <Driver>[].obs;
   RxList<Vehicle> vehicles = <Vehicle>[].obs;
+  RxBool isDriversLoading = false.obs;
+  RxBool isVehiclesLoading = false.obs;
+  RxList<ExpandableItem<dynamic>> expandableList =
+      <ExpandableItem<dynamic>>[].obs;
 
   //paging controller
   final PagingController<int, Sale> pagingController =
@@ -51,6 +57,7 @@ class SalesController extends GetxController
 
   @override
   void onInit() {
+    generateExpandableItems();
     pagingController.addPageRequestListener((int pageKey) {
       getSales(pageKey);
     });
@@ -75,14 +82,31 @@ class SalesController extends GetxController
     super.onClose();
   }
 
-
   void loadDependencies() {
     fetchAllVehicles();
     fetchAllDrivers();
     resetFields();
   }
 
-  void deleteASale(String saleId) async{
+  void onExpansionCallBack(int index) {
+    expandableList[index].isExpanded = !expandableList[index].isExpanded;
+    update(<Object>['filter']);
+  }
+
+  void generateExpandableItems() {
+    expandableList.value = <ExpandableItem<dynamic>>[
+      ExpandableItem<List<Driver>>(
+          body: drivers,
+          headerValue: 'Driver',
+          icon: IconlyBold.discovery),
+      ExpandableItem<List<Vehicle>>(
+          body: vehicles,
+          headerValue: 'Vehicle',
+          icon: Ionicons.speedometer),
+    ];
+  }
+
+  void deleteASale(String saleId) async {
     isLoading(true);
     final Either<Failure, Sale> failureOrSale = await deleteSale(saleId);
     failureOrSale.fold(
@@ -100,15 +124,13 @@ class SalesController extends GetxController
     );
   }
 
-  void resetFields(){
+  void resetFields() {
     amount.value = '0.0';
     vehicleId.value = '';
     selectedVehicle.value = Vehicle.empty();
     selectedDriver.value = Driver.empty();
     driverId.value = '';
   }
-
-
 
   void onSaleSaved() async {
     isLoading(true);
@@ -130,8 +152,8 @@ class SalesController extends GetxController
       },
       (Sale sale) {
         isLoading(false);
-         Get.back<dynamic>(result: sale);
-         endDate(DateTime.now());
+        Get.back<dynamic>(result: sale);
+        endDate(DateTime.now());
         pagingController.refresh();
       },
     );
@@ -171,7 +193,7 @@ class SalesController extends GetxController
 
   void navigateToAddSalesScreen() async {
     final dynamic res = await Get.toNamed(AppRoutes.addSale);
-    if(res != null) {
+    if (res != null) {
       AppSnack.show(
         message: 'Sale added successfully',
         status: SnackStatus.success,
@@ -221,8 +243,8 @@ class SalesController extends GetxController
       pageSize: 10,
       startDate: startDate.value.toIso8601String(),
       endDate: endDate.value.toIso8601String(),
-     // driverId: driverId.value,
-     // status: status.value,
+      // driverId: driverId.value,
+      // status: status.value,
       query: query.value,
     ));
     failureOrSales.fold((Failure failure) {
@@ -297,8 +319,23 @@ class SalesController extends GetxController
     return errorMessage;
   }
 
-  RxBool get saleFormIsValid =>
-      (validateAmount(amount.value) == null &&
-      validateField(driverId.value) == null &&
-      validateField(vehicleId.value) == null).obs;
+  RxBool get saleFormIsValid => (validateAmount(amount.value) == null &&
+          validateField(driverId.value) == null &&
+          validateField(vehicleId.value) == null)
+      .obs;
+}
+
+// stores ExpansionPanel state information
+class ExpandableItem<T> {
+  ExpandableItem({
+    required this.body,
+    required this.headerValue,
+    this.isExpanded = false,
+    required this.icon,
+  });
+
+  T body;
+  String headerValue;
+  bool isExpanded;
+  IconData icon;
 }

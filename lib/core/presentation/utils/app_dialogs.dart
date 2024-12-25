@@ -36,7 +36,10 @@ class AppDialogs {
                   child: const Text('Cancel'),
                 ),
                 TextButton(
-                  onPressed: onConfirmPressed,
+                  onPressed: () {
+                    onConfirmPressed();
+                    Navigator.pop(context);
+                  },
                   child: Text(confirmText ?? 'Ok'),
                 ),
               ],

@@ -66,7 +66,16 @@ class SalesScreen extends GetView<SalesController> {
             icon: const Icon(IconlyLight.search),
           ),
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              showModalBottomSheet<dynamic>(
+                context: context,
+                builder: (BuildContext context) => SizedBox(
+                  child: _buildFilterModal(
+                    context,
+                  ),
+                ),
+              );
+            },
             icon: const Icon(IconlyLight.filter),
           ),
         ],
@@ -367,6 +376,136 @@ class SalesScreen extends GetView<SalesController> {
           ),
         ),
       ],
+    );
+  }
+
+  //filter
+  Widget _buildFilterModal(BuildContext context) {
+    controller.loadDependencies();
+    return SingleChildScrollView(
+      child: Padding(
+        padding: AppPaddings.mA,
+        child: Column(
+          children: <Widget>[
+            const Align(
+              alignment: Alignment.center,
+              child: Text('Filter',
+                  style: TextStyle(fontWeight: FontWeight.bold)),
+            ),
+            const AppSpacing(
+              v: 20,
+            ),
+            GetBuilder<SalesController>(
+                id: 'filter',
+                builder: (_) {
+                  return ExpansionPanelList(
+                    expansionCallback: (int panelIndex, bool isExpanded) {
+                      controller.onExpansionCallBack(panelIndex);
+                    },
+                    materialGapSize: 10,
+                    expandedHeaderPadding: EdgeInsets.zero,
+                    children: controller.expandableList.isEmpty
+                        ? <ExpansionPanel>[]
+                        : <ExpansionPanel>[
+                            _buildExpansionPanel(
+                              context,
+                              isExpanded:
+                                  controller.expandableList.first.isExpanded,
+                              title: controller.expandableList.first.headerValue,
+                              icon: controller.expandableList.first.icon,
+                              body: Obx(
+                                () => ListView.separated(
+                                  shrinkWrap: true,
+                                  itemCount:
+                                      controller.expandableList.first.body.length,
+                                  itemBuilder: (BuildContext context, int index) {
+                                    return ListTile(
+                                      title: Text(
+                                        '${controller.expandableList.first.body[index].user.firstName} '
+                                        '${controller.expandableList.first.body[index].user.lastName}',
+                                        style: const TextStyle(fontSize: 12),),
+                                    );
+                                  },
+                                  separatorBuilder:
+                                      (BuildContext context, int index) {
+                                    return const Divider();
+                                  },
+                                ),
+                              ),
+                              isLoading: controller.isDriversLoading.value,
+                            ),
+                            _buildExpansionPanel(
+                              context,
+                              isExpanded:
+                                  controller.expandableList.last.isExpanded,
+                              title: controller.expandableList.last.headerValue,
+                              icon: controller.expandableList.last.icon,
+                              body: Obx(
+                                () => ListView.separated(
+                                  shrinkWrap: true,
+                                  itemCount:
+                                      controller.expandableList.last.body.length,
+                                  itemBuilder: (BuildContext context, int index) {
+                                    return ListTile(
+                                      visualDensity: const VisualDensity(vertical: -4,
+                                      horizontal: -4,),
+                                        title: Text(
+                                            '${controller.expandableList.last.body[index].model ?? ''} '
+                                                '${controller.expandableList.last.body[index].make ?? ''}'
+                                            ' ${controller.expandableList.last.body[index].color ?? ''} '
+                                            '${controller.expandableList.last.body[index].year ?? ''}',
+                                        style: const TextStyle(fontSize: 12),),
+                                    );
+                                  },
+                                  separatorBuilder:
+                                      (BuildContext context, int index) {
+                                    return const Divider();
+                                  },
+                                ),
+                              ),
+                              isLoading: controller.isVehiclesLoading.value,
+                            ),
+                          ],
+                  );
+                }),
+          ],
+        ),
+      ),
+    );
+  }
+
+  ExpansionPanel _buildExpansionPanel(
+    BuildContext context, {
+    required bool isExpanded,
+    required String title,
+    required IconData icon,
+    required Widget body,
+    required bool isLoading,
+  }) {
+    return ExpansionPanel(
+      canTapOnHeader: true,
+      isExpanded: isExpanded,
+      backgroundColor: context.colorScheme.surface,
+      headerBuilder: (BuildContext context, bool isExpanded) {
+        return Padding(
+          padding: AppPaddings.mA,
+          child: Text.rich(
+            TextSpan(
+              children: <InlineSpan>[
+                WidgetSpan(child: Icon(icon)),
+                const WidgetSpan(child: AppSpacing(h: 10)),
+                TextSpan(
+                  text: title,
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: context.colorScheme.onSurface),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+      body: isLoading ? const Center(child: CircularProgressIndicator()) : body,
     );
   }
 }
