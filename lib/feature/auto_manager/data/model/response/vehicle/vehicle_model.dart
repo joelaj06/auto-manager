@@ -23,7 +23,7 @@ class Vehicle with _$Vehicle {
     String? ownerId,
     String? status,
     String? currentDriverId,
-    bool? rentalStatus,
+    @JsonKey(name: 'rentalStatus')bool? isRented,
     List<Sale>? salesHistory,
     List<Rental>? rentalHistory,
     String? createdAt,

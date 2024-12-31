@@ -67,10 +67,10 @@ class _BaseScreenState extends State<BaseScreen> {
         ),
       ),
       child: AnimatedBottomNavigationBar.builder(
-        itemCount: mobileNavIcons.length,
+        itemCount: mobileNavPages.length,
         tabBuilder: (int index, bool isActive) {
           return SizedBox(
-            width: MediaQuery.of(context).size.width / 5,
+            width: MediaQuery.of(context).size.width / mobileNavPages.length,
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.center,

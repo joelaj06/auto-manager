@@ -1,7 +1,9 @@
 import 'package:automanager/core/presentation/theme/app_theme.dart';
 import 'package:automanager/feature/auto_manager/presentation/presentation.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:get/get.dart';
 import 'package:iconly/iconly.dart';
@@ -10,6 +12,7 @@ import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import '../../../../../core/errors/failure.dart';
 import '../../../../../core/presentation/utils/utils.dart';
 import '../../../../../core/presentation/widgets/widgets.dart';
+import '../../../../../core/utils/permissions.dart';
 import '../../../data/model/response/vehicle/vehicle_model.dart';
 
 class VehicleScreen extends GetView<VehicleController> {
@@ -24,10 +27,10 @@ class VehicleScreen extends GetView<VehicleController> {
               'Vehicles${controller.totalCount.value == 0 ? '' : '(${controller.totalCount.value})'}'),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: UserPermissions.validator.canCreateVehicle ? FloatingActionButton(
         onPressed: controller.navigateToAddVehicleScreen,
         child: const Icon(IconlyLight.plus),
-      ),
+      ) : null,
       body: Column(
         children: <Widget>[
           _buildDriverSearchField(context),
@@ -74,32 +77,38 @@ class VehicleScreen extends GetView<VehicleController> {
                 endActionPane: ActionPane(
                   motion: const DrawerMotion(),
                   children: <Widget>[
-                    SlidableAction(
-                      backgroundColor: context.colorScheme.background,
-                      icon: IconlyLight.edit,
-                      label: 'Edit',
-                      onPressed: (BuildContext context) {
-                        controller.navigateToUpdateVehicleScreen(vehicle);
-                      },
+                    Visibility(
+                      visible: UserPermissions.validator.canUpdateVehicle,
+                      child: SlidableAction(
+                        backgroundColor: context.colorScheme.background,
+                        icon: IconlyLight.edit,
+                        label: 'Edit',
+                        onPressed: (BuildContext context) {
+                          controller.navigateToUpdateVehicleScreen(vehicle);
+                        },
+                      ),
                     ),
-                    SlidableAction(
-                      backgroundColor: context.colorScheme.background,
-                      foregroundColor: Colors.red,
-                      icon: IconlyLight.delete,
-                      label: 'Delete',
-                      onPressed: (BuildContext context) async {
+                    Visibility(
+                      visible: UserPermissions.validator.canDeleteVehicle,
+                      child: SlidableAction(
+                        backgroundColor: context.colorScheme.background,
+                        foregroundColor: Colors.red,
+                        icon: IconlyLight.delete,
+                        label: 'Delete',
+                        onPressed: (BuildContext context) async {
 
-                        await AppDialogs.showDialogWithButtons(
-                          context,
-                          onConfirmPressed: () =>
-                              controller.deleteTheVehicle(vehicle.id!),
-                          content: const Text(
-                            'Are you sure you want to delete this vehicle?',
-                            textAlign: TextAlign.center,
-                          ),
-                          confirmText: 'Delete',
-                        );
-                      },
+                          await AppDialogs.showDialogWithButtons(
+                            context,
+                            onConfirmPressed: () =>
+                                controller.deleteTheVehicle(vehicle.id!),
+                            content: const Text(
+                              'Are you sure you want to delete this vehicle?',
+                              textAlign: TextAlign.center,
+                            ),
+                            confirmText: 'Delete',
+                          );
+                        },
+                      ),
                     ),
                   ],
                 ),
@@ -166,13 +175,13 @@ class VehicleScreen extends GetView<VehicleController> {
                 Container(
                   padding: AppPaddings.sA,
                   decoration: BoxDecoration(
-                    color: vehicle.rentalStatus == true
+                    color: vehicle.isRented == true
                         ? Colors.deepOrange
                         : Colors.green.shade900,
                     borderRadius: BorderRadius.circular(5),
                   ),
                   child: Text(
-                    vehicle.rentalStatus == true ? 'Rented' : 'Available',
+                    vehicle.isRented == true ? 'Rented' : 'Available',
                     style: const TextStyle(fontSize: 12,
                     color: Colors.white,
                     ),
@@ -186,12 +195,11 @@ class VehicleScreen extends GetView<VehicleController> {
                     Image.asset(AssetImages.speedometer),
                 errorWidget:
                     (BuildContext context, String url, dynamic error) =>
-                        const Icon(Icons.error),
+                        Image.asset(AssetImages.speedometer),
                 imageBuilder: (BuildContext context,
                         ImageProvider<Object> imageProvider) =>
                     Container(
                       width: 100.0,
-                      //  height: 100.0,
                       decoration: BoxDecoration(
                         color: Colors.white,
                         shape: BoxShape.rectangle,
@@ -238,7 +246,7 @@ class VehicleScreen extends GetView<VehicleController> {
             ),
             ModalListCard(
               title: 'Status',
-              value: vehicle.rentalStatus == true ? 'Rented' : 'Available',
+              value: vehicle.isRented == true ? 'Rented' : 'Available',
             ),
           ],
         ),

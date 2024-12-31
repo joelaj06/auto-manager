@@ -1,14 +1,13 @@
 import 'package:automanager/core/core.dart';
 import 'package:automanager/core/presentation/theme/app_theme.dart';
-import 'package:automanager/core/presentation/utils/app_dialogs.dart';
 import 'package:automanager/feature/auto_manager/presentation/more/getx/more_controller.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:iconly/iconly.dart';
 import 'package:ionicons/ionicons.dart';
 
-import '../../../../../core/presentation/routes/routes.dart';
-import '../../../../../core/presentation/utils/utils.dart';
 import '../widgets/custom_tile.dart';
 
 class MoreScreen extends GetView<MoreController> {
@@ -38,36 +37,51 @@ class MoreScreen extends GetView<MoreController> {
                   Navigator.of(context).pushNamed(AppRoutes.profile),
               text: 'Profile',
             ),
-            CustomTile(
-              icon: IconlyLight.work,
-              onPressed: () => Navigator.of(context).pushNamed(
-                AppRoutes.updateCompany,
+            Visibility(
+              visible: UserPermissions.validator.canUpdateCompany,
+              child: CustomTile(
+                icon: IconlyLight.work,
+                onPressed: () => Navigator.of(context).pushNamed(
+                  AppRoutes.updateCompany,
+                ),
+                text: 'Company',
               ),
-              text: 'Company',
             ),
-            CustomTile(
-              icon: IconlyLight.discovery,
-              onPressed: () =>
-                  Navigator.of(context).pushNamed(AppRoutes.drivers),
-              text: 'Drivers',
+            Visibility(
+              visible: UserPermissions.validator.canViewDrivers,
+              child: CustomTile(
+                icon: IconlyLight.discovery,
+                onPressed: () =>
+                    Navigator.of(context).pushNamed(AppRoutes.drivers),
+                text: 'Drivers',
+              ),
             ),
-            CustomTile(
-              icon: IconlyLight.user_1,
-              onPressed: () =>
-                  Navigator.of(context).pushNamed(AppRoutes.customers),
-              text: 'Customers',
+            Visibility(
+              visible: UserPermissions.validator.canViewCustomers,
+              child: CustomTile(
+                icon: IconlyLight.user_1,
+                onPressed: () =>
+                    Navigator.of(context).pushNamed(AppRoutes.customers),
+                text: 'Customers',
+              ),
             ),
-            CustomTile(
-              icon: Ionicons.speedometer,
-              onPressed: () =>
-                  Navigator.of(context).pushNamed(AppRoutes.vehicle),
-              text: 'Vehicles',
+            Visibility(
+              visible: UserPermissions.validator.canViewVehicles,
+              child: CustomTile(
+                icon: Ionicons.speedometer,
+                onPressed: () =>
+                    Navigator.of(context).pushNamed(AppRoutes.vehicle),
+                text: 'Vehicles',
+              ),
             ),
-            CustomTile(
-              icon: IconlyLight.user,
-              onPressed: () =>
-                  Navigator.of(context).pushNamed(AppRoutes.userAccounts),
-              text: 'User Accounts',
+            Visibility(
+              visible: UserPermissions.validator.canViewUsers,
+              child: CustomTile(
+                icon: IconlyLight.user,
+                onPressed: () =>
+                    Navigator.of(context).pushNamed(AppRoutes.userAccounts),
+                text: 'User Accounts',
+              ),
             ),
             CustomTile(
               icon: IconlyLight.shield_done,

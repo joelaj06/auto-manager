@@ -68,7 +68,7 @@ class DashboardSummaryCard extends StatelessWidget {
                 ),
               ],
             ),
-            Builder(builder: (BuildContext context) {
+           /* Builder(builder: (BuildContext context) {
               if (onTap != null) {
                 return Container(
                   decoration: BoxDecoration(
@@ -97,7 +97,7 @@ class DashboardSummaryCard extends StatelessWidget {
                 );
               }
               return const SizedBox.shrink();
-            })
+            })*/
           ]),
     );
   }

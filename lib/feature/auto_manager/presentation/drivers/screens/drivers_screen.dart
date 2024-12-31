@@ -1,6 +1,8 @@
 import 'package:automanager/core/core.dart';
 import 'package:automanager/core/presentation/theme/app_theme.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:get/get.dart';
 import 'package:iconly/iconly.dart';
@@ -22,10 +24,10 @@ class DriversScreen extends GetView<DriverController> {
               'Drivers${controller.totalCount.value == 0 ? '' : '(${controller.totalCount.value})'}'),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: UserPermissions.validator.canCreateDriver ? FloatingActionButton(
         onPressed: controller.navigateToAddDriverScreen,
         child: const Icon(IconlyLight.plus),
-      ),
+      ) : null,
       body: SizedBox(
         child: _buildDriversList(context),
       ),
@@ -45,31 +47,37 @@ class DriversScreen extends GetView<DriverController> {
                 endActionPane: ActionPane(
                   motion: const DrawerMotion(),
                   children: <Widget>[
-                    SlidableAction(
-                      backgroundColor: context.colorScheme.background,
-                      icon: IconlyLight.edit,
-                      label: 'Edit',
-                      onPressed: (BuildContext context) {
-                        controller.navigateToUpdateDriverScreen(driver);
-                      },
+                    Visibility(
+                      visible: UserPermissions.validator.canUpdateDriver,
+                      child: SlidableAction(
+                        backgroundColor: context.colorScheme.background,
+                        icon: IconlyLight.edit,
+                        label: 'Edit',
+                        onPressed: (BuildContext context) {
+                          controller.navigateToUpdateDriverScreen(driver);
+                        },
+                      ),
                     ),
-                    SlidableAction(
-                      backgroundColor: context.colorScheme.background,
-                      foregroundColor: Colors.red,
-                      icon: IconlyLight.delete,
-                      label: 'Delete',
-                      onPressed: (BuildContext context) async {
-                        await AppDialogs.showDialogWithButtons(
-                          context,
-                          onConfirmPressed: () =>
-                              controller.deleteTheDriver(driver),
-                          content: const Text(
-                            'Are you sure you want to delete this driver?',
-                            textAlign: TextAlign.center,
-                          ),
-                          confirmText: 'Delete',
-                        );
-                      },
+                    Visibility(
+                      visible: UserPermissions.validator.canDeleteDriver,
+                      child: SlidableAction(
+                        backgroundColor: context.colorScheme.background,
+                        foregroundColor: Colors.red,
+                        icon: IconlyLight.delete,
+                        label: 'Delete',
+                        onPressed: (BuildContext context) async {
+                          await AppDialogs.showDialogWithButtons(
+                            context,
+                            onConfirmPressed: () =>
+                                controller.deleteTheDriver(driver),
+                            content: const Text(
+                              'Are you sure you want to delete this driver?',
+                              textAlign: TextAlign.center,
+                            ),
+                            confirmText: 'Delete',
+                          );
+                        },
+                      ),
                     ),
                   ],
                 ),

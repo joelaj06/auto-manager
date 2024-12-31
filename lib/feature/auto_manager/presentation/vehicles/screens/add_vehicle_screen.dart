@@ -37,13 +37,17 @@ class AddVehicleScreen extends GetView<VehicleController> {
               const AppSpacing(v: 10),
               Visibility(
                 visible: args != null
-                    ? args.vehicle.status == VehicleStatus.rented.name
+                    ? args.vehicle.isRented == true
                     : false,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
-                    const Text(
+                     Text(
                       'Release Vehicle',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: context.colorScheme.primary,
+                      ),
                     ),
                     Obx(
                       () => Switch(
@@ -130,7 +134,7 @@ class AddVehicleScreen extends GetView<VehicleController> {
                                 Image.asset(AssetImages.speedometer),
                             errorWidget: (BuildContext context, String url,
                                     dynamic error) =>
-                                const Icon(Icons.error),
+                                Image.asset(AssetImages.speedometer)
                           )
                         : Image.memory(
                             fit: BoxFit.cover,

@@ -1,6 +1,8 @@
 import 'package:automanager/core/presentation/theme/app_theme.dart';
 import 'package:automanager/feature/auto_manager/presentation/presentation.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:get/get.dart';
 import 'package:iconly/iconly.dart';
@@ -18,10 +20,10 @@ class RentalScreen extends GetView<RentalController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: UserPermissions.validator.canCreateRental ? FloatingActionButton(
         onPressed: controller.navigateToAddRentalScreen,
         child: const Icon(IconlyLight.plus),
-      ),
+      ) :null,
       appBar: AppBar(
         title: Obx(
           () => Text(
@@ -76,52 +78,61 @@ class RentalScreen extends GetView<RentalController> {
                       startActionPane: ActionPane(
                         motion: const DrawerMotion(),
                         children: <Widget>[
-                          SlidableAction(
-                            backgroundColor: context.colorScheme.background,
-                            foregroundColor: Colors.red,
-                            icon: IconlyLight.delete,
-                            label: 'Delete',
-                            onPressed: (BuildContext context) async {
-                              await AppDialogs.showDialogWithButtons(
-                                context,
-                                onConfirmPressed: () =>
-                                    controller.deleteTheRental(rental),
-                                content: const Text(
-                                  'Are you sure you want to delete this rental?',
-                                  textAlign: TextAlign.center,
-                                ),
-                                confirmText: 'Delete',
-                              );
-                            },
+                          Visibility(
+                            visible: UserPermissions.validator.canDeleteRental,
+                            child: SlidableAction(
+                              backgroundColor: context.colorScheme.background,
+                              foregroundColor: Colors.red,
+                              icon: IconlyLight.delete,
+                              label: 'Delete',
+                              onPressed: (BuildContext context) async {
+                                await AppDialogs.showDialogWithButtons(
+                                  context,
+                                  onConfirmPressed: () =>
+                                      controller.deleteTheRental(rental),
+                                  content: const Text(
+                                    'Are you sure you want to delete this rental?',
+                                    textAlign: TextAlign.center,
+                                  ),
+                                  confirmText: 'Delete',
+                                );
+                              },
+                            ),
                           ),
                         ],
                       ),
                       endActionPane: ActionPane(
                         motion: const DrawerMotion(),
                         children: <Widget>[
-                          SlidableAction(
-                            backgroundColor: context.colorScheme.background,
-                            icon: IconlyLight.edit,
-                            label: 'Edit',
-                            onPressed: (BuildContext context) {
-                              controller.navigateToUpdateRentalScreen(rental);
-                            },
+                          Visibility(
+                            visible: UserPermissions.validator.canUpdateRental,
+                            child: SlidableAction(
+                              backgroundColor: context.colorScheme.background,
+                              icon: IconlyLight.edit,
+                              label: 'Edit',
+                              onPressed: (BuildContext context) {
+                                controller.navigateToUpdateRentalScreen(rental);
+                              },
+                            ),
                           ),
-                          SlidableAction(
-                            backgroundColor: context.colorScheme.background,
-                            icon: Icons.add,
-                            label: 'Extend',
-                            onPressed: (BuildContext context) {
-                              showModalBottomSheet<dynamic>(
-                                context: context,
-                                isScrollControlled: true,
-                                builder: (BuildContext context) =>
-                                    FractionallySizedBox(
-                                  heightFactor: 0.8,
-                                  child: _buildExtensionForm(context, rental),
-                                ),
-                              );
-                            },
+                          Visibility(
+                            visible: UserPermissions.validator.canCreateRentalExtension,
+                            child: SlidableAction(
+                              backgroundColor: context.colorScheme.background,
+                              icon: Icons.add,
+                              label: 'Extend',
+                              onPressed: (BuildContext context) {
+                                showModalBottomSheet<dynamic>(
+                                  context: context,
+                                  isScrollControlled: true,
+                                  builder: (BuildContext context) =>
+                                      FractionallySizedBox(
+                                    heightFactor: 0.8,
+                                    child: _buildExtensionForm(context, rental),
+                                  ),
+                                );
+                              },
+                            ),
                           ),
                         ],
                       ),

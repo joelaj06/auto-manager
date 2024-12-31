@@ -2,6 +2,8 @@
 
 import 'package:freezed_annotation/freezed_annotation.dart';
 
+import 'role_model.dart';
+
 part 'user_model.freezed.dart';
 part 'user_model.g.dart';
 
@@ -15,6 +17,7 @@ class User with _$User {
     String? address,
     String? token,
     String? phone,
+    Role? role,
     @JsonKey(name: 'imageUrl') String? imgUrl,
     String? company,
     bool? isActive,

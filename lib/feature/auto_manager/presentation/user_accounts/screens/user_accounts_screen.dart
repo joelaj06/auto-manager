@@ -1,6 +1,8 @@
 import 'package:automanager/core/presentation/theme/app_theme.dart';
 import 'package:automanager/feature/authentication/data/data.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:get/get.dart';
 import 'package:iconly/iconly.dart';
@@ -9,6 +11,7 @@ import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import '../../../../../core/errors/failure.dart';
 import '../../../../../core/presentation/utils/utils.dart';
 import '../../../../../core/presentation/widgets/widgets.dart';
+import '../../../../../core/utils/permissions.dart';
 import '../../sales/widgets/modal_list_card.dart';
 import '../getx/user_account_controller.dart';
 
@@ -24,10 +27,10 @@ class UserAccountScreen extends GetView<UserAccountController> {
               'User Accounts${controller.totalCount.value == 0 ? '' : '(${controller.totalCount.value})'}'),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: UserPermissions.validator.canCreateUser ? FloatingActionButton(
         onPressed: controller.navigateToAddUserScreen,
         child: const Icon(IconlyLight.plus),
-      ),
+      ): null,
       body: Column(
         children: <Widget>[
           _buildUserSearchField(context),
@@ -71,31 +74,37 @@ class UserAccountScreen extends GetView<UserAccountController> {
                 endActionPane: ActionPane(
                   motion: const DrawerMotion(),
                   children: <Widget>[
-                    SlidableAction(
-                      backgroundColor: context.colorScheme.background,
-                      icon: IconlyLight.edit,
-                      label: 'Edit',
-                      onPressed: (BuildContext context) {
-                        controller.navigateToUpdateUserScreen(user);
-                      },
+                    Visibility(
+                      visible: UserPermissions.validator.canUpdateUser,
+                      child: SlidableAction(
+                        backgroundColor: context.colorScheme.background,
+                        icon: IconlyLight.edit,
+                        label: 'Edit',
+                        onPressed: (BuildContext context) {
+                          controller.navigateToUpdateUserScreen(user);
+                        },
+                      ),
                     ),
-                    SlidableAction(
-                      backgroundColor: context.colorScheme.background,
-                      foregroundColor: Colors.red,
-                      icon: IconlyLight.delete,
-                      label: 'Delete',
-                      onPressed: (BuildContext context) async {
-                        await AppDialogs.showDialogWithButtons(
-                          context,
-                          onConfirmPressed: () =>
-                              controller.deleteUserAccount(user.id),
-                          content: const Text(
-                            'Are you sure you want to delete this user?',
-                            textAlign: TextAlign.center,
-                          ),
-                          confirmText: 'Delete',
-                        );
-                      },
+                    Visibility(
+                      visible: UserPermissions.validator.canDeleteUser,
+                      child: SlidableAction(
+                        backgroundColor: context.colorScheme.background,
+                        foregroundColor: Colors.red,
+                        icon: IconlyLight.delete,
+                        label: 'Delete',
+                        onPressed: (BuildContext context) async {
+                          await AppDialogs.showDialogWithButtons(
+                            context,
+                            onConfirmPressed: () =>
+                                controller.deleteUserAccount(user.id),
+                            content: const Text(
+                              'Are you sure you want to delete this user?',
+                              textAlign: TextAlign.center,
+                            ),
+                            confirmText: 'Delete',
+                          );
+                        },
+                      ),
                     ),
                   ],
                 ),

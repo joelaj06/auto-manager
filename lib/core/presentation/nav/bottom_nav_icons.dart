@@ -1,18 +1,20 @@
 import 'package:flutter/cupertino.dart';
 import 'package:iconsax/iconsax.dart';
 
+import '../../utils/permissions.dart';
+
 List<IconData> mobileNavIcons = <IconData>[
-  Iconsax.chart,
+  if (UserPermissions.validator.canViewDashboard) Iconsax.chart,
   Iconsax.moneys,
   Iconsax.wallet_minus,
-  Iconsax.key,
+  if (UserPermissions.validator.canViewRentals) Iconsax.key,
   Iconsax.menu,
 ];
 
 List<String> mobileNavTexts = <String>[
-  'Dashboard',
+  if (UserPermissions.validator.canViewDashboard) 'Dashboard',
   'Sales',
   'Expenses',
-  'Rentals',
+  if (UserPermissions.validator.canViewRentals) 'Rentals',
   'More',
 ];

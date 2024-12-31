@@ -20,7 +20,7 @@ class VehicleRequest with _$VehicleRequest {
     String? ownerId,
     String? status,
     String? currentDriverId,
-    bool? rentalStatus,
+    @JsonKey(name: 'rentalStatus')bool? isRented,
     InsuranceDetail? insuranceDetails,
     String? image,
   }) = _VehicleRequest;

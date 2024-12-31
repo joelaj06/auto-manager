@@ -83,6 +83,7 @@ class VehicleController extends GetxController {
       licensePlate: plateNumber.value.isNotEmpty ? plateNumber.value : null,
       image: image.value,
       status: isVehicleReleased.value ? VehicleStatus.available.name : null,
+      isRented: isVehicleReleased.value ? false : null,
     );
     isLoading(true);
     final Either<Failure, Vehicle> failureOrVehicle =
@@ -201,6 +202,7 @@ class VehicleController extends GetxController {
     color(vehicle.color);
     plateNumber(vehicle.licensePlate);
     image(vehicle.image);
+    isVehicleReleased(!(vehicle.isRented ?? false));
   }
 
   void toggleVehicleRelease(bool value) {

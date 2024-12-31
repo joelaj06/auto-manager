@@ -1,6 +1,8 @@
 import 'package:automanager/core/presentation/theme/app_theme.dart';
 import 'package:automanager/feature/auto_manager/presentation/customers/customers.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:get/get.dart';
 import 'package:iconly/iconly.dart';
@@ -10,6 +12,7 @@ import '../../../../../core/errors/failure.dart';
 import '../../../../../core/presentation/utils/utils.dart';
 import '../../../../../core/presentation/widgets/widgets.dart';
 import '../../../../../core/utils/data_formatter.dart';
+import '../../../../../core/utils/permissions.dart';
 import '../../../data/model/response/customer/customer_model.dart';
 import '../../sales/widgets/modal_list_card.dart';
 
@@ -25,10 +28,10 @@ class CustomerScreen extends GetView<CustomerController> {
               'Customers${controller.totalCount.value == 0 ? '' : '(${controller.totalCount.value})'}'),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: UserPermissions.validator.canCreateCustomer ?FloatingActionButton(
         onPressed: controller.navigateToAddCustomerScreen,
         child: const Icon(IconlyLight.plus),
-      ),
+      ) : null,
       body: Column(
         children: <Widget>[
           _buildCustomerSearchField(context),
@@ -71,31 +74,37 @@ class CustomerScreen extends GetView<CustomerController> {
                 endActionPane: ActionPane(
                   motion: const DrawerMotion(),
                   children: <Widget>[
-                    SlidableAction(
-                      backgroundColor: context.colorScheme.background,
-                      icon: IconlyLight.edit,
-                      label: 'Edit',
-                      onPressed: (BuildContext context) {
-                        controller.navigateToUpdateCustomerScreen(customer);
-                      },
+                    Visibility(
+                      visible: UserPermissions.validator.canUpdateCustomer,
+                      child: SlidableAction(
+                        backgroundColor: context.colorScheme.background,
+                        icon: IconlyLight.edit,
+                        label: 'Edit',
+                        onPressed: (BuildContext context) {
+                          controller.navigateToUpdateCustomerScreen(customer);
+                        },
+                      ),
                     ),
-                    SlidableAction(
-                      backgroundColor: context.colorScheme.background,
-                      foregroundColor: Colors.red,
-                      icon: IconlyLight.delete,
-                      label: 'Delete',
-                      onPressed: (BuildContext context) async {
-                        await AppDialogs.showDialogWithButtons(
-                          context,
-                          onConfirmPressed: () =>
-                              controller.deleteTheCustomer(customer.id),
-                          content: const Text(
-                            'Are you sure you want to delete this customer?',
-                            textAlign: TextAlign.center,
-                          ),
-                          confirmText: 'Delete',
-                        );
-                      },
+                    Visibility(
+                      visible: UserPermissions.validator.canDeleteCustomer,
+                      child: SlidableAction(
+                        backgroundColor: context.colorScheme.background,
+                        foregroundColor: Colors.red,
+                        icon: IconlyLight.delete,
+                        label: 'Delete',
+                        onPressed: (BuildContext context) async {
+                          await AppDialogs.showDialogWithButtons(
+                            context,
+                            onConfirmPressed: () =>
+                                controller.deleteTheCustomer(customer.id),
+                            content: const Text(
+                              'Are you sure you want to delete this customer?',
+                              textAlign: TextAlign.center,
+                            ),
+                            confirmText: 'Delete',
+                          );
+                        },
+                      ),
                     ),
                   ],
                 ),

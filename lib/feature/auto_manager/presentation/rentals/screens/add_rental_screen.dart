@@ -1,4 +1,5 @@
 import 'package:automanager/feature/auto_manager/presentation/presentation.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:iconly/iconly.dart';
@@ -6,6 +7,7 @@ import 'package:iconly/iconly.dart';
 import '../../../../../core/presentation/utils/utils.dart';
 import '../../../../../core/presentation/widgets/widgets.dart';
 import '../../../../../core/utils/data_formatter.dart';
+import '../../../../../core/utils/permissions.dart';
 import '../../../data/model/model.dart';
 
 class AddRentalScreen extends GetView<RentalController> {
@@ -130,28 +132,32 @@ class AddRentalScreen extends GetView<RentalController> {
                                     ),
                                   ),
                                   const AppSpacing(h: 10),
-                                  IconButton(
-                                    icon: const Icon(
-                                      IconlyLight.delete,
-                                      color: Colors.red,
+                                  Visibility(
+                                    visible: UserPermissions
+                                        .validator.canDeleteRentalExtension,
+                                    child: IconButton(
+                                      icon: const Icon(
+                                        IconlyLight.delete,
+                                        color: Colors.red,
+                                      ),
+                                      onPressed: () async {
+                                        await AppDialogs.showDialogWithButtons(
+                                          context,
+                                          onConfirmPressed: () =>
+                                              controller.removeTheExtension(
+                                            controller.rentalExtensions[index],
+                                            index,
+                                            args?.rental.id ?? '',
+                                          ),
+                                          content: const Text(
+                                            'Are you sure you want to remove this '
+                                            'extension?',
+                                            textAlign: TextAlign.center,
+                                          ),
+                                          confirmText: 'Remove',
+                                        );
+                                      },
                                     ),
-                                    onPressed: () async {
-                                      await AppDialogs.showDialogWithButtons(
-                                        context,
-                                        onConfirmPressed: () =>
-                                            controller.removeTheExtension(
-                                          controller.rentalExtensions[index],
-                                          index,
-                                          args?.rental.id ?? '',
-                                        ),
-                                        content: const Text(
-                                          'Are you sure you want to remove this '
-                                          'extension?',
-                                          textAlign: TextAlign.center,
-                                        ),
-                                        confirmText: 'Remove',
-                                      );
-                                    },
                                   ),
                                 ],
                               );

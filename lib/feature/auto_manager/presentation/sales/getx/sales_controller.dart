@@ -112,7 +112,7 @@ class SalesController extends GetxController
 
   void generateExpandableItems() {
     expandableList.value = <ExpandableItem<dynamic>>[
-      ExpandableItem<List<Driver>>(
+     if(UserPermissions.validator.canViewOtherSales) ExpandableItem<List<Driver>>(
           body: drivers, headerValue: 'Driver', icon: IconlyBold.discovery),
       ExpandableItem<List<Vehicle>>(
           body: vehicles, headerValue: 'Vehicle', icon: Ionicons.speedometer),

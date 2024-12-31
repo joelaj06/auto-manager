@@ -1,6 +1,8 @@
 import 'package:automanager/core/presentation/theme/app_theme.dart';
 import 'package:automanager/feature/auto_manager/presentation/expense/expense.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:get/get.dart';
 import 'package:iconly/iconly.dart';
@@ -20,10 +22,10 @@ class ExpensesScreen extends GetView<ExpenseController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: UserPermissions.validator.canCreateExpense ? FloatingActionButton(
         onPressed: controller.navigateToAddExpenseScreen,
         child: const Icon(IconlyLight.plus),
-      ),
+      ) : null,
       appBar: AppBar(
         title: Obx(
           () => Text(
@@ -94,32 +96,38 @@ class ExpensesScreen extends GetView<ExpenseController> {
                       endActionPane: ActionPane(
                         motion: const DrawerMotion(),
                         children: <Widget>[
-                          SlidableAction(
-                            backgroundColor: context.colorScheme.background,
-                            //  foregroundColor: Colors.red,
-                            icon: IconlyLight.edit,
-                            label: 'Edit',
-                            onPressed: (BuildContext context) {
-                              controller.navigateToUpdateExpenseScreen(expense);
-                            },
+                          Visibility(
+                            visible: UserPermissions.validator.canUpdateExpense,
+                            child: SlidableAction(
+                              backgroundColor: context.colorScheme.background,
+                              //  foregroundColor: Colors.red,
+                              icon: IconlyLight.edit,
+                              label: 'Edit',
+                              onPressed: (BuildContext context) {
+                                controller.navigateToUpdateExpenseScreen(expense);
+                              },
+                            ),
                           ),
-                          SlidableAction(
-                            backgroundColor: context.colorScheme.background,
-                            foregroundColor: Colors.red,
-                            icon: IconlyLight.delete,
-                            label: 'Delete',
-                            onPressed: (BuildContext context) async {
-                              await AppDialogs.showDialogWithButtons(
-                                context,
-                                onConfirmPressed: () =>
-                                    controller.deleteExpense(expense.id),
-                                content: const Text(
-                                  'Are you sure you want to delete this expense?',
-                                  textAlign: TextAlign.center,
-                                ),
-                                confirmText: 'Delete',
-                              );
-                            },
+                          Visibility(
+                            visible: UserPermissions.validator.canDeleteExpense,
+                            child: SlidableAction(
+                              backgroundColor: context.colorScheme.background,
+                              foregroundColor: Colors.red,
+                              icon: IconlyLight.delete,
+                              label: 'Delete',
+                              onPressed: (BuildContext context) async {
+                                await AppDialogs.showDialogWithButtons(
+                                  context,
+                                  onConfirmPressed: () =>
+                                      controller.deleteExpense(expense.id),
+                                  content: const Text(
+                                    'Are you sure you want to delete this expense?',
+                                    textAlign: TextAlign.center,
+                                  ),
+                                  confirmText: 'Delete',
+                                );
+                              },
+                            ),
                           ),
                         ],
                       ),

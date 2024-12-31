@@ -1,6 +1,8 @@
 // ignore_for_file: invalid_annotation_target
 import 'package:freezed_annotation/freezed_annotation.dart';
 
+import '../user/role_model.dart';
+
 part 'login_response.freezed.dart';
 
 part 'login_response.g.dart';
@@ -16,6 +18,7 @@ class LoginResponse with _$LoginResponse {
     String? token,
     String? phone,
     String? image,
+    Role? role,
     String? company,
     String? createdAt,
   }) = _LoginResponse;

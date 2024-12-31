@@ -1,8 +1,8 @@
+import 'package:automanager/core/core.dart';
 import 'package:automanager/core/utils/validators.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
-import 'package:get/get_rx/get_rx.dart';
 
 import '../../../../../core/errors/failure.dart';
 import '../../../../../core/presentation/routes/app_routes.dart';

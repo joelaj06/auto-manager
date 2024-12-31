@@ -3,6 +3,7 @@ import 'package:automanager/core/presentation/theme/app_theme.dart';
 import 'package:automanager/feature/auto_manager/presentation/sales/getx/sales_controller.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:get/get.dart';
 import 'package:iconly/iconly.dart';
@@ -17,10 +18,12 @@ class SalesScreen extends GetView<SalesController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        onPressed: controller.navigateToAddSalesScreen,
-        child: const Icon(IconlyLight.plus),
-      ),
+      floatingActionButton: UserPermissions.validator.canCreateSale
+          ? FloatingActionButton(
+              onPressed: controller.navigateToAddSalesScreen,
+              child: const Icon(IconlyLight.plus),
+            )
+          : null,
       appBar: AppBar(
         title: Obx(
           () => AnimatedBuilder(
@@ -156,23 +159,26 @@ class SalesScreen extends GetView<SalesController> {
                       endActionPane: ActionPane(
                         motion: const DrawerMotion(),
                         children: <Widget>[
-                          SlidableAction(
-                            backgroundColor: context.colorScheme.background,
-                            foregroundColor: Colors.red,
-                            icon: IconlyLight.delete,
-                            label: 'Delete',
-                            onPressed: (BuildContext context) async {
-                              await AppDialogs.showDialogWithButtons(
-                                context,
-                                onConfirmPressed: () =>
-                                    controller.deleteASale(sale.id),
-                                content: const Text(
-                                  'Are you sure you want to delete this sale?',
-                                  textAlign: TextAlign.center,
-                                ),
-                                confirmText: 'Delete',
-                              );
-                            },
+                          Visibility(
+                            visible: UserPermissions.validator.canDeleteSale,
+                            child: SlidableAction(
+                              backgroundColor: context.colorScheme.background,
+                              foregroundColor: Colors.red,
+                              icon: IconlyLight.delete,
+                              label: 'Delete',
+                              onPressed: (BuildContext context) async {
+                                await AppDialogs.showDialogWithButtons(
+                                  context,
+                                  onConfirmPressed: () =>
+                                      controller.deleteASale(sale.id),
+                                  content: const Text(
+                                    'Are you sure you want to delete this sale?',
+                                    textAlign: TextAlign.center,
+                                  ),
+                                  confirmText: 'Delete',
+                                );
+                              },
+                            ),
                           ),
                         ],
                       ),
@@ -430,9 +436,9 @@ class SalesScreen extends GetView<SalesController> {
                                                   .body[index].id);
                                         },
                                         trailing:
-                                        controller.filteredDriverId.value ==
-                                            controller.expandableList.first
-                                                .body[index].id
+                                            controller.filteredDriverId.value ==
+                                                    controller.expandableList
+                                                        .first.body[index].id
                                                 ? const Icon(
                                                     Icons.check_circle,
                                                   )

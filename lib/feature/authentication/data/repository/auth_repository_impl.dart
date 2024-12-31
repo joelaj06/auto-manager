@@ -39,6 +39,8 @@ class AuthRepositoryImpl extends Repository implements AuthRepository {
     return response.fold((Failure failure) => left(failure),
         (LoginResponse response) async {
       await authLocalDataSource.persistAuthResponse(response);
+      UserPermissions.initializeValidator(
+          response.role?.permissions ?? <String>[]);
       final User user = User(
         id: response.id,
         firstName: response.firstName,
