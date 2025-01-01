@@ -2,6 +2,8 @@ import 'package:dartz/dartz.dart';
 
 import '../../../../core/errors/failure.dart';
 import '../../../authentication/data/models/request/user/user_request.dart';
+import '../../../authentication/data/models/response/user/permission_model.dart';
+import '../../../authentication/data/models/response/user/role_model.dart';
 import '../../../authentication/data/models/response/user/user_model.dart';
 import '../../data/model/model.dart';
 
@@ -132,5 +134,15 @@ abstract interface class AutoManagerRepository {
   });
 
   Future<Either<Failure, Rental>> removeExtension(
-      {required String rentalId, required RemoveExtensionRequest removeExtensionRequest});
+      {required String rentalId,
+      required RemoveExtensionRequest removeExtensionRequest});
+
+  Future<Either<Failure, List<Role>>> fetchRoles();
+
+  Future<Either<Failure, List<UserPermission>>> fetchPermissions();
+
+  Future<Either<Failure, Role>> updateRole(
+      {required RoleRequest roleRequest});
+
+  Future<Either<Failure, Role>> addRole({required RoleRequest roleRequest});
 }

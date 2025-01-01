@@ -103,6 +103,14 @@ class AutoManagerEndpoints {
     required int pageSize,
   }) =>
       'users?pageIndex=$pageIndex&pageSize=$pageSize';
+
+  static const String roles = 'roles';
+
+  static String role(String roleId) => 'roles/$roleId';
+
+  static const String permissions = 'permissions';
+
+
 }
 
 class FilterParams {

@@ -1,5 +1,7 @@
 import 'package:automanager/core/errors/failure.dart';
 import 'package:automanager/feature/authentication/data/models/request/user/user_request.dart';
+import 'package:automanager/feature/authentication/data/models/response/user/permission_model.dart';
+import 'package:automanager/feature/authentication/data/models/response/user/role_model.dart';
 import 'package:automanager/feature/authentication/data/models/response/user/user_model.dart';
 
 import 'package:dartz/dartz.dart';
@@ -23,8 +25,8 @@ class AutoManagerRepositoryImpl extends Repository
   @override
   Future<Either<Failure, DashboardSummary>> fetchDashboardSummary(
       {required String startDate,
-        required String endDate,
-        required String companyId}) {
+      required String endDate,
+      required String companyId}) {
     return makeRequest(autoManagerRemoteDataSource.dashboardSummary(
         startDate: startDate, endDate: endDate, companyId: companyId));
   }
@@ -42,14 +44,15 @@ class AutoManagerRepositoryImpl extends Repository
   }
 
   @override
-  Future<Either<Failure, ListPage<Sale>>> fetchSales({required int pageIndex,
-    required int pageSize,
-    required String? startDate,
-    required String? endDate,
-    required String? driverId,
-    required String? vehicleId,
-    required String? status,
-    required String? query}) {
+  Future<Either<Failure, ListPage<Sale>>> fetchSales(
+      {required int pageIndex,
+      required int pageSize,
+      required String? startDate,
+      required String? endDate,
+      required String? driverId,
+      required String? vehicleId,
+      required String? status,
+      required String? query}) {
     return makeRequest(
       autoManagerRemoteDataSource.fetchSales(
         pageIndex: pageIndex,
@@ -98,14 +101,14 @@ class AutoManagerRepositoryImpl extends Repository
   }
 
   @override
-  Future<Either<Failure, ListPage<Expense>>> fetchExpenses(
-      {required int pageIndex,
-        required int pageSize,
-        required String? startDate,
-        required String? endDate,
-        required String? categoryId,
-        required String? vehicleId,
-      }) {
+  Future<Either<Failure, ListPage<Expense>>> fetchExpenses({
+    required int pageIndex,
+    required int pageSize,
+    required String? startDate,
+    required String? endDate,
+    required String? categoryId,
+    required String? vehicleId,
+  }) {
     return makeRequest(autoManagerRemoteDataSource.fetchExpenses(
       pageIndex: pageIndex,
       pageSize: pageSize,
@@ -153,12 +156,12 @@ class AutoManagerRepositoryImpl extends Repository
   @override
   Future<Either<Failure, ListPage<Rental>>> fetchRentals(
       {required int pageIndex,
-        required int pageSize,
-        required String? startDate,
-        required String? endDate,
-        required String? query,
-        required String? customerId,
-        required String? vehicleId}) {
+      required int pageSize,
+      required String? startDate,
+      required String? endDate,
+      required String? query,
+      required String? customerId,
+      required String? vehicleId}) {
     return makeRequest(autoManagerRemoteDataSource.fetchRentals(
       pageIndex: pageIndex,
       pageSize: pageSize,
@@ -324,8 +327,40 @@ class AutoManagerRepositoryImpl extends Repository
 
   @override
   Future<Either<Failure, Rental>> removeExtension(
-      {required String rentalId, required RemoveExtensionRequest removeExtensionRequest}) {
-    return makeRequest(autoManagerRemoteDataSource.removeExtension(
-      rentalId: rentalId, removeExtensionRequest: removeExtensionRequest,),);
+      {required String rentalId,
+      required RemoveExtensionRequest removeExtensionRequest}) {
+    return makeRequest(
+      autoManagerRemoteDataSource.removeExtension(
+        rentalId: rentalId,
+        removeExtensionRequest: removeExtensionRequest,
+      ),
+    );
+  }
+
+  @override
+  Future<Either<Failure, List<UserPermission>>> fetchPermissions() {
+    return makeRequest(autoManagerRemoteDataSource.fetchPermissions());
+  }
+
+  @override
+  Future<Either<Failure, List<Role>>> fetchRoles() {
+    return makeRequest(autoManagerRemoteDataSource.fetchRoles());
+  }
+
+  @override
+  Future<Either<Failure, Role>> addRole({required RoleRequest roleRequest}) {
+    return makeRequest(
+        autoManagerRemoteDataSource.addRole(roleRequest: roleRequest));
+  }
+
+  @override
+  Future<Either<Failure, Role>> updateRole(
+      {required RoleRequest roleRequest}) {
+    return makeRequest(
+      autoManagerRemoteDataSource.updateRole(
+        roleRequest: roleRequest,
+      roleId: roleRequest.id!,
+      ),
+    );
   }
 }

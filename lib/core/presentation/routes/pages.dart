@@ -125,5 +125,10 @@ class Pages {
       page: () => const PasswordResetScreen(),
       binding: LoginBindings(),
     ),
+    GetPage<AppRoutes>(
+      name: AppRoutes.role,
+      page: () => const RoleScreen(),
+      binding: RoleBindings(),
+    ),
   ];
 }

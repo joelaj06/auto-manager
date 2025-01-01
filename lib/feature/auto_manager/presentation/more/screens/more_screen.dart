@@ -18,7 +18,7 @@ class MoreScreen extends GetView<MoreController> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('More'),
-        actions: [
+        actions: <Widget>[
           IconButton(
             onPressed: controller.toggleTheme,
             icon: Icon(
@@ -81,6 +81,14 @@ class MoreScreen extends GetView<MoreController> {
                 onPressed: () =>
                     Navigator.of(context).pushNamed(AppRoutes.userAccounts),
                 text: 'User Accounts',
+              ),
+            ), Visibility(
+              visible: UserPermissions.validator.canViewRoles,
+              child: CustomTile(
+                icon: IconlyLight.lock,
+                onPressed: () =>
+                    Navigator.of(context).pushNamed(AppRoutes.role),
+                text: 'Roles',
               ),
             ),
             CustomTile(

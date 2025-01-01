@@ -1,5 +1,4 @@
-import '../../../authentication/data/models/request/user/user_request.dart';
-import '../../../authentication/data/models/response/user/user_model.dart';
+import '../../../authentication/data/models/models.dart';
 import '../model/model.dart';
 
 abstract interface class AutoManagerRemoteDatasource {
@@ -129,5 +128,15 @@ abstract interface class AutoManagerRemoteDatasource {
       {required VehicleRequest vehicleRequest, required String vehicleId});
 
   Future<Rental> removeExtension(
-      {required String rentalId, required RemoveExtensionRequest removeExtensionRequest});
+      {required String rentalId,
+      required RemoveExtensionRequest removeExtensionRequest});
+
+  Future<List<Role>> fetchRoles();
+
+  Future<Role> updateRole(
+      {required RoleRequest roleRequest, required String roleId});
+
+  Future<Role> addRole({required RoleRequest roleRequest});
+
+  Future<List<UserPermission>> fetchPermissions();
 }

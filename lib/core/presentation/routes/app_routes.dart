@@ -24,6 +24,9 @@ class AppRoutes{
   static const String addVehicle = '/addVehicle';
   static const String addUser = '/addUser';
   static const String passwordReset = '/passwordReset';
+  static const String role = '/role';
+  static const String addRole = '/addRole';
+
 
 
 }

@@ -1,4 +1,6 @@
 import 'package:automanager/feature/authentication/data/models/request/user/user_request.dart';
+import 'package:automanager/feature/authentication/data/models/response/user/permission_model.dart';
+import 'package:automanager/feature/authentication/data/models/response/user/role_model.dart';
 import 'package:automanager/feature/authentication/data/models/response/user/user_model.dart';
 import 'package:automanager/feature/auto_manager/data/data.dart';
 
@@ -65,7 +67,8 @@ class AutoMangerRemoteDatasourceImpl implements AutoManagerRemoteDatasource {
               endDate: endDate),
           driverId,
           query,
-          status,vehicleId),
+          status,
+          vehicleId),
     );
     final List<dynamic> items = json['items'] as List<dynamic>;
     final List<Sale> sales =
@@ -146,13 +149,14 @@ class AutoMangerRemoteDatasourceImpl implements AutoManagerRemoteDatasource {
   }) async {
     final Map<String, dynamic> json = await _client.get(
       FilterParams.expenseParams(
-          AutoManagerEndpoints.expenseList(
-              pageIndex: pageIndex,
-              pageSize: pageSize,
-              startDate: startDate,
-              endDate: endDate,
-              categoryId: categoryId),
-          categoryId,vehicleId,
+        AutoManagerEndpoints.expenseList(
+            pageIndex: pageIndex,
+            pageSize: pageSize,
+            startDate: startDate,
+            endDate: endDate,
+            categoryId: categoryId),
+        categoryId,
+        vehicleId,
       ),
     );
     final List<dynamic> items = json['items'] as List<dynamic>;
@@ -440,5 +444,45 @@ class AutoMangerRemoteDatasourceImpl implements AutoManagerRemoteDatasource {
       body: removeExtensionRequest.toJson(),
     );
     return Rental.fromJson(json);
+  }
+
+  @override
+  Future<List<Role>> fetchRoles() async {
+    final Map<String, dynamic> json =
+        await _client.get(AutoManagerEndpoints.roles);
+    final List<dynamic> items = json['items'] as List<dynamic>;
+    final List<Role> roles =
+        items.map((dynamic role) => Role.fromJson(role)).toList();
+    return roles;
+  }
+
+  @override
+  Future<List<UserPermission>> fetchPermissions() async {
+    final Map<String, dynamic> json =
+        await _client.get(AutoManagerEndpoints.permissions);
+    final List<dynamic> items = json['items'] as List<dynamic>;
+    final List<UserPermission> permissions = items
+        .map((dynamic permission) => UserPermission.fromJson(permission))
+        .toList();
+    return permissions;
+  }
+
+  @override
+  Future<Role> addRole({required RoleRequest roleRequest}) async {
+    final Map<String, dynamic> json = await _client.post(
+      AutoManagerEndpoints.roles,
+      body: roleRequest.toJson(),
+    );
+    return Role.fromJson(json);
+  }
+
+  @override
+  Future<Role> updateRole(
+      {required RoleRequest roleRequest, required String roleId}) async {
+    final Map<String, dynamic> json = await _client.put(
+      AutoManagerEndpoints.role(roleId),
+      body: roleRequest.toJson(),
+    );
+    return Role.fromJson(json);
   }
 }
