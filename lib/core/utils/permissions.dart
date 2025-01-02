@@ -169,6 +169,135 @@ class UserPermissions {
 
 
 
+  //categorized permissions
+
+ static final List<CategorizedPermissions> categorizedPermissions = <CategorizedPermissions>[
+    CategorizedPermissions(
+      title: 'Sale',
+      permissionActions: <CategorizedPermissionActions>[
+        CategorizedPermissionActions(action: 'Create', permission: createSale),
+        CategorizedPermissionActions(action: 'View', permission: viewSale),
+        CategorizedPermissionActions(action: 'Update', permission: updateSale),
+        CategorizedPermissionActions(action: 'Delete', permission: deleteSale),
+        CategorizedPermissionActions(action: 'View Others', permission: viewOthersSales),
+      ],
+    ),
+    CategorizedPermissions(
+      title: 'Role',
+      permissionActions: <CategorizedPermissionActions>[
+        CategorizedPermissionActions(action: 'Create', permission: createRole),
+        CategorizedPermissionActions(action: 'View', permission: viewRole),
+        CategorizedPermissionActions(action: 'Update', permission: updateRole),
+        CategorizedPermissionActions(action: 'Delete', permission: deleteRole),
+      ],
+    ),
+    CategorizedPermissions(
+      title: 'Permission',
+      permissionActions: <CategorizedPermissionActions>[
+        CategorizedPermissionActions(action: 'Create', permission: createPermission),
+        CategorizedPermissionActions(action: 'View', permission: viewPermission),
+        CategorizedPermissionActions(action: 'Update', permission: updatePermission),
+        CategorizedPermissionActions(action: 'Delete', permission: deletePermission),
+      ],
+    ),
+    CategorizedPermissions(
+      title: 'User',
+      permissionActions: <CategorizedPermissionActions>[
+        CategorizedPermissionActions(action: 'Create', permission: createUser),
+        CategorizedPermissionActions(action: 'View', permission: viewUser),
+        CategorizedPermissionActions(action: 'Update', permission: updateUser),
+        CategorizedPermissionActions(action: 'Delete', permission: deleteUser),
+      ],
+    ),
+    CategorizedPermissions(
+      title: 'Company',
+      permissionActions: <CategorizedPermissionActions>[
+        CategorizedPermissionActions(action: 'Create', permission: createCompany),
+        CategorizedPermissionActions(action: 'View', permission: viewCompany),
+        CategorizedPermissionActions(action: 'Update', permission: updateCompany),
+        CategorizedPermissionActions(action: 'Delete', permission: deleteCompany),
+      ],
+    ),
+    CategorizedPermissions(
+      title: 'Vehicle',
+      permissionActions: <CategorizedPermissionActions>[
+        CategorizedPermissionActions(action: 'Create', permission: createVehicle),
+        CategorizedPermissionActions(action: 'View', permission: viewVehicle),
+        CategorizedPermissionActions(action: 'Update', permission: updateVehicle),
+        CategorizedPermissionActions(action: 'Delete', permission: deleteVehicle),
+      ],
+    ),
+    CategorizedPermissions(
+      title: 'Driver',
+      permissionActions: <CategorizedPermissionActions>[
+        CategorizedPermissionActions(action: 'Create', permission: createDriver),
+        CategorizedPermissionActions(action: 'View', permission: viewDriver),
+        CategorizedPermissionActions(action: 'Update', permission: updateDriver),
+        CategorizedPermissionActions(action: 'Delete', permission: deleteDriver),
+      ],
+    ),
+    CategorizedPermissions(
+      title: 'Expense',
+      permissionActions: <CategorizedPermissionActions>[
+        CategorizedPermissionActions(action: 'Create', permission: createExpense),
+        CategorizedPermissionActions(action: 'View', permission: viewExpense),
+        CategorizedPermissionActions(action: 'Update', permission: updateExpense),
+        CategorizedPermissionActions(action: 'Delete', permission: deleteExpense),
+        CategorizedPermissionActions(action: 'View Others', permission: viewOthersExpenses),
+      ],
+    ),
+    CategorizedPermissions(
+      title: 'Rental',
+      permissionActions: <CategorizedPermissionActions>[
+        CategorizedPermissionActions(action: 'Create', permission: createRental),
+        CategorizedPermissionActions(action: 'View', permission: viewRental),
+        CategorizedPermissionActions(action: 'Update', permission: updateRental),
+        CategorizedPermissionActions(action: 'Delete', permission: deleteRental),
+        CategorizedPermissionActions(action: 'Extend', permission: createRentalExtension),
+        CategorizedPermissionActions(action: 'Delete Extension', permission: deleteRentalExtension),
+      ],
+    ),
+    CategorizedPermissions(
+      title: 'Customer',
+      permissionActions: <CategorizedPermissionActions>[
+        CategorizedPermissionActions(action: 'Create', permission: createCustomer),
+        CategorizedPermissionActions(action: 'View', permission: viewCustomer),
+        CategorizedPermissionActions(action: 'Update', permission: updateCustomer),
+        CategorizedPermissionActions(action: 'Delete', permission: deleteCustomer),
+      ],
+    ),
+    CategorizedPermissions(
+      title: 'Dashboard',
+      permissionActions: <CategorizedPermissionActions>[
+        CategorizedPermissionActions(action: 'View', permission: viewDashboard),
+      /*  CategorizedPermissionActions(action: 'View Sales', permission: viewDashboardSales),
+        CategorizedPermissionActions(action: 'View Customers', permission: viewDashboardCustomers),
+        CategorizedPermissionActions(action: 'View Drivers', permission: viewDashboardDrivers),
+        CategorizedPermissionActions(action: 'View Vehicles', permission: viewDashboardVehicles),
+        CategorizedPermissionActions(action: 'View Expenses', permission: viewDashboardExpenses),
+        CategorizedPermissionActions(action: 'View Rentals', permission: viewDashboardRentals),
+        CategorizedPermissionActions(action: 'View Revenue', permission: viewDashboardRevenue),*/
+      ],
+    ),
+  ];
+
+
+
+}
+
+class CategorizedPermissions{
+
+  CategorizedPermissions({required this.title, required this.permissionActions});
+  String title;
+  List<CategorizedPermissionActions> permissionActions;
+}
+
+
+class CategorizedPermissionActions{
+
+  CategorizedPermissionActions({required this.action, required this.permission});
+  String action;
+  String permission;
 }
 
 class Validator {
@@ -266,6 +395,8 @@ class Validator {
   bool get canViewDashboardWeeklySales =>
       can(UserPermissions.viewDashboardWeeklySales);
   bool get canViewDashboardSummary => can(UserPermissions.viewDashboardSummary);
+
+
 
 
 }

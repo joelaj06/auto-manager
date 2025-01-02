@@ -1,4 +1,5 @@
 import 'package:automanager/core/core.dart';
+import 'package:automanager/core/utils/validators.dart';
 import 'package:automanager/feature/auto_manager/data/data.dart';
 import 'package:automanager/feature/auto_manager/domain/usecase/role/role.dart';
 import 'package:automanager/feature/auto_manager/presentation/role/argument/role_argument.dart';
@@ -22,12 +23,13 @@ class RoleController extends GetxController {
   final FetchPermissions fetchPermissions;
 
   //reactive variables
-  RxList<Role> roles = <Role>[].obs;
-  RxBool isLoading = false.obs;
-  RxString name = ''.obs;
-  RxList<String> selectedPermissions = <String>[].obs;
-  RxList<UserPermission> permissions = <UserPermission>[].obs;
-  RxString query = ''.obs;
+  final RxList<Role> roles = <Role>[].obs;
+  final RxBool isLoading = false.obs;
+  final RxString name = ''.obs;
+  final RxList<String> selectedPermissions = <String>[].obs;
+  final RxList<UserPermission> permissions = <UserPermission>[].obs;
+  final RxString query = ''.obs;
+  final RxSet<String> selectedPermissionsSet = <String>{}.obs;
 
   @override
   void onInit() {
@@ -35,12 +37,15 @@ class RoleController extends GetxController {
     super.onInit();
   }
 
+
+
   void updateTheRole(String roleId) async {
     final RoleRequest roleRequest = RoleRequest(
       id: roleId,
       name: name.value.isNotEmpty ? name.value : null,
       permissions: selectedPermissions,
     );
+
     isLoading(true);
     final Either<Failure, Role> failureOrRole = await updateRole(roleRequest);
     failureOrRole.fold((Failure failure) {
@@ -95,6 +100,16 @@ class RoleController extends GetxController {
     });
   }
 
+  void addPermission(String permission) {
+    selectedPermissionsSet.add(permission);
+    selectedPermissions(selectedPermissionsSet.toList());
+  }
+
+  void removePermission(String permission) {
+    selectedPermissionsSet.remove(permission);
+    selectedPermissions(selectedPermissionsSet.toList());
+  }
+
   void navigateToAddRoleScreen() async {
     final dynamic res = await Get.toNamed<dynamic>(AppRoutes.addRole);
     if (res != null) {
@@ -120,7 +135,26 @@ class RoleController extends GetxController {
     roles(queriedRoles);
   }
 
+  void getRoleDataFromArgs(Role role){
+    selectedPermissions(role.permissions);
+    selectedPermissionsSet.addAll(role.permissions);
+  }
+
+  void clearField(){
+    name('');
+    selectedPermissions(<String>[]);
+    selectedPermissionsSet.clear();
+  }
+
+  void onNameInputChanged(String value){
+    name(value);
+  }
+
   void onSearchFieldInputChanged(String value) {
     query(value);
   }
+
+  RxBool get roleFormIsValid => (Validators.validateField(name.value) == null
+      )
+      .obs;
 }

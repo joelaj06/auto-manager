@@ -129,6 +129,10 @@ class Pages {
       name: AppRoutes.role,
       page: () => const RoleScreen(),
       binding: RoleBindings(),
+    ),GetPage<AppRoutes>(
+      name: AppRoutes.addRole,
+      page: () => const AddRoleScreen(),
+      binding: RoleBindings(),
     ),
   ];
 }
