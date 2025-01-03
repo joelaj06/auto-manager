@@ -1,6 +1,7 @@
 import 'package:automanager/feature/auto_manager/domain/domain.dart';
 import 'package:get/get.dart';
 
+import '../../../domain/usecase/role/fetch_roles.dart';
 import 'user_account_controller.dart';
 
 class UserAccountBindings extends Bindings {
@@ -18,6 +19,9 @@ class UserAccountBindings extends Bindings {
           autoManagerRepository: Get.find(),
         ),
         deleteUser: DeleteUser(
+          autoManagerRepository: Get.find(),
+        ),
+        fetchRoles: FetchRoles(
           autoManagerRepository: Get.find(),
         ),
       ),

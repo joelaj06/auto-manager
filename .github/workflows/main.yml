@@ -30,7 +30,7 @@ jobs:
 
 
       - name: Build APK
-        run: flutter build apk --release --split-per-abi
+        run: flutter build apk -t lib/main_junat.dart --release --split-per-abi --flavor junat
 
       - name: List build directory (for debugging)
         run: ls -R build/

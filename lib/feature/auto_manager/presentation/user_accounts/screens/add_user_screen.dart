@@ -1,3 +1,4 @@
+import 'package:automanager/feature/authentication/data/data.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -11,6 +12,7 @@ class AddUserScreen extends GetView<UserAccountController> {
   @override
   Widget build(BuildContext context) {
     final UserAccountArgument? args = Get.arguments as UserAccountArgument?;
+    controller.getRoles();
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -51,81 +53,102 @@ class AddUserScreen extends GetView<UserAccountController> {
                 initialValue: args != null ? args.user.phone : '',
               ),
               const AppSpacing(v: 10),
-             if (args != null) const SizedBox.shrink() else Obx(
-                () => AppTextInputField(
-                  maxLines: 1,
-                  labelText: 'Password',
-                  onChanged: controller.onPasswordInputChanged,
-                  validator: controller.validatePassword,
-                  textInputType: TextInputType.visiblePassword,
-                  obscureText: !controller.showPassword.value,
-                  suffixIcon: AnimatedSwitcher(
-                    reverseDuration: Duration.zero,
-                    transitionBuilder:
-                        (Widget? child, Animation<double> animation) {
-                      final Animation<double> offset =
-                          Tween<double>(begin: 0, end: 1.0).animate(animation);
-                      return ScaleTransition(scale: offset, child: child);
-                    },
-                    switchInCurve: Curves.elasticOut,
-                    duration: const Duration(milliseconds: 700),
-                    child: IconButton(
-                      key: ValueKey<bool>(controller.showPassword.value),
-                      onPressed: controller.togglePassword,
-                      icon: Obx(
-                        () => controller.showPassword.value
-                            ? const Icon(
-                                Icons.visibility,
-                                size: 20,
-                              )
-                            : const Icon(
-                                Icons.visibility_off,
-                                size: 20,
-                              ),
+              AppSelectField<Role>(
+                labelText: 'Role',
+                onChanged: (Role role) {
+                  controller.onRoleSelected(role);
+                },
+                value: args != null
+                    ? args.user.role
+                    : controller.selectedRole.value,
+                options: controller.roles,
+                titleBuilder: (_, Role role) => role.name.toTitleCase(),
+                validator: (Role role) => controller.validateField(role.name),
+              ),
+              const AppSpacing(v: 10),
+              if (args != null)
+                const SizedBox.shrink()
+              else
+                Obx(
+                  () => AppTextInputField(
+                    maxLines: 1,
+                    labelText: 'Password',
+                    onChanged: controller.onPasswordInputChanged,
+                    validator: controller.validatePassword,
+                    textInputType: TextInputType.visiblePassword,
+                    obscureText: !controller.showPassword.value,
+                    suffixIcon: AnimatedSwitcher(
+                      reverseDuration: Duration.zero,
+                      transitionBuilder:
+                          (Widget? child, Animation<double> animation) {
+                        final Animation<double> offset =
+                            Tween<double>(begin: 0, end: 1.0)
+                                .animate(animation);
+                        return ScaleTransition(scale: offset, child: child);
+                      },
+                      switchInCurve: Curves.elasticOut,
+                      duration: const Duration(milliseconds: 700),
+                      child: IconButton(
+                        key: ValueKey<bool>(controller.showPassword.value),
+                        onPressed: controller.togglePassword,
+                        icon: Obx(
+                          () => controller.showPassword.value
+                              ? const Icon(
+                                  Icons.visibility,
+                                  size: 20,
+                                )
+                              : const Icon(
+                                  Icons.visibility_off,
+                                  size: 20,
+                                ),
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
               const AppSpacing(
                 v: 10,
               ),
-              if (args != null) const SizedBox.shrink() else Obx(
-                () => AppTextInputField(
-                  maxLines: 1,
-                  labelText: 'Confirm Password',
-                  onChanged: controller.onConfirmPasswordInputChanged,
-                  validator: controller.validatePasswordConfirmation,
-                  obscureText: !controller.showPassword.value,
-                  textInputType: TextInputType.visiblePassword,
-                  suffixIcon: AnimatedSwitcher(
-                    reverseDuration: Duration.zero,
-                    transitionBuilder:
-                        (Widget? child, Animation<double> animation) {
-                      final Animation<double> offset =
-                          Tween<double>(begin: 0, end: 1.0).animate(animation);
-                      return ScaleTransition(scale: offset, child: child);
-                    },
-                    switchInCurve: Curves.elasticOut,
-                    duration: const Duration(milliseconds: 700),
-                    child: IconButton(
-                      key: ValueKey<bool>(controller.showPassword.value),
-                      onPressed: controller.togglePassword,
-                      icon: Obx(
-                        () => controller.showPassword.value
-                            ? const Icon(
-                                Icons.visibility,
-                                size: 20,
-                              )
-                            : const Icon(
-                                Icons.visibility_off,
-                                size: 20,
-                              ),
+              if (args != null)
+                const SizedBox.shrink()
+              else
+                Obx(
+                  () => AppTextInputField(
+                    maxLines: 1,
+                    labelText: 'Confirm Password',
+                    onChanged: controller.onConfirmPasswordInputChanged,
+                    validator: controller.validatePasswordConfirmation,
+                    obscureText: !controller.showPassword.value,
+                    textInputType: TextInputType.visiblePassword,
+                    suffixIcon: AnimatedSwitcher(
+                      reverseDuration: Duration.zero,
+                      transitionBuilder:
+                          (Widget? child, Animation<double> animation) {
+                        final Animation<double> offset =
+                            Tween<double>(begin: 0, end: 1.0)
+                                .animate(animation);
+                        return ScaleTransition(scale: offset, child: child);
+                      },
+                      switchInCurve: Curves.elasticOut,
+                      duration: const Duration(milliseconds: 700),
+                      child: IconButton(
+                        key: ValueKey<bool>(controller.showPassword.value),
+                        onPressed: controller.togglePassword,
+                        icon: Obx(
+                          () => controller.showPassword.value
+                              ? const Icon(
+                                  Icons.visibility,
+                                  size: 20,
+                                )
+                              : const Icon(
+                                  Icons.visibility_off,
+                                  size: 20,
+                                ),
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
             ],
           ),
         ),

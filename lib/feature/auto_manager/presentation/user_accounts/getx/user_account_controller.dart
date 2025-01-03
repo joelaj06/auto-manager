@@ -11,6 +11,7 @@ import '../../../../../core/presentation/routes/app_routes.dart';
 import '../../../../../core/presentation/utils/utils.dart';
 import '../../../../../core/usecase/usecase.dart';
 import '../../../data/model/response/listpage/listpage.dart';
+import '../../../domain/usecase/role/fetch_roles.dart';
 
 class UserAccountController extends GetxController {
   UserAccountController({
@@ -18,25 +19,29 @@ class UserAccountController extends GetxController {
     required this.fetchUsers,
     required this.updateUser,
     required this.deleteUser,
+    required this.fetchRoles,
   });
 
   final AddUser addUser;
   final UpdateUser updateUser;
   final FetchUsers fetchUsers;
   final DeleteUser deleteUser;
+  final FetchRoles fetchRoles;
 
   //reactive variables
-  RxInt totalCount = 0.obs;
-  RxString query = ''.obs;
-  RxBool isLoading = false.obs;
-  RxString firstName = ''.obs;
-  RxString lastName = ''.obs;
-  RxString email = ''.obs;
-  RxString phone = ''.obs;
-  RxString address = ''.obs;
-  RxString password = ''.obs;
-  RxString passwordConfirmation = ''.obs;
-  RxBool showPassword = false.obs;
+  final RxInt totalCount = 0.obs;
+  final RxString query = ''.obs;
+  final RxBool isLoading = false.obs;
+  final RxString firstName = ''.obs;
+  final RxString lastName = ''.obs;
+  final RxString email = ''.obs;
+  final RxString phone = ''.obs;
+  final RxString address = ''.obs;
+  final RxString password = ''.obs;
+  final RxString passwordConfirmation = ''.obs;
+  final RxBool showPassword = false.obs;
+  final RxList<Role> roles = <Role>[].obs;
+  final Rx<Role> selectedRole = Role.empty().obs;
 
   //paging controller
   final PagingController<int, User> pagingController =
@@ -50,6 +55,19 @@ class UserAccountController extends GetxController {
     super.onInit();
   }
 
+  void getRoles() async {
+    isLoading(true);
+    final Either<Failure, List<Role>> failureOrRoles =
+    await fetchRoles(NoParams());
+    failureOrRoles.fold((Failure failure) {
+      isLoading(false);
+      AppSnack.show(message: failure.message, status: SnackStatus.error);
+    }, (List<Role> rolesL) {
+      isLoading(false);
+      roles(rolesL);
+    });
+  }
+
   void updateUserAccount(String userId) async {
     isLoading(true);
     final UserRequest userRequest = UserRequest(
@@ -59,6 +77,7 @@ class UserAccountController extends GetxController {
       email: email.value.isNotEmpty ? email.value : null,
       phone: phone.value.isNotEmpty ? phone.value : null,
       address: address.value.isNotEmpty ? address.value : null,
+      role: selectedRole.value.id.isNotEmpty ? selectedRole.value.id : null,
     );
     final Either<Failure, User> failureOrUser = await updateUser(userRequest);
 
@@ -95,6 +114,7 @@ class UserAccountController extends GetxController {
       phone: phone.value,
       address: address.value,
       password: password.value,
+      role: selectedRole.value.id.toString(),
     );
     isLoading(true);
     final Either<Failure, User> failureOrUser = await addUser(userRequest);
@@ -143,6 +163,10 @@ class UserAccountController extends GetxController {
     });
   }
 
+  void onRoleSelected(Role role) {
+    selectedRole(role);
+  }
+
   void onSearchQuerySubmitted() {
     pagingController.refresh();
   }
@@ -154,6 +178,7 @@ class UserAccountController extends GetxController {
     phone('');
     address('');
     password('');
+    selectedRole(Role.empty());
   }
 
   void onSearchFieldInputChanged(String value) {
@@ -269,6 +294,7 @@ class UserAccountController extends GetxController {
       validateField(firstName.value) == null &&
       validateField(phone.value) == null &&
       validateField(lastName.value) == null &&
-      validatePassword(password.value) == null)
+      validatePassword(password.value) == null &&
+      validateField(selectedRole.value.name) == null )
       .obs;
 }
