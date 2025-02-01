@@ -147,32 +147,7 @@ class LoginScreenWeb extends GetView<LoginController> {
     );
   }
 
-  Widget _buildBottomNavBar(BuildContext context) {
-    return Obx(
-      () => controller.isLoadingLocalData.value
-          ? const SizedBox()
-          : SizedBox(
-              height: 50,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  const Text('Don\'t have an account? '),
-                  TextButton(
-                    onPressed: () {
-                      controller.navigateToSignUpScreen();
-                    },
-                    child: const Text(
-                      'Register',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  )
-                ],
-              ),
-            ),
-    );
-  }
+
 
   Widget _buildForm() {
     return AutofillGroup(
