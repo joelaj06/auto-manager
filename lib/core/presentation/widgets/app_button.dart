@@ -7,7 +7,7 @@ import 'package:get/get.dart';
 
 import '../utils/app_padding.dart';
 
-final Color primaryColor = Get.context!.colorScheme.secondaryContainer;
+final Color primaryColor = !Get.isDarkMode ? Colors.black : Get.context!.colorScheme.secondaryContainer;
 
 class AppButton extends StatefulWidget {
   AppButton(
@@ -36,6 +36,8 @@ class AppButton extends StatefulWidget {
 
 class _AppButtonState extends State<AppButton> {
   late Color backupColor;
+
+  bool _isHovered = false;
 
   @override
   void initState() {
@@ -70,13 +72,17 @@ class _AppButtonState extends State<AppButton> {
           });
         },
         child: MouseRegion(
+          onEnter: (_) => setState(() => _isHovered = true),
+          onExit: (_) => setState(() => _isHovered = false),
           cursor: widget.enabled ?  SystemMouseCursors.click : SystemMouseCursors.forbidden,
           child: AnimatedContainer(
             // width: width / 2,
             padding: widget.padding ?? AppPaddings.lA,
             decoration: BoxDecoration(
               color: widget.enabled
-                  ? widget.backgroundColor
+                  ?  _isHovered
+                  ? widget.backgroundColor?.withOpacity(0.8) // Darker on hover
+                  : widget.backgroundColor
                   : context.colorScheme.inversePrimary.withOpacity(0.4),
               borderRadius: BorderRadius.circular(15),
             ),
