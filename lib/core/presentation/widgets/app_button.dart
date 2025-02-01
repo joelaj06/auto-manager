@@ -54,7 +54,7 @@ class _AppButtonState extends State<AppButton> {
     widget.backgroundColor =
         widget.backgroundColor ?? Color(primaryColor.value);
     return Padding(
-      padding: AppPaddings.mA,
+      padding: AppPaddings.mV,
       child: GestureDetector(
         onTap: () {
           if (widget.loading || !widget.enabled) {
@@ -69,29 +69,32 @@ class _AppButtonState extends State<AppButton> {
             });
           });
         },
-        child: AnimatedContainer(
-          // width: width / 2,
-          padding: widget.padding ?? AppPaddings.lA,
-          decoration: BoxDecoration(
-            color: widget.enabled
-                ? widget.backgroundColor
-                : context.colorScheme.inversePrimary.withOpacity(0.4),
-            borderRadius: BorderRadius.circular(15),
-          ),
-          duration: const Duration(
-            milliseconds: 300,
-          ),
-          child: Center(
-            child: FittedBox(
-              fit: BoxFit.fill,
-              child: Text(
-                widget.text,
-                style: TextStyle(
-                  fontWeight: FontWeight.w400,
-                  color: widget.enabled && !widget.loading
-                      ? Colors.white
-                      : context.colorScheme.onPrimaryContainer.withOpacity(0.4),
-                  fontSize: widget.fontSize ?? 20,
+        child: MouseRegion(
+          cursor: widget.enabled ?  SystemMouseCursors.click : SystemMouseCursors.forbidden,
+          child: AnimatedContainer(
+            // width: width / 2,
+            padding: widget.padding ?? AppPaddings.lA,
+            decoration: BoxDecoration(
+              color: widget.enabled
+                  ? widget.backgroundColor
+                  : context.colorScheme.inversePrimary.withOpacity(0.4),
+              borderRadius: BorderRadius.circular(15),
+            ),
+            duration: const Duration(
+              milliseconds: 300,
+            ),
+            child: Center(
+              child: FittedBox(
+                fit: BoxFit.fill,
+                child: Text(
+                  widget.text,
+                  style: TextStyle(
+                    fontWeight: FontWeight.w400,
+                    color: widget.enabled && !widget.loading
+                        ? Colors.white
+                        : context.colorScheme.onPrimaryContainer.withOpacity(0.4),
+                    fontSize: widget.fontSize ?? 20,
+                  ),
                 ),
               ),
             ),

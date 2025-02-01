@@ -168,7 +168,11 @@ class _AppTextInputFieldState extends State<AppTextInputField> {
                   onFieldSubmitted: widget.onFieldSubmitted,
                   decoration: InputDecoration(
                     focusedBorder:
-                        const OutlineInputBorder(borderSide: BorderSide.none),
+                        const OutlineInputBorder(
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(15),
+                            ),
+                            borderSide: BorderSide(color: Colors.black)),
 
                     enabledBorder: const OutlineInputBorder(
                       borderSide: BorderSide.none,
