@@ -36,7 +36,7 @@ jobs:
         run: ls -R build/
 
       - name: Archive Build Outputs
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: flutter-apk
           path: |
