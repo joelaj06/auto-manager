@@ -1,3 +1,4 @@
+import 'package:automanager/core/core.dart';
 import 'package:automanager/core/presentation/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 
@@ -12,14 +13,23 @@ class AppLogo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Image.asset(
-      AppFlavorEnvironment.appFlavor == FlavorEnvironment.automanager.name
-          ? (context.isDarkMode
-              ? AssetImages.appLogoWhite
-              : AssetImages.appLogoBlack)
-          : AssetImages.junatLogo,
-      height: height,
-      width: width,
+    return PlatformWidget(
+      web: Image.asset(
+        context.isDarkMode
+            ? AssetImages.logoWhite
+            : AssetImages.logoBlack,
+        height: height,
+        width: width,
+      ),
+      mobile: Image.asset(
+        AppFlavorEnvironment.appFlavor == FlavorEnvironment.automanager.name
+            ? (context.isDarkMode
+                ? AssetImages.appLogoWhite
+                : AssetImages.appLogoBlack)
+            : AssetImages.junatLogo,
+        height: height,
+        width: width,
+      ),
     );
   }
 }

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:automanager/core/presentation/app/auto_manager.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:logging/logging.dart';
@@ -60,7 +61,7 @@ Future<String> getInitialRoute() async {
   String? currentRoute = prefs.getString('currentRoute');
   final bool? skipOnboarding = prefs.getBool('skipOnboarding');
   if (skipOnboarding == null || skipOnboarding == false) {
-    currentRoute = '/onboarding';
+    currentRoute = kIsWeb ? '/login': '/onboarding';
   }
   currentRoute ??= '/login';
   return currentRoute;

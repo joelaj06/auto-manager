@@ -47,7 +47,7 @@ extension EnvironmentX on Environment {
   String get url {
     return <Environment, String>{
       Environment.development:
-        'http://192.168.175.194:3000/api/',
+        'https://auto-manager-api-6yxs.onrender.com/api/',
       Environment.production: 'https://auto-manager-api-6yxs.onrender.com/api/',
     }[this]!;
   }
