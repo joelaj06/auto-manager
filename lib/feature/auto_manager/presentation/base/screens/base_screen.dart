@@ -27,7 +27,7 @@ class _BaseScreenState extends State<BaseScreen> {
       currentBackPressTime = now;
       Fluttertoast.showToast(
         msg: 'Double tap to exit',
-        backgroundColor: Colors.black.withOpacity(0.5),
+        backgroundColor: Colors.black.withValues(alpha: 0.5),
       );
       return Future<bool>.value(false);
     }
@@ -41,7 +41,7 @@ class _BaseScreenState extends State<BaseScreen> {
       body: Builder(builder: (BuildContext context) {
         return PopScope(
           canPop: false,
-          onPopInvoked: (bool didPop) async {
+          onPopInvokedWithResult: (bool didPop,_) async {
             if (didPop) {
               return;
             }
@@ -81,7 +81,7 @@ class _BaseScreenState extends State<BaseScreen> {
                   size: isActive ? 26 : 24,
                   color: isActive
                       ? context.colorScheme.onSurface
-                      : context.colorScheme.inverseSurface.withOpacity(0.8),
+                      : context.colorScheme.inverseSurface.withValues(alpha: 0.8),
                 ),
                 FittedBox(
                   fit: BoxFit.fill,
@@ -91,7 +91,7 @@ class _BaseScreenState extends State<BaseScreen> {
                       fontWeight: isActive ? FontWeight.bold : FontWeight.w500,
                       color:
                           isActive?  context.colorScheme.onSurface
-                        : context.colorScheme.inverseSurface.withOpacity(0.8)
+                        : context.colorScheme.inverseSurface.withValues(alpha: 0.8)
                     ),
                   ),
                 ),

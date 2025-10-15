@@ -15,9 +15,8 @@ class AddVehicleScreen extends GetView<VehicleController> {
 
   @override
   Widget build(BuildContext context) {
-    final VehicleArgument? args = Get.arguments;
+    final VehicleArgument? args = ModalRoute.of(context)?.settings.arguments as VehicleArgument?;
     controller.clearFields();
-
     if (args != null) {
       controller.getVehicleDataFromArgs(args.vehicle);
     }

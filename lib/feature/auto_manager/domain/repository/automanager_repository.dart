@@ -8,16 +8,21 @@ import '../../../authentication/data/models/response/user/user_model.dart';
 import '../../data/model/model.dart';
 
 abstract interface class AutoManagerRepository {
-  Future<Either<Failure, Company>> addCompany(
-      {required Company companyRequest});
+  Future<Either<Failure, Company>> addCompany({
+    required Company companyRequest,
+  });
 
-  Future<Either<Failure, DashboardSummary>> fetchDashboardSummary(
-      {required String startDate,
-      required String endDate,
-      required String companyId});
+  Future<Either<Failure, DashboardSummary>> fetchDashboardSummary({
+    required String startDate,
+    required String endDate,
+    required String companyId,
+  });
 
-  Future<Either<Failure, MonthlySales>> fetchMonthlySales(
-      {required String companyId, required int year, required int month});
+  Future<Either<Failure, MonthlySales>> fetchMonthlySales({
+    required String companyId,
+    required int year,
+    required int month,
+  });
 
   Future<Either<Failure, Company>> fetchCompany(String companyId);
 
@@ -32,8 +37,9 @@ abstract interface class AutoManagerRepository {
     required String? query,
   });
 
-  Future<Either<Failure, Sale>> addSale(
-      {required AddSaleRequest addSaleRequest});
+  Future<Either<Failure, Sale>> addSale({
+    required AddSaleRequest addSaleRequest,
+  });
 
   Future<Either<Failure, Sale>> deleteSale({required String saleId});
 
@@ -60,13 +66,15 @@ abstract interface class AutoManagerRepository {
 
   Future<Either<Failure, List<ExpenseCategory>>> fetchExpenseCategories();
 
-  Future<Either<Failure, Expense>> addExpense(
-      {required AddExpenseRequest addExpenseRequest});
+  Future<Either<Failure, Expense>> addExpense({
+    required AddExpenseRequest addExpenseRequest,
+  });
 
   Future<Either<Failure, Expense>> deleteExpense({required String expenseId});
 
-  Future<Either<Failure, Expense>> updateExpense(
-      {required UpdateExpenseRequest updateExpenseRequest});
+  Future<Either<Failure, Expense>> updateExpense({
+    required UpdateExpenseRequest updateExpenseRequest,
+  });
 
   Future<Either<Failure, ListPage<Rental>>> fetchRentals({
     required int pageIndex,
@@ -78,13 +86,15 @@ abstract interface class AutoManagerRepository {
     required String? vehicleId,
   });
 
-  Future<Either<Failure, Rental>> addRental(
-      {required RentalRequest addRentalRequest});
+  Future<Either<Failure, Rental>> addRental({
+    required RentalRequest addRentalRequest,
+  });
 
   Future<Either<Failure, Rental>> deleteRental({required String rentalId});
 
-  Future<Either<Failure, Rental>> updateRental(
-      {required RentalRequest updateRentalRequest});
+  Future<Either<Failure, Rental>> updateRental({
+    required RentalRequest updateRentalRequest,
+  });
 
   Future<Either<Failure, ListPage<Customer>>> fetchCustomers({
     required int pageIndex,
@@ -92,8 +102,9 @@ abstract interface class AutoManagerRepository {
     required String? query,
   });
 
-  Future<Either<Failure, Rental>> extendRental(
-      {required ExtendRentalRequest extendRentalRequest});
+  Future<Either<Failure, Rental>> extendRental({
+    required ExtendRentalRequest extendRentalRequest,
+  });
 
   Future<Either<Failure, User>> fetchUser({required String userId});
 
@@ -107,21 +118,25 @@ abstract interface class AutoManagerRepository {
 
   Future<Either<Failure, User>> addUser({required UserRequest userRequest});
 
-  Future<Either<Failure, Customer>> addCustomer(
-      {required CustomerRequest customerRequest});
+  Future<Either<Failure, Customer>> addCustomer({
+    required CustomerRequest customerRequest,
+  });
 
-  Future<Either<Failure, Customer>> deleteCustomer(
-      {required String customerId});
+  Future<Either<Failure, Customer>> deleteCustomer({
+    required String customerId,
+  });
 
   Future<Either<Failure, Customer>> updateCustomer({
     required CustomerRequest customerRequest,
   });
 
-  Future<Either<Failure, Vehicle>> addVehicle(
-      {required VehicleRequest vehicleRequest});
+  Future<Either<Failure, Vehicle>> addVehicle({
+    required VehicleRequest vehicleRequest,
+  });
 
-  Future<Either<Failure, Vehicle>> updateVehicle(
-      {required VehicleRequest vehicleRequest});
+  Future<Either<Failure, Vehicle>> updateVehicle({
+    required VehicleRequest vehicleRequest,
+  });
 
   Future<Either<Failure, Vehicle>> deleteVehicle({required String vehicleId});
 
@@ -133,16 +148,18 @@ abstract interface class AutoManagerRepository {
     required String? query,
   });
 
-  Future<Either<Failure, Rental>> removeExtension(
-      {required String rentalId,
-      required RemoveExtensionRequest removeExtensionRequest});
+  Future<Either<Failure, Rental>> removeExtension({
+    required String rentalId,
+    required RemoveExtensionRequest removeExtensionRequest,
+  });
 
   Future<Either<Failure, List<Role>>> fetchRoles();
 
   Future<Either<Failure, List<UserPermission>>> fetchPermissions();
 
-  Future<Either<Failure, Role>> updateRole(
-      {required RoleRequest roleRequest});
+  Future<Either<Failure, Role>> updateRole({required RoleRequest roleRequest});
 
   Future<Either<Failure, Role>> addRole({required RoleRequest roleRequest});
+
+  Future<Either<Failure, Driver>> addDriver({required UserRequest userRequest});
 }

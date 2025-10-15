@@ -1,5 +1,6 @@
 export 'animated_column.dart';
 export 'app_button.dart';
+export 'app_loading_box.dart';
 export 'app_logo.dart';
 export 'app_otp_widget.dart';
 export 'app_select_field.dart';

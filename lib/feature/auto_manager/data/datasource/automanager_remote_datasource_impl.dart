@@ -485,4 +485,14 @@ class AutoMangerRemoteDatasourceImpl implements AutoManagerRemoteDatasource {
     );
     return Role.fromJson(json);
   }
+
+  @override
+  Future<Driver> addDriver({required UserRequest userRequest}) async {
+    final Map<String, dynamic> json = await _client.post(
+      AutoManagerEndpoints.drivers,
+      body: userRequest.toJson(),
+    );
+    return Driver.fromJson(json);
+
+  }
 }

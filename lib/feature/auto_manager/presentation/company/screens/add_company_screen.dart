@@ -15,58 +15,80 @@ class AddCompanyScreen extends GetView<CompanyController> {
         title: const Text(
           'Business Setup',
         ),
+        automaticallyImplyLeading: false,
       ),
+
       bottomNavigationBar: Obx(
         () => Visibility(
           visible: controller.pageIndex.value < 3,
           child: _buildBottomNavigationBar(),
         ),
       ),
-      body: Column(
-        children: <Widget>[
-          const AppSpacing(v: 10),
-          Obx(() => Text('Step ${(controller.pageIndex.value + 1)}/4')),
-          SizedBox(
-            height: 10,
-            width: context.width,
-            child: Padding(
-              padding: AppPaddings.mH,
-              child: Obx(
-                () => TweenAnimationBuilder<double>(
-                  duration: const Duration(milliseconds: 300),
-                  tween: Tween<double>(
-                    begin: 0.0,
-                    end: (controller.pageIndex.value + 1) / 4,
-                  ),
-                  builder: (BuildContext context, double value, Widget? child) {
-                    return LinearProgressIndicator(
-                      semanticsLabel: 'stepper',
-                      value: value,
-                      minHeight: 20,
-                      borderRadius: BorderRadius.circular(20),
-                    );
-                  },
+      body: Builder(
+        builder: (context) {
+          return PopScope(
+            onPopInvokedWithResult: (bool didPop,_) async {
+              if (didPop) {
+                return;
+              }
+              if (controller.pageIndex.value == 3) {
+                controller.navigateToLoginScreen();
+                return;
+              }
+              controller.navigateToPreviousPage();
+            },
+            child: Obx(() => AppLoadingBox(
+              loading: controller.isLoading.value,
+              child: Column(
+                  children: <Widget>[
+                    const AppSpacing(v: 10),
+                    Obx(() => Text('Step ${(controller.pageIndex.value + 1)}/4')),
+                    SizedBox(
+                      height: 10,
+                      width: context.width,
+                      child: Padding(
+                        padding: AppPaddings.mH,
+                        child: Obx(
+                          () => TweenAnimationBuilder<double>(
+                            duration: const Duration(milliseconds: 300),
+                            tween: Tween<double>(
+                              begin: 0.0,
+                              end: (controller.pageIndex.value + 1) / 4,
+                            ),
+                            builder: (BuildContext context, double value, Widget? child) {
+                              return LinearProgressIndicator(
+                                semanticsLabel: 'stepper',
+                                value: value,
+                                minHeight: 20,
+                                borderRadius: BorderRadius.circular(20),
+                              );
+                            },
+                          ),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: Padding(
+                        padding: AppPaddings.mA.add(AppPaddings.mT),
+                        child: PageView(
+                          controller: controller.pageController,
+                          onPageChanged: controller.onPageChanged,
+                          physics: const NeverScrollableScrollPhysics(),
+                          children: <Widget>[
+                            _buildBasicInfoPage(context),
+                            _buildContactPage(context),
+                            _buildBusinessRegistrationPage(context),
+                            _buildSuccessPage(context),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              ),
             ),
-          ),
-          Expanded(
-            child: Padding(
-              padding: AppPaddings.mA.add(AppPaddings.mT),
-              child: PageView(
-                controller: controller.pageController,
-                onPageChanged: controller.onPageChanged,
-                physics: const NeverScrollableScrollPhysics(),
-                children: <Widget>[
-                  _buildBasicInfoPage(context),
-                  _buildContactPage(context),
-                  _buildBusinessRegistrationPage(context),
-                  _buildSuccessPage(context),
-                ],
-              ),
             ),
-          ),
-        ],
+          );
+        }
       ),
     );
   }
@@ -297,7 +319,7 @@ class AddCompanyScreen extends GetView<CompanyController> {
                               ? true
                               : false,
                   onPressed: controller.saveCompany,
-                  text: controller.pageIndex.value == 2 ? 'Continue' : 'Next',
+                  text:  controller.pageIndex.value == 2 ? 'Continue' : 'Next',
                   // fontSize: 18,
                 ),
               ),

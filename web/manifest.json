@@ -5,7 +5,7 @@
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "AutoManager is a comprehensive fleet management app designed for car owners to efficiently manage their vehicles and drivers. With features to track vehicle assignments, monitor driver performance, record weekly sales, manage expenses, and handle car leasing, AutoManager simplifies the process of overseeing fleet operations.",
+    "description": "A new Flutter project.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

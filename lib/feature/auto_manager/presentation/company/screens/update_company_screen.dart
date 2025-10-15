@@ -47,7 +47,7 @@ class UpdateCompanyScreen extends GetView<CompanyController> {
                 labelText: 'Motto',
                 onChanged: controller.onMottoInputChanged,
                 controller: controller.companyMottoTextEditingController,
-                textInputType: TextInputType.phone,
+                textInputType: TextInputType.text,
               )
             ],
           ),

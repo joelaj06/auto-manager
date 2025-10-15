@@ -1,8 +1,6 @@
 import 'package:automanager/core/presentation/theme/app_theme.dart';
 import 'package:automanager/feature/auto_manager/presentation/presentation.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:get/get.dart';
 import 'package:iconly/iconly.dart';
@@ -81,7 +79,7 @@ class RentalScreen extends GetView<RentalController> {
                           Visibility(
                             visible: UserPermissions.validator.canDeleteRental,
                             child: SlidableAction(
-                              backgroundColor: context.colorScheme.background,
+                              backgroundColor: context.colorScheme.surface,
                               foregroundColor: Colors.red,
                               icon: IconlyLight.delete,
                               label: 'Delete',
@@ -107,7 +105,7 @@ class RentalScreen extends GetView<RentalController> {
                           Visibility(
                             visible: UserPermissions.validator.canUpdateRental,
                             child: SlidableAction(
-                              backgroundColor: context.colorScheme.background,
+                              backgroundColor: context.colorScheme.surface,
                               icon: IconlyLight.edit,
                               label: 'Edit',
                               onPressed: (BuildContext context) {
@@ -118,7 +116,7 @@ class RentalScreen extends GetView<RentalController> {
                           Visibility(
                             visible: UserPermissions.validator.canCreateRentalExtension,
                             child: SlidableAction(
-                              backgroundColor: context.colorScheme.background,
+                              backgroundColor: context.colorScheme.surface,
                               icon: Icons.add,
                               label: 'Extend',
                               onPressed: (BuildContext context) {
@@ -362,8 +360,9 @@ class RentalScreen extends GetView<RentalController> {
                         Text(
                           rental.rentalCode,
                           textAlign: TextAlign.left,
-                          style: const TextStyle(
+                          style: context.sub2.copyWith(
                             fontWeight: FontWeight.bold,
+                            fontSize: 12,
                           ),
                         ),
                         Text(DataFormatter.formatDate(rental.date ?? '')),
@@ -465,13 +464,16 @@ class RentalScreen extends GetView<RentalController> {
               controller.totalAmount.value,
             ),
             textAlign: TextAlign.left,
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(
+            style: Theme.of(context).textTheme.titleSmall?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
           ),
         ),
         Chip(
-          backgroundColor: context.colorScheme.background,
+          backgroundColor: context.colorScheme.surface,
+          labelStyle: context.caption.copyWith(
+            color: context.colorScheme.onSurface,
+          ),
           label: Obx(
             () => Text(
               controller.dateText.value,

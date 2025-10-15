@@ -307,6 +307,9 @@ class SalesController extends GetxController
   void onDriverSelected(Driver driver) {
     selectedDriver(driver);
     driverId(driver.id);
+    if(driver.vehicle != null){
+      onVehicleSelected(driver.vehicle!);
+    }
   }
 
   void onVehicleSelected(Vehicle vehicle) {

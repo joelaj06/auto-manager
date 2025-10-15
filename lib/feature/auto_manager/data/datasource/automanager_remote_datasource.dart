@@ -139,4 +139,6 @@ abstract interface class AutoManagerRemoteDatasource {
   Future<Role> addRole({required RoleRequest roleRequest});
 
   Future<List<UserPermission>> fetchPermissions();
+
+  Future<Driver> addDriver({required UserRequest userRequest});
 }

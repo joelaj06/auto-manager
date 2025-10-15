@@ -13,11 +13,15 @@ class Driver with _$Driver {
   const factory Driver({
    @JsonKey(name: '_id') required String? id,
     String? licenseNumber,
+    required String firstName,
+    required String lastName,
+    String? email,
+    String? phone,
     @JsonKey(name: 'lisenceExpiryDate')String? licenceExpiryDate,
     String? status,
     String? userId,
     Vehicle? vehicle,
-    required User user,
+     User? user,
     List<Sale>? salesHistory,
     String? createdAt,
     String? updatedAt,
@@ -32,6 +36,7 @@ class Driver with _$Driver {
 
   factory Driver.empty() =>  Driver(
     id: '',
-    user: User.empty(),
+    firstName: '',
+    lastName: '',
   );
 }

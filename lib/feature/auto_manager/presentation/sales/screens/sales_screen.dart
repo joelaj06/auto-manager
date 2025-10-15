@@ -1,9 +1,7 @@
 import 'package:automanager/core/core.dart';
 import 'package:automanager/core/presentation/theme/app_theme.dart';
 import 'package:automanager/feature/auto_manager/presentation/sales/getx/sales_controller.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:get/get.dart';
 import 'package:iconly/iconly.dart';
@@ -18,34 +16,37 @@ class SalesScreen extends GetView<SalesController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: UserPermissions.validator.canCreateSale
-          ? FloatingActionButton(
-              onPressed: controller.navigateToAddSalesScreen,
-              child: const Icon(IconlyLight.plus),
-            )
-          : null,
+      floatingActionButton:
+          UserPermissions.validator.canCreateSale
+              ? FloatingActionButton(
+                onPressed: controller.navigateToAddSalesScreen,
+                child: const Icon(IconlyLight.plus),
+              )
+              : null,
       appBar: AppBar(
         title: Obx(
           () => AnimatedBuilder(
             animation: controller.animation,
             builder: (BuildContext context, Widget? child) {
               return Opacity(
-                opacity: controller.isSearching.value
-                    ? controller.animation.value
-                    : 1.0,
+                opacity:
+                    controller.isSearching.value
+                        ? controller.animation.value
+                        : 1.0,
                 child: Transform.translate(
                   offset: Offset(0.0, 5.0 * (1 - controller.animation.value)),
                   child: child,
                 ),
               );
             },
-            child: controller.isSearching.value
-                ? _buildSearchField(context)
-                : Obx(
-                    () => Text(
-                      'Sales ${controller.totalCount.value == 0 ? '' : '(${controller.totalCount.value})'}',
+            child:
+                controller.isSearching.value
+                    ? _buildSearchField(context)
+                    : Obx(
+                      () => Text(
+                        'Sales ${controller.totalCount.value == 0 ? '' : '(${controller.totalCount.value})'}',
+                      ),
                     ),
-                  ),
           ),
         ),
         leading: Obx(
@@ -73,11 +74,9 @@ class SalesScreen extends GetView<SalesController> {
             onPressed: () {
               showModalBottomSheet<dynamic>(
                 context: context,
-                builder: (BuildContext context) => SizedBox(
-                  child: _buildFilterModal(
-                    context,
-                  ),
-                ),
+                builder:
+                    (BuildContext context) =>
+                        SizedBox(child: _buildFilterModal(context)),
               );
             },
             icon: const Icon(IconlyLight.filter),
@@ -96,9 +95,7 @@ class SalesScreen extends GetView<SalesController> {
               ),
             ),
           ),
-          Expanded(
-            child: _buildSalesList(context),
-          ),
+          Expanded(child: _buildSalesList(context)),
         ],
       ),
     );
@@ -108,11 +105,11 @@ class SalesScreen extends GetView<SalesController> {
     return Container(
       padding: const EdgeInsets.only(left: 4),
       decoration: BoxDecoration(
-        color: context.colorScheme.background,
+        color: context.colorScheme.surface,
         borderRadius: BorderRadius.circular(5),
         boxShadow: <BoxShadow>[
           BoxShadow(
-            color: Colors.grey.withOpacity(0.5),
+            color: Colors.grey.withValues(alpha: 0.5),
             blurRadius: 6.0,
             spreadRadius: 0.0,
             offset: const Offset(0, 4),
@@ -123,15 +120,11 @@ class SalesScreen extends GetView<SalesController> {
         autofocus: true,
         controller: controller.searchQueryTextEditingController.value,
         onFieldSubmitted: controller.onSearchQuerySubmitted,
-        style: const TextStyle(
-          fontSize: 18,
-        ),
+        style: const TextStyle(fontSize: 18),
         decoration: InputDecoration(
           suffixIcon: IconButton(
             onPressed: controller.clearSearchField,
-            icon: const Icon(
-              Icons.cancel,
-            ),
+            icon: const Icon(Icons.cancel),
           ),
           border: InputBorder.none,
           hintText: 'Search...',
@@ -149,69 +142,68 @@ class SalesScreen extends GetView<SalesController> {
             onRefresh: () {
               controller.endDate(DateTime.now());
               return Future<void>.sync(
-                  () => controller.pagingController.refresh());
+                () => controller.pagingController.refresh(),
+              );
             },
             child: PagedListView<int, Sale>(
-                pagingController: controller.pagingController,
-                builderDelegate: PagedChildBuilderDelegate<Sale>(
-                  itemBuilder: (BuildContext context, Sale sale, int index) {
-                    return Slidable(
-                      endActionPane: ActionPane(
-                        motion: const DrawerMotion(),
-                        children: <Widget>[
-                          Visibility(
-                            visible: UserPermissions.validator.canDeleteSale,
-                            child: SlidableAction(
-                              backgroundColor: context.colorScheme.background,
-                              foregroundColor: Colors.red,
-                              icon: IconlyLight.delete,
-                              label: 'Delete',
-                              onPressed: (BuildContext context) async {
-                                await AppDialogs.showDialogWithButtons(
-                                  context,
-                                  onConfirmPressed: () =>
-                                      controller.deleteASale(sale.id),
-                                  content: const Text(
-                                    'Are you sure you want to delete this sale?',
-                                    textAlign: TextAlign.center,
-                                  ),
-                                  confirmText: 'Delete',
-                                );
-                              },
-                            ),
+              pagingController: controller.pagingController,
+              builderDelegate: PagedChildBuilderDelegate<Sale>(
+                itemBuilder: (BuildContext context, Sale sale, int index) {
+                  return Slidable(
+                    endActionPane: ActionPane(
+                      motion: const DrawerMotion(),
+                      children: <Widget>[
+                        Visibility(
+                          visible: UserPermissions.validator.canDeleteSale,
+                          child: SlidableAction(
+                            backgroundColor: context.colorScheme.surface,
+                            foregroundColor: Colors.red,
+                            icon: IconlyLight.delete,
+                            label: 'Delete',
+                            onPressed: (BuildContext context) async {
+                              await AppDialogs.showDialogWithButtons(
+                                context,
+                                onConfirmPressed:
+                                    () => controller.deleteASale(sale.id),
+                                content: const Text(
+                                  'Are you sure you want to delete this sale?',
+                                  textAlign: TextAlign.center,
+                                ),
+                                confirmText: 'Delete',
+                              );
+                            },
                           ),
-                        ],
-                      ),
-                      child: _buildSalesListTile(context, index, sale),
-                    );
-                  },
-                  firstPageErrorIndicatorBuilder: (BuildContext context) =>
-                      ErrorIndicator(
-                    error: controller.pagingController.value.error as Failure,
-                    onTryAgain: () => controller.pagingController.refresh(),
-                  ),
-                  noItemsFoundIndicatorBuilder: (BuildContext context) =>
-                      const EmptyListIndicator(),
-                  newPageProgressIndicatorBuilder: (BuildContext context) =>
-                      const Center(
-                    child: CircularProgressIndicator.adaptive(),
-                  ),
-                  firstPageProgressIndicatorBuilder: (BuildContext context) =>
-                      const Center(
-                    child: CircularProgressIndicator.adaptive(),
-                  ),
-                ),
-                shrinkWrap: true),
+                        ),
+                      ],
+                    ),
+                    child: _buildSalesListTile(context, index, sale),
+                  );
+                },
+                firstPageErrorIndicatorBuilder:
+                    (BuildContext context) => ErrorIndicator(
+                      error: controller.pagingController.value.error as Failure,
+                      onTryAgain: () => controller.pagingController.refresh(),
+                    ),
+                noItemsFoundIndicatorBuilder:
+                    (BuildContext context) => const EmptyListIndicator(),
+                newPageProgressIndicatorBuilder:
+                    (BuildContext context) => const Center(
+                      child: CircularProgressIndicator.adaptive(),
+                    ),
+                firstPageProgressIndicatorBuilder:
+                    (BuildContext context) => const Center(
+                      child: CircularProgressIndicator.adaptive(),
+                    ),
+              ),
+              shrinkWrap: true,
+            ),
           ),
         ),
       ],
     );
   }
 
-  Widget _buildSaleDetailModal(
-    BuildContext context,
-    Sale sale,
-  ) {
+  Widget _buildSaleDetailModal(BuildContext context, Sale sale) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: SingleChildScrollView(
@@ -220,12 +212,15 @@ class SalesScreen extends GetView<SalesController> {
           children: <Widget>[
             ModalListCard(title: 'Sale ID', value: sale.saleId ?? '--'),
             ModalListCard(
-                title: 'Date',
-                value: DataFormatter.formatDateToString(sale.createdAt ?? '')),
+              title: 'Date',
+              value: DataFormatter.formatDateToString(sale.createdAt ?? ''),
+            ),
             ModalListCard(
-                title: 'Driver',
-                value: '${sale.driver?.user.firstName ?? ''} '
-                    '${sale.driver?.user.lastName ?? ''}'),
+              title: 'Driver',
+              value:
+                  '${sale.driver?.firstName ?? ''} '
+                  '${sale.driver?.lastName ?? ''}',
+            ),
             ModalListCard(
               title: 'Vehicle',
               value:
@@ -234,8 +229,9 @@ class SalesScreen extends GetView<SalesController> {
             ),
             ModalListCard(
               title: 'Amount',
-              value: DataFormatter.getLocalCurrencyFormatter(context)
-                  .format(sale.amount),
+              value: DataFormatter.getLocalCurrencyFormatter(
+                context,
+              ).format(sale.amount),
             ),
           ],
         ),
@@ -248,9 +244,9 @@ class SalesScreen extends GetView<SalesController> {
       onTap: () {
         showModalBottomSheet<dynamic>(
           context: context,
-          builder: (BuildContext context) => SizedBox(
-            child: _buildSaleDetailModal(context, sale),
-          ),
+          builder:
+              (BuildContext context) =>
+                  SizedBox(child: _buildSaleDetailModal(context, sale)),
         );
       },
       child: Padding(
@@ -268,11 +264,15 @@ class SalesScreen extends GetView<SalesController> {
                         Text(
                           sale.saleId,
                           textAlign: TextAlign.left,
-                          style: const TextStyle(
+                          style: context.sub2.copyWith(
                             fontWeight: FontWeight.bold,
+                            fontSize: 12,
                           ),
                         ),
-                        Text(DataFormatter.formatDate(sale.createdAt ?? '')),
+                        Text(
+                          DataFormatter.formatDate(sale.createdAt ?? ''),
+                          style: context.caption,
+                        ),
                       ],
                     ),
                   ),
@@ -280,7 +280,7 @@ class SalesScreen extends GetView<SalesController> {
                     child: Column(
                       children: <Widget>[
                         Text(
-                          '${sale.driver?.user.firstName ?? ''} ${sale.driver?.user.lastName ?? ''}',
+                          '${sale.driver?.firstName ?? ''} ${sale.driver?.user?.lastName ?? ''}',
                           style: const TextStyle(fontWeight: FontWeight.w500),
                         ),
                         Text(
@@ -292,24 +292,22 @@ class SalesScreen extends GetView<SalesController> {
                     ),
                   ),
                   Expanded(
-                    child: Center(
-                      child: Text(
-                        sale.amount.toStringAsFixed(2),
-                      ),
-                    ),
+                    child: Center(child: Text(sale.amount.toStringAsFixed(2))),
                   ),
                   Expanded(
                     child: Center(
                       child: Container(
                         padding: AppPaddings.mH.add(AppPaddings.sV),
                         decoration: BoxDecoration(
-                          color: Colors.green.withOpacity(0.2),
+                          color: Colors.green.withValues(alpha: 0.2),
                           borderRadius: AppBorderRadius.largeAll,
                         ),
                         child: Text(
                           (sale.status ?? 'pending').toTitleCase(),
                           style: const TextStyle(
-                              color: Colors.green, fontSize: 12),
+                            color: Colors.green,
+                            fontSize: 12,
+                          ),
                         ),
                       ),
                     ),
@@ -317,9 +315,7 @@ class SalesScreen extends GetView<SalesController> {
                 ],
               ),
             ),
-            const Divider(
-              height: 2,
-            ),
+            const Divider(height: 2),
           ],
         ),
       ),
@@ -330,28 +326,22 @@ class SalesScreen extends GetView<SalesController> {
     return Container(
       padding: const EdgeInsets.all(8),
       color: context.colorScheme.outlineVariant,
-      child: const Padding(
+      child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 12.0),
         child: Row(
           children: <Widget>[
-            Expanded(
-              child: Text('ID'),
-            ),
-            Expanded(
-              child: Center(
-                child: Text('Driver'),
-              ),
-            ),
+            Expanded(child: Text('ID')),
+            Expanded(child: Center(child: Text('Driver'))),
             Expanded(
               child: Center(
-                child: Text('Amount(GHS)'),
+                child: Text(
+                  'Amount(GHS)',
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                ),
               ),
             ),
-            Expanded(
-              child: Center(
-                child: Text('Status'),
-              ),
-            ),
+            Expanded(child: Center(child: Text('Status'))),
           ],
         ),
       ),
@@ -365,22 +355,21 @@ class SalesScreen extends GetView<SalesController> {
       children: <Widget>[
         Obx(
           () => Text(
-            DataFormatter.getLocalCurrencyFormatter(context).format(
-              controller.totalAmount.value,
-            ),
+            DataFormatter.getLocalCurrencyFormatter(
+              context,
+            ).format(controller.totalAmount.value),
             textAlign: TextAlign.left,
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
           ),
         ),
         Chip(
-          backgroundColor: context.colorScheme.background,
-          label: Obx(
-            () => Text(
-              controller.dateText.value,
-            ),
+          backgroundColor: context.colorScheme.surface,
+          labelStyle: context.caption.copyWith(
+            color: context.colorScheme.onSurface,
           ),
+          label: Obx(() => Text(controller.dateText.value)),
         ),
       ],
     );
@@ -396,24 +385,25 @@ class SalesScreen extends GetView<SalesController> {
           children: <Widget>[
             const Align(
               alignment: Alignment.center,
-              child:
-                  Text('Filter', style: TextStyle(fontWeight: FontWeight.bold)),
+              child: Text(
+                'Filter',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
             ),
-            const AppSpacing(
-              v: 20,
-            ),
+            const AppSpacing(v: 20),
             GetBuilder<SalesController>(
-                id: 'filter',
-                builder: (_) {
-                  return ExpansionPanelList(
-                    expansionCallback: (int panelIndex, bool isExpanded) {
-                      controller.onExpansionCallBack(panelIndex);
-                    },
-                    materialGapSize: 10,
-                    expandedHeaderPadding: EdgeInsets.zero,
-                    children: controller.expandableList.isEmpty
-                        ? <ExpansionPanel>[]
-                        : <ExpansionPanel>[
+              id: 'filter',
+              builder: (_) {
+                return ExpansionPanelList(
+                  expansionCallback: (int panelIndex, bool isExpanded) {
+                    controller.onExpansionCallBack(panelIndex);
+                  },
+                  materialGapSize: 10,
+                  expandedHeaderPadding: EdgeInsets.zero,
+                  children:
+                      controller.expandableList.isEmpty
+                          ? <ExpansionPanel>[]
+                          : <ExpansionPanel>[
                             _buildExpansionPanel(
                               context,
                               isExpanded:
@@ -424,35 +414,48 @@ class SalesScreen extends GetView<SalesController> {
                               body: Obx(
                                 () => ListView.separated(
                                   shrinkWrap: true,
-                                  itemCount: controller
-                                      .expandableList.first.body.length,
-                                  itemBuilder:
-                                      (BuildContext context, int index) {
+                                  itemCount:
+                                      controller
+                                          .expandableList
+                                          .first
+                                          .body
+                                          .length,
+                                  itemBuilder: (
+                                    BuildContext context,
+                                    int index,
+                                  ) {
                                     return Obx(
                                       () => ListTile(
                                         onTap: () {
                                           controller.onFilteredDriverSelected(
-                                              controller.expandableList.first
-                                                  .body[index].id);
+                                            controller
+                                                .expandableList
+                                                .first
+                                                .body[index]
+                                                .id,
+                                          );
                                         },
                                         trailing:
                                             controller.filteredDriverId.value ==
-                                                    controller.expandableList
-                                                        .first.body[index].id
-                                                ? const Icon(
-                                                    Icons.check_circle,
-                                                  )
+                                                    controller
+                                                        .expandableList
+                                                        .first
+                                                        .body[index]
+                                                        .id
+                                                ? const Icon(Icons.check_circle)
                                                 : null,
                                         title: Text(
-                                          '${controller.expandableList.first.body[index].user.firstName} '
-                                          '${controller.expandableList.first.body[index].user.lastName}',
+                                          '${controller.expandableList.first.body[index].firstName} '
+                                          '${controller.expandableList.first.body[index].lastName}',
                                           style: const TextStyle(fontSize: 12),
                                         ),
                                       ),
                                     );
                                   },
-                                  separatorBuilder:
-                                      (BuildContext context, int index) {
+                                  separatorBuilder: (
+                                    BuildContext context,
+                                    int index,
+                                  ) {
                                     return const Divider();
                                   },
                                 ),
@@ -468,26 +471,38 @@ class SalesScreen extends GetView<SalesController> {
                               body: Obx(
                                 () => ListView.separated(
                                   shrinkWrap: true,
-                                  itemCount: controller
-                                      .expandableList.last.body.length,
-                                  itemBuilder:
-                                      (BuildContext context, int index) {
+                                  itemCount:
+                                      controller
+                                          .expandableList
+                                          .last
+                                          .body
+                                          .length,
+                                  itemBuilder: (
+                                    BuildContext context,
+                                    int index,
+                                  ) {
                                     return Obx(
                                       () => ListTile(
                                         onTap: () {
                                           controller.onFilteredVehicleSelected(
-                                            controller.expandableList.last
-                                                .body[index].id,
+                                            controller
+                                                .expandableList
+                                                .last
+                                                .body[index]
+                                                .id,
                                           );
                                         },
-                                        trailing: controller
-                                                    .filteredVehicleId.value ==
-                                                controller.expandableList.last
-                                                    .body[index].id
-                                            ? const Icon(
-                                                Icons.check_circle,
-                                              )
-                                            : null,
+                                        trailing:
+                                            controller
+                                                        .filteredVehicleId
+                                                        .value ==
+                                                    controller
+                                                        .expandableList
+                                                        .last
+                                                        .body[index]
+                                                        .id
+                                                ? const Icon(Icons.check_circle)
+                                                : null,
                                         visualDensity: const VisualDensity(
                                           vertical: -4,
                                           horizontal: -4,
@@ -502,8 +517,10 @@ class SalesScreen extends GetView<SalesController> {
                                       ),
                                     );
                                   },
-                                  separatorBuilder:
-                                      (BuildContext context, int index) {
+                                  separatorBuilder: (
+                                    BuildContext context,
+                                    int index,
+                                  ) {
                                     return const Divider();
                                   },
                                 ),
@@ -511,11 +528,10 @@ class SalesScreen extends GetView<SalesController> {
                               isLoading: controller.isVehiclesLoading.value,
                             ),
                           ],
-                  );
-                }),
-            const AppSpacing(
-              v: 20,
+                );
+              },
             ),
+            const AppSpacing(v: 20),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
@@ -525,9 +541,7 @@ class SalesScreen extends GetView<SalesController> {
                     child: const Text('Reset'),
                   ),
                 ),
-                const AppSpacing(
-                  h: 10,
-                ),
+                const AppSpacing(h: 10),
                 Expanded(
                   child: AppButton(
                     padding: const EdgeInsets.all(12),
@@ -540,7 +554,7 @@ class SalesScreen extends GetView<SalesController> {
                   ),
                 ),
               ],
-            )
+            ),
           ],
         ),
       ),
@@ -570,8 +584,9 @@ class SalesScreen extends GetView<SalesController> {
                 TextSpan(
                   text: title,
                   style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: context.colorScheme.onSurface),
+                    fontWeight: FontWeight.bold,
+                    color: context.colorScheme.onSurface,
+                  ),
                 ),
               ],
             ),

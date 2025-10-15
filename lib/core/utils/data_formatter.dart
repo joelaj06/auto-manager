@@ -80,6 +80,7 @@ class DataFormatter{
     return digit;
   }
 
+  /// A number format for compact currency representations, e.g. "GH¢1.2M" instead of "GH¢1,200,000".
   static NumberFormat getLocalCompactCurrencyFormatter(BuildContext context){
     return NumberFormat.compactCurrency(
       symbol: 'GH¢',
