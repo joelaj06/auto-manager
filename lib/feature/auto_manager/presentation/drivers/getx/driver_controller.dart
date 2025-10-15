@@ -13,14 +13,14 @@ class DriverController extends GetxController {
     required this.fetchDrivers,
     required this.updateDriver,
     required this.deleteDriver,
-    required this.addUser,
+    required this.addDriver,
     required this.fetchVehicles,
   });
 
   final FetchDrivers fetchDrivers;
   final UpdateUser updateDriver;
   final DeleteDriver deleteDriver;
-  final AddUser addUser;
+  final AddDriver addDriver;
   final FetchVehicles fetchVehicles;
 
   //reactive variables
@@ -106,6 +106,7 @@ class DriverController extends GetxController {
   }
 
   void addADriver() async {
+    isLoading(true);
     final UserRequest userRequest = UserRequest(
         firstName: firstName.value,
         lastName: lastName.value,
@@ -115,14 +116,11 @@ class DriverController extends GetxController {
         licenseNumber: licenseNumber.value,
         licenceExpiryDate: selectedLicenseExpiryDate.value.toIso8601String(),
         vehicleId: selectedVehicle.value.id);
-    final Either<Failure, User> failureOrDriver = await addUser(userRequest);
-
-    isLoading(true);
-
+    final Either<Failure, Driver> failureOrDriver = await addDriver(userRequest);
     failureOrDriver.fold((Failure failure) {
       isLoading(false);
       AppSnack.show(message: failure.message, status: SnackStatus.error);
-    }, (User newDriver) {
+    }, (Driver newDriver) {
       isLoading(false);
       pagingController.refresh();
       Get.back<dynamic>(result: newDriver);
@@ -217,6 +215,15 @@ class DriverController extends GetxController {
       selectedLicenseExpiryDate(res);
       licenseExpiryDateController.value.text =
           DataFormatter.formatDateToString(res.toIso8601String());
+    }
+  }
+
+  void navigateToAddVehicleScreen() async {
+    final dynamic res = await Get.toNamed(AppRoutes.addVehicle);
+    if (res != null) {
+      fetchAllVehicles();
+      AppSnack.show(
+          message: 'Vehicle added successfully', status: SnackStatus.success);
     }
   }
 

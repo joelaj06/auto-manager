@@ -1,4 +1,5 @@
 import 'package:automanager/core/core.dart';
+import 'package:automanager/core/presentation/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -18,19 +19,35 @@ class SignUpScreen extends GetView<SignUpController> {
       appBar: AppBar(
         title: const Text('Sign Up'),
         backgroundColor: Colors.transparent,
+        leading:
+            controller.pageIndex.value == 0
+                ? null
+                : IconButton(
+                  icon: Icon(
+                    Icons.arrow_back,
+                    color: context.colorScheme.onSurface,
+                  ),
+                  onPressed: () {
+                    controller.navigatePages(0);
+                  },
+                ),
       ),
       bottomNavigationBar: SizedBox(
         height: 70,
         child: Obx(
-          () => controller.pageIndex.value == 0 ? AppButton(
-            enabled: !controller.isLoading.value &&
-                controller.clientFormIsValid.value,
-            onPressed: () {
-              controller.signUp();
-            },
-            text: 'Continue',
-            // fontSize: 18,
-          ): const SizedBox.shrink(),
+          () =>
+              controller.pageIndex.value == 0
+                  ? AppButton(
+                    enabled:
+                        !controller.isLoading.value &&
+                        controller.clientFormIsValid.value,
+                    onPressed: () {
+                      controller.signUp();
+                    },
+                    text: 'Continue',
+                    // fontSize: 18,
+                  )
+                  : const SizedBox.shrink(),
         ),
       ),
       body: Container(
@@ -48,11 +65,9 @@ class SignUpScreen extends GetView<SignUpController> {
           future: controller.currentPageFuture,
           builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
+              return const Center(child: CircularProgressIndicator());
             }
-            if(snapshot.hasData){
+            if (snapshot.hasData) {
               return PageView(
                 controller: controller.pageController,
                 onPageChanged: controller.onPageChanged,
@@ -70,10 +85,10 @@ class SignUpScreen extends GetView<SignUpController> {
                   _buildOtpVerificationPage(context),
                 ],
               );
-            }else{
+            } else {
               return const SizedBox.shrink();
             }
-          }
+          },
         ),
       ),
     );
@@ -97,28 +112,29 @@ class SignUpScreen extends GetView<SignUpController> {
                     onCompleted: (String otp) {
                       controller.otpVerificationCode(otp);
                     },
-                   // errorColor: Colors.red,
-                    hasError: controller.wrongOtp.value, // Set to true to show error color
+                    // errorColor: Colors.red,
+                    hasError:
+                        controller
+                            .wrongOtp
+                            .value, // Set to true to show error color
                   ),
                 ),
-                const AppSpacing(
-                  v: 10,
-                ),
+                const AppSpacing(v: 10),
                 Row(
                   children: <Widget>[
                     const Text(
                       'Please enter the OTP sent to ',
                       textAlign: TextAlign.start,
                     ),
-                   Obx(() =>Text(
+                    Obx(
+                      () => Text(
                         controller.email.value,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                        ),
+                        style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
                     ),
                   ],
                 ),
+                const AppSpacing(v: 20),
               ],
             ),
           ],
@@ -127,9 +143,7 @@ class SignUpScreen extends GetView<SignUpController> {
     );
   }
 
-  Widget _buildPersonalProfilePage(
-    BuildContext context,
-  ) {
+  Widget _buildPersonalProfilePage(BuildContext context) {
     return GestureDetector(
       onTap: () {
         FocusScope.of(context).requestFocus(FocusNode());
@@ -144,37 +158,29 @@ class SignUpScreen extends GetView<SignUpController> {
                 labelText: 'First Name',
                 onChanged: controller.onFirstNameInputChanged,
                 validator: controller.validateName,
-                textInputType: TextInputType.name
+                textInputType: TextInputType.name,
               ),
-              const AppSpacing(
-                v: 10,
-              ),
+              const AppSpacing(v: 10),
               AppTextInputField(
                 labelText: 'Last Name',
                 onChanged: controller.onLastNameInputChanged,
                 validator: controller.validateName,
-                textInputType: TextInputType.name
+                textInputType: TextInputType.name,
               ),
-              const AppSpacing(
-                v: 10,
-              ),
+              const AppSpacing(v: 10),
               AppTextInputField(
                 labelText: 'Email',
                 onChanged: controller.onEmailInputChanged,
                 validator: controller.validateEmail,
                 textInputType: TextInputType.emailAddress,
               ),
-              const AppSpacing(
-                v: 10,
-              ),
+              const AppSpacing(v: 10),
               AppTextInputField(
                 labelText: 'Phone number',
                 onChanged: controller.onPhoneInputChanged,
                 textInputType: TextInputType.phone,
               ),
-              const AppSpacing(
-                v: 10,
-              ),
+              const AppSpacing(v: 10),
               Obx(
                 () => AppTextInputField(
                   maxLines: 1,
@@ -185,10 +191,14 @@ class SignUpScreen extends GetView<SignUpController> {
                   obscureText: !controller.showPassword.value,
                   suffixIcon: AnimatedSwitcher(
                     reverseDuration: Duration.zero,
-                    transitionBuilder:
-                        (Widget? child, Animation<double> animation) {
-                      final Animation<double> offset =
-                          Tween<double>(begin: 0, end: 1.0).animate(animation);
+                    transitionBuilder: (
+                      Widget? child,
+                      Animation<double> animation,
+                    ) {
+                      final Animation<double> offset = Tween<double>(
+                        begin: 0,
+                        end: 1.0,
+                      ).animate(animation);
                       return ScaleTransition(scale: offset, child: child);
                     },
                     switchInCurve: Curves.elasticOut,
@@ -197,23 +207,16 @@ class SignUpScreen extends GetView<SignUpController> {
                       key: ValueKey<bool>(controller.showPassword.value),
                       onPressed: controller.togglePassword,
                       icon: Obx(
-                        () => controller.showPassword.value
-                            ? const Icon(
-                                Icons.visibility,
-                                size: 20,
-                              )
-                            : const Icon(
-                                Icons.visibility_off,
-                                size: 20,
-                              ),
+                        () =>
+                            controller.showPassword.value
+                                ? const Icon(Icons.visibility, size: 20)
+                                : const Icon(Icons.visibility_off, size: 20),
                       ),
                     ),
                   ),
                 ),
               ),
-              const AppSpacing(
-                v: 10,
-              ),
+              const AppSpacing(v: 10),
               Obx(
                 () => AppTextInputField(
                   maxLines: 1,
@@ -224,10 +227,14 @@ class SignUpScreen extends GetView<SignUpController> {
                   textInputType: TextInputType.visiblePassword,
                   suffixIcon: AnimatedSwitcher(
                     reverseDuration: Duration.zero,
-                    transitionBuilder:
-                        (Widget? child, Animation<double> animation) {
-                      final Animation<double> offset =
-                          Tween<double>(begin: 0, end: 1.0).animate(animation);
+                    transitionBuilder: (
+                      Widget? child,
+                      Animation<double> animation,
+                    ) {
+                      final Animation<double> offset = Tween<double>(
+                        begin: 0,
+                        end: 1.0,
+                      ).animate(animation);
                       return ScaleTransition(scale: offset, child: child);
                     },
                     switchInCurve: Curves.elasticOut,
@@ -236,15 +243,10 @@ class SignUpScreen extends GetView<SignUpController> {
                       key: ValueKey<bool>(controller.showPassword.value),
                       onPressed: controller.togglePassword,
                       icon: Obx(
-                        () => controller.showPassword.value
-                            ? const Icon(
-                                Icons.visibility,
-                                size: 20,
-                              )
-                            : const Icon(
-                                Icons.visibility_off,
-                                size: 20,
-                              ),
+                        () =>
+                            controller.showPassword.value
+                                ? const Icon(Icons.visibility, size: 20)
+                                : const Icon(Icons.visibility_off, size: 20),
                       ),
                     ),
                   ),
@@ -258,9 +260,6 @@ class SignUpScreen extends GetView<SignUpController> {
   }
 
   Widget _buildLogo(BuildContext context) {
-    return const AppLogo(
-      height: 200,
-      width: 200,
-    );
+    return const AppLogo(height: 200, width: 200);
   }
 }

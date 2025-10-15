@@ -1,7 +1,7 @@
 class UserPermissions {
   const UserPermissions._();
 
-  static late Validator validator;
+  static Validator validator = Validator(<String>[]);
 
   /// Initialize the validator with user permissions
   static void initializeValidator(List<String> userPermissions) {

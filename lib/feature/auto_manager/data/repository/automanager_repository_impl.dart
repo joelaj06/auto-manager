@@ -363,4 +363,11 @@ class AutoManagerRepositoryImpl extends Repository
       ),
     );
   }
+
+  @override
+  Future<Either<Failure, Driver>> addDriver({required UserRequest userRequest}) {
+    return makeRequest(autoManagerRemoteDataSource.addDriver(
+      userRequest: userRequest,
+    ));
+  }
 }

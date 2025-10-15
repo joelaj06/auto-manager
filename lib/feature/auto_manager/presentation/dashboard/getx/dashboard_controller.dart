@@ -5,15 +5,17 @@ import 'package:dartz/dartz.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
+
 import '../../../../authentication/data/models/models.dart';
 import '../../../data/data.dart';
 
 class DashboardController extends GetxController {
-  DashboardController(
-      {required this.fetchDashboardSummaryData,
-      required this.fetchMonthlySales,
-      required this.loadUser,
-      required this.fetchCompany});
+  DashboardController({
+    required this.fetchDashboardSummaryData,
+    required this.fetchMonthlySales,
+    required this.loadUser,
+    required this.fetchCompany,
+  });
 
   final FetchDashboardSummaryData fetchDashboardSummaryData;
   final FetchMonthlySales fetchMonthlySales;
@@ -29,7 +31,7 @@ class DashboardController extends GetxController {
   RxString dateText = 'This Month'.obs;
   Rx<DateTime> startDate =
       DateTime(DateTime.now().year, DateTime.now().month, 1).obs;
-  Rx<DateTime> endDate = DateTime.now().obs;
+  Rx<DateTime?> endDate = null.obs;
   RxInt month = DateTime.now().month.obs;
   RxInt year = DateTime.now().year.obs;
   Rx<DateTime> selectedMonthYear = DateTime.now().obs;
@@ -59,6 +61,7 @@ class DashboardController extends GetxController {
     chartSeriesController = null;
     super.onClose();
   }
+
   void loadDependencies() async {
     await loadUserData().then((_) {
       getCompany();
@@ -71,7 +74,7 @@ class DashboardController extends GetxController {
     final Either<Failure, Company> failureOrCompany = await fetchCompany(
       PageParams(companyId: loginResponse.company),
     );
-    failureOrCompany.fold((_) {}, (Company data){
+    failureOrCompany.fold((_) {}, (Company data) {
       company(data);
     });
   }
@@ -114,25 +117,27 @@ class DashboardController extends GetxController {
   }
 
   void generateSalesOfTheMonthData(MonthlySales sale) {
+
     for (int i = 0; i < sale.weeks.length; i++) {
       salesForTheMonthData.add(
-        ChartData(
-          xValue: sale.weeks[i],
-          yValue: sale.sales[i].toDouble(),
-        ),
+        ChartData(xValue: sale.weeks[i], yValue: sale.sales[i].toDouble()),
       );
     }
+    print(salesForTheMonthData.length);
   }
 
   void updateDataSource(MonthlySales sale) {
+
     if (salesForTheMonthData.isNotEmpty && chartSeriesController != null) {
       // Clear the data and generate new data
       salesForTheMonthData.clear();
       generateSalesOfTheMonthData(sale);
 
       // Update all indices dynamically
-      final List<int> updatedIndexes =
-          List<int>.generate(salesForTheMonthData.length, (int index) => index);
+      final List<int> updatedIndexes = List<int>.generate(
+        salesForTheMonthData.length,
+        (int index) => index,
+      );
       chartSeriesController!.updateDataSource(
         updatedDataIndexes: updatedIndexes,
       );
@@ -142,62 +147,64 @@ class DashboardController extends GetxController {
   void getMonthlySales() async {
     final Either<Failure, MonthlySales> failureOrMonthlySales =
         await fetchMonthlySales(
-      PageParams(
-        companyId: loginResponse.company,
-        year: year.value,
-        month: month.value,
-      ),
+          PageParams(
+            companyId: loginResponse.company,
+            year: year.value,
+            month: month.value,
+          ),
+        );
+    failureOrMonthlySales.fold(
+      (Failure failure) {
+        AppSnack.show(message: failure.message, status: SnackStatus.error);
+      },
+      (MonthlySales sales) {
+        monthlySales(sales);
+        if (isDateFilter.value) {
+          updateDataSource(sales);
+        } else {
+          salesForTheMonthData.clear();
+          generateSalesOfTheMonthData(sales);
+          chartSeriesController
+              ?.updateDataSource(); // Update data after generating
+        }
+        update(<Object>['salesForTheMonthData']);
+        isDateFilter(false);
+      },
     );
-    failureOrMonthlySales.fold((Failure failure) {
-      AppSnack.show(message: failure.message, status: SnackStatus.error);
-    }, (MonthlySales sales) {
-      monthlySales(sales);
-      if (isDateFilter.value) {
-        updateDataSource(sales);
-      } else {
-        salesForTheMonthData.clear();
-        generateSalesOfTheMonthData(sales);
-        chartSeriesController
-            ?.updateDataSource(); // Update data after generating
-      }
-      update(<Object>['salesForTheMonthData']);
-      isDateFilter(false);
-    });
   }
 
   void getDashboardSummaryData() async {
     final Either<Failure, DashboardSummary> failureOrDashboardSummary =
         await fetchDashboardSummaryData(
-      PageParams(
-        startDate: startDate.value.toIso8601String(),
-        endDate: endDate.value.toIso8601String(),
-        companyId: loginResponse.company,
-      ),
+          PageParams(
+            startDate: startDate.value.toIso8601String(),
+            endDate:
+                endDate.value?.toIso8601String() ??
+                DateTime.now().toIso8601String(),
+            companyId: loginResponse.company,
+          ),
+        );
+    failureOrDashboardSummary.fold(
+      (Failure failure) {
+        AppSnack.show(message: failure.message, status: SnackStatus.error);
+      },
+      (DashboardSummary summary) {
+        dashboardSummary(summary);
+      },
     );
-    failureOrDashboardSummary.fold((Failure failure) {
-      AppSnack.show(message: failure.message, status: SnackStatus.error);
-    }, (DashboardSummary summary) {
-      dashboardSummary(summary);
-    });
   }
 
   Future<void> loadUserData() async {
     final Either<Failure, User> failureOrUser = await loadUser(null);
     // ignore: unawaited_futures
-    failureOrUser.fold(
-      (Failure failure) {},
-      (User user) {
-        loginResponse = (user);
-      },
-    );
+    failureOrUser.fold((Failure failure) {}, (User user) {
+      loginResponse = (user);
+    });
   }
 }
 
 class ChartData {
-  ChartData({
-    required this.xValue,
-    required this.yValue,
-  });
+  ChartData({required this.xValue, required this.yValue});
 
   final int? xValue;
   final double? yValue;

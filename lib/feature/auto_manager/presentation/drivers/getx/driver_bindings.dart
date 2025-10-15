@@ -16,7 +16,7 @@ class DriverBindings extends Bindings {
           deleteDriver: DeleteDriver(
             autoManagerRepository: Get.find(),
           ),
-          addUser: AddUser(
+          addDriver: AddDriver(
             autoManagerRepository: Get.find(),
           ),
           fetchVehicles: FetchVehicles(

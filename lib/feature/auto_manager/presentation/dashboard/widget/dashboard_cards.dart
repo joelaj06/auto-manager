@@ -23,7 +23,7 @@ class DashboardSummaryCard extends StatelessWidget {
     return Container(
       padding: AppPaddings.lA,
       decoration: BoxDecoration(
-        color: context.colorScheme.outline.withOpacity(0.1),
+        color: context.colorScheme.outline.withValues(alpha:0.1),
         borderRadius: AppBorderRadius.card,
       ),
       child: Row(
@@ -35,7 +35,7 @@ class DashboardSummaryCard extends StatelessWidget {
               children: <Widget>[
                 Container(
                   decoration: BoxDecoration(
-                    color: context.colorScheme.outline.withOpacity(0.2),
+                    color: context.colorScheme.outline.withValues(alpha:0.2),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   padding: AppPaddings.mA,
@@ -56,7 +56,7 @@ class DashboardSummaryCard extends StatelessWidget {
                     Row(
                       children: <Widget>[
                         Text(value,
-                            style: context.textTheme.titleLarge
+                            style: context.textTheme.bodyLarge
                                 ?.copyWith(fontWeight: FontWeight.w500)),
                         const AppSpacing(
                           h: 5,
@@ -72,7 +72,7 @@ class DashboardSummaryCard extends StatelessWidget {
               if (onTap != null) {
                 return Container(
                   decoration: BoxDecoration(
-                    color: context.colorScheme.outline.withOpacity(0.2),
+                    color: context.colorScheme.outline.withValues(alpha:0.2),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   padding: AppPaddings.sA.add(AppPaddings.sH),

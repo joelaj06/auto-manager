@@ -4,7 +4,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/cupertino.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:open_file/open_file.dart';
+import 'package:open_filex/open_filex.dart';
 import 'package:path_provider/path_provider.dart';
 
 class Base64Convertor {
@@ -53,7 +53,7 @@ class Base64Convertor {
 
   static Future<void> openPdfFile(String fileName) async {
     final String dir = '${directory!.path}/$fileName';
-    await OpenFile.open(dir);
+    await OpenFilex.open(dir);
   }
 
   Uint8List base64toImage(String base64String) {

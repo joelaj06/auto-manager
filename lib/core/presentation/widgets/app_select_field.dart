@@ -16,6 +16,7 @@ class AppSelectField<T> extends StatefulWidget {
     this.customTitleBuilder,
     this.disabled = false,
     this.header,
+    this.suffixLabel,
   });
   final void Function(T) onChanged;
   final T? value;
@@ -30,8 +31,8 @@ class AppSelectField<T> extends StatefulWidget {
   ) titleBuilder;
   final Widget Function(BuildContext, T?)? customChildBuilder;
   final Widget Function(BuildContext, T?, bool isActive)? customTitleBuilder;
-
   final Widget Function(BuildContext)? header;
+  final Widget? suffixLabel;
 
   @override
   _AppSelectFieldState<T> createState() => _AppSelectFieldState<T>();
@@ -74,20 +75,30 @@ class _AppSelectFieldState<T> extends State<AppSelectField<T>> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          if (widget.labelText != null)
-            Padding(
-              padding: const EdgeInsets.all(6),
-              child: Text(
-                widget.labelText!.toTitleCase(),
-                textAlign: TextAlign.left,
-                style:  TextStyle(
-                  fontWeight: FontWeight.w500,
-                  color: widget.disabled
-                      ? context.colorScheme.inverseSurface
-                      : context.colorScheme.onSurface,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              if (widget.labelText != null)
+                Padding(
+                  padding: const EdgeInsets.all(5.0),
+                  child: Text(
+                    widget.labelText!.toTitleCase(),
+                    textAlign: TextAlign.left,
+                    style:  TextStyle(
+                      fontWeight: FontWeight.w500,
+                      color: widget.disabled
+                          ? context.colorScheme.inverseSurface
+                          : context.colorScheme.onSurface,
+                    ),
+                  ),
                 ),
+              if (widget.suffixLabel != null) Padding(
+                padding: const EdgeInsets.all(6.0),
+                child: widget.suffixLabel!,
               ),
-            ),
+            ],
+          ),
+
           InkWell(
             onTap: () async {
               await showModalBottomSheet<void>(

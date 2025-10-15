@@ -7,10 +7,11 @@ import 'package:get/get.dart';
 import '../../../data/models/models.dart';
 
 class SignUpController extends GetxController {
-  SignUpController(
-      {required this.userSignUp,
-      required this.verifyRegistrationOtp,
-      required this.loadUserSignupData});
+  SignUpController({
+    required this.userSignUp,
+    required this.verifyRegistrationOtp,
+    required this.loadUserSignupData,
+  });
 
   final UserSignUp userSignUp;
   final VerifyRegistrationOtp verifyRegistrationOtp;
@@ -70,8 +71,9 @@ class SignUpController extends GetxController {
   void verifyUserOtp() async {
     final OtpVerificationRequest otpVerificationRequest =
         OtpVerificationRequest(
-            otp: otpCode.value.trim(),
-            userId: registrationResponse.value.data?.userId ?? '');
+          otp: otpCode.value.trim(),
+          userId: registrationResponse.value.data?.userId ?? '',
+        );
     isLoading(true);
     final Either<Failure, UserRegistration> failureOrUser =
         await verifyRegistrationOtp(otpVerificationRequest);
@@ -85,28 +87,28 @@ class SignUpController extends GetxController {
         wrongOtp(false);
         isLoading(false);
         AppSnack.show(message: userRes.message, status: SnackStatus.success);
-        if (AppFlavorEnvironment.appFlavor ==
-            FlavorEnvironment.automanager.name) {
-          saveCurrentRoute(AppRoutes.addCompany);
-          Get.toNamed<dynamic>(AppRoutes.addCompany);
-        } else {
-          Get.toNamed<dynamic>(AppRoutes.login);
-        }
+        saveCurrentRoute(AppRoutes.addCompany);
+        Get.toNamed<dynamic>(AppRoutes.addCompany);
       },
     );
   }
 
   Future<String> getCurrentPage() async {
-    final String currentRoute =
-        await _sharedPreferencesWrapper.getString(SharedPrefsKeys.currentRoute);
-    pageController =
-        PageController(initialPage: currentRoute == AppRoutes.signup ? 1 : 0);
+    final String currentRoute = await _sharedPreferencesWrapper.getString(
+      SharedPrefsKeys.currentRoute,
+    );
+    pageController = PageController(
+      initialPage: currentRoute == AppRoutes.signup ? 1 : 0,
+    );
+    pageIndex(currentRoute == AppRoutes.signup ? 1 : 0);
     return currentRoute;
   }
 
   Future<void> saveCurrentRoute(String page) async {
     await _sharedPreferencesWrapper.setString(
-        SharedPrefsKeys.currentRoute, page);
+      SharedPrefsKeys.currentRoute,
+      page,
+    );
   }
 
   void signUp() async {
@@ -125,8 +127,9 @@ class SignUpController extends GetxController {
       isActive: true,
       isVerified: false,
     );
-    final Either<Failure, UserRegistration> failureOrUser =
-        await userSignUp(userRequest);
+    final Either<Failure, UserRegistration> failureOrUser = await userSignUp(
+      userRequest,
+    );
     failureOrUser.fold(
       (Failure failure) {
         isLoading(false);
@@ -151,8 +154,11 @@ class SignUpController extends GetxController {
   }
 
   void navigatePages(int value) {
-    pageController.animateToPage(value,
-        duration: const Duration(milliseconds: 300), curve: Curves.easeIn);
+    pageController.animateToPage(
+      value,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeIn,
+    );
   }
 
   void otpVerificationCode(String value) {
@@ -211,7 +217,8 @@ class SignUpController extends GetxController {
 
     // Regular expression for validating an email address
     final RegExp emailPattern = RegExp(
-        r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
+      r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+",
+    );
 
     // Check if email is valid using regex
     if (!emailPattern.hasMatch(email!)) {
@@ -233,11 +240,13 @@ class SignUpController extends GetxController {
     return errorMessage;
   }
 
-  RxBool get clientFormIsValid => (validateEmail(email.value) == null &&
-          validatePasswordConfirmation(passwordConfirmation.value) == null &&
-          validateName(firstName.value) == null &&
-          validateName(phone.value) == null &&
-          validateName(lastName.value) == null &&
-          validatePassword(password.value) == null)
-      .obs;
+  RxBool get clientFormIsValid =>
+      (validateEmail(email.value) == null &&
+              validatePasswordConfirmation(passwordConfirmation.value) ==
+                  null &&
+              validateName(firstName.value) == null &&
+              validateName(phone.value) == null &&
+              validateName(lastName.value) == null &&
+              validatePassword(password.value) == null)
+          .obs;
 }

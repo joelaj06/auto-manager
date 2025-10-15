@@ -39,9 +39,9 @@ class ApiNotRespondingException extends AppException {
 class UnauthorizedException extends AppException {
   UnauthorizedException(String message, String url)
       : super(message, 'Unauthorized Request', url){
-    if(Get.currentRoute != AppRoutes.login){
-       postUnAuthorized();
-    }
+    // if(Get.currentRoute != AppRoutes.login){
+    //    postUnAuthorized();
+    // }
   }
 
   void postUnAuthorized() async {

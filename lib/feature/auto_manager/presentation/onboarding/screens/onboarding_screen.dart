@@ -63,7 +63,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 end: Alignment.bottomCenter,
                 colors: <Color>[
                   Colors.transparent, // Top part transparent
-                  Colors.black.withOpacity(0.9), // Darker at the bottom
+                  Colors.black.withValues(alpha: 0.9), // Darker at the bottom
                 ],
               ),
             ),

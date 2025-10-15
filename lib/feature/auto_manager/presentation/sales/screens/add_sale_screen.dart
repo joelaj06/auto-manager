@@ -32,27 +32,28 @@ class AddSaleScreen extends GetView<SalesController> {
                   value: controller.selectedDriver.value,
                   options: controller.drivers,
                   titleBuilder: (_, Driver driver) =>
-                      ('${driver.user.firstName} '
-                              '${driver.user.lastName}')
+                      ('${driver.firstName} '
+                              '${driver.lastName}')
                           .toTitleCase(),
                   validator: (Driver driver) =>
-                      controller.validateField(driver.user.firstName),
+                      controller.validateField(driver.firstName),
                 ),
                 const AppSpacing(v: 10),
-                AppSelectField<Vehicle>(
-                  labelText: 'Vehicle',
-                  onChanged: (Vehicle vehicle) {
-                    controller.onVehicleSelected(vehicle);
-                  },
-                  value: controller.selectedVehicle.value,
-                  options: controller.vehicles,
-                  titleBuilder: (_, Vehicle vehicle) =>
-                      ('${vehicle.model ?? ''} ${vehicle.make ?? ''}'
-                              ' ${vehicle.color ?? ''} '
-                              '${vehicle.year ?? ''}')
-                          .toTitleCase(),
-                  validator: (Vehicle vehicle) =>
-                      controller.validateField(vehicle.model),
+                Obx(() => AppSelectField<Vehicle>(
+                    labelText: 'Vehicle',
+                    onChanged: (Vehicle vehicle) {
+                      controller.onVehicleSelected(vehicle);
+                    },
+                    value: controller.selectedVehicle.value,
+                    options: controller.vehicles,
+                    titleBuilder: (_, Vehicle vehicle) =>
+                        ('${vehicle.model ?? ''} ${vehicle.make ?? ''}'
+                                ' ${vehicle.color ?? ''} '
+                                '${vehicle.year ?? ''}')
+                            .toTitleCase(),
+                    validator: (Vehicle vehicle) =>
+                        controller.validateField(vehicle.model),
+                  ),
                 ),
                 const AppSpacing(v: 10),
                 AppTextInputField(
@@ -77,7 +78,7 @@ class AddSaleScreen extends GetView<SalesController> {
       height: 70,
       child: Obx(
         () => AppButton(
-          text: 'Save',
+          text: controller.isLoading.value ? 'Loading...' : 'Save',
           onPressed: controller.onSaleSaved,
           enabled:
               controller.saleFormIsValid.value &&

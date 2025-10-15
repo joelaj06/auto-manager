@@ -33,46 +33,59 @@ class AddDriverScreen extends GetView<DriverController> {
                 labelText: 'First Name',
                 onChanged: controller.onFirstNameInputChanged,
                 validator: controller.validateField,
-                initialValue: args != null ? args.driver.user.firstName : '',
+                initialValue: args != null ? args.driver.firstName : '',
               ),
               const AppSpacing(v: 10),
               AppTextInputField(
                 labelText: 'Last Name',
                 onChanged: controller.onLastNameInputChanged,
                 validator: controller.validateField,
-                initialValue: args != null ? args.driver.user.lastName : '',
+                initialValue: args != null ? args.driver.lastName : '',
               ),
               const AppSpacing(v: 10),
               AppTextInputField(
                 labelText: 'Email',
                 onChanged: controller.onEmailInputChanged,
                 validator: controller.validateEmail,
-                initialValue: args != null ? args.driver.user.email : '',
+                initialValue: args != null ? args.driver.email : '',
               ),
               const AppSpacing(v: 10),
               AppTextInputField(
                 labelText: 'Phone',
                 onChanged: controller.onPhoneInputChanged,
                 textInputType: TextInputType.phone,
-                initialValue: args != null ? args.driver.user.phone : '',
+                initialValue: args != null ? args.driver.phone : '',
               ),
               const AppSpacing(v: 10),
               AppSelectField<Vehicle>(
                 labelText: 'Assigned Vehicle',
+                suffixLabel: TextButton(
+                  onPressed: controller.navigateToAddVehicleScreen,
+                  style: TextButton.styleFrom(
+                    padding: EdgeInsets.zero,
+                    visualDensity: VisualDensity(
+                      vertical: -4,
+                    ),
+                  ),
+                  child: const Text('Add Vehicle'),
+                ),
                 onChanged: (Vehicle vehicle) {
                   controller.onVehicleSelected(vehicle);
                 },
-                value: args != null
-                    ? args.driver.vehicle
-                    : controller.selectedVehicle.value,
+                value:
+                    args != null
+                        ? args.driver.vehicle
+                        : controller.selectedVehicle.value,
                 options: controller.vehicles,
-                titleBuilder: (_, Vehicle vehicle) =>
-                    ('${vehicle.model ?? ''} ${vehicle.make ?? ''}'
-                        ' ${vehicle.color ?? ''} '
-                        '${vehicle.year ?? ''}')
-                        .toTitleCase(),
-                validator: (Vehicle vehicle) =>
-                    controller.validateField(vehicle.model),
+                titleBuilder:
+                    (_, Vehicle vehicle) =>
+                        ('${vehicle.model ?? ''} ${vehicle.make ?? ''}'
+                                ' ${vehicle.color ?? ''} '
+                                '${vehicle.year ?? ''}')
+                            .toTitleCase(),
+                validator:
+                    (Vehicle vehicle) =>
+                        controller.validateField(vehicle.model),
               ),
               const AppSpacing(v: 10),
               AppTextInputField(
@@ -80,20 +93,19 @@ class AddDriverScreen extends GetView<DriverController> {
                 onChanged: controller.onLicenseNumberInputChanged,
                 initialValue: args != null ? args.driver.licenseNumber : '',
               ),
+              const AppSpacing(v: 10),
               Obx(
-                    () =>
-                    AppTextInputField(
-                      controller: controller.licenseExpiryDateController.value,
-                      labelText: 'License Expiry Date',
-                      validator: (String? value) => null,
-                      textInputType: TextInputType.datetime,
-                      hintText: controller.licenseExpiryDateController.value
-                          .text,
-                      readOnly: true,
-                      onTap: () {
-                        controller.selectLicenseDate(context);
-                      },
-                    ),
+                () => AppTextInputField(
+                  controller: controller.licenseExpiryDateController.value,
+                  labelText: 'License Expiry Date',
+                  validator: (String? value) => null,
+                  textInputType: TextInputType.datetime,
+                  hintText: controller.licenseExpiryDateController.value.text,
+                  readOnly: true,
+                  onTap: () {
+                    controller.selectLicenseDate(context);
+                  },
+                ),
               ),
             ],
           ),
@@ -102,25 +114,25 @@ class AddDriverScreen extends GetView<DriverController> {
     );
   }
 
-  Widget _buildBottomBar(BuildContext context,
-      {required DriverArgument? arg}) {
+  Widget _buildBottomBar(BuildContext context, {required DriverArgument? arg}) {
     return Padding(
       padding: AppPaddings.mA,
       child: SizedBox(
         height: 70,
         child: Obx(
-              () =>
-              AppButton(
-                text: arg != null ? 'Update' : 'Save',
-                onPressed: () {
-                  arg != null
-                      ? controller.updateTheDriver(arg.driver.user.id)
-                      : controller.addADriver();
-                },
-                enabled: arg != null ? !controller.isLoading.value : controller
-                    .driverFormIsValid.value &&
-                    !controller.isLoading.value,
-              ),
+          () => AppButton(
+            text: controller.isLoading.value ? 'Loading...' : arg != null ? 'Update' : 'Save',
+            onPressed: () {
+              arg != null
+                  ? controller.updateTheDriver(arg.driver.id!)
+                  : controller.addADriver();
+            },
+            enabled:
+                arg != null
+                    ? !controller.isLoading.value
+                    : controller.driverFormIsValid.value &&
+                        !controller.isLoading.value,
+          ),
         ),
       ),
     );

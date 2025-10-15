@@ -117,15 +117,15 @@ class DriversScreen extends GetView<DriverController> {
               );
             },
             title: Text(
-              '${driver.user.firstName} ${driver.user.lastName}',
+              '${driver.firstName} ${driver.lastName}',
               style: const TextStyle(fontWeight: FontWeight.bold),
             ),
             subtitle: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Text(driver.user.email ?? 'No Email'),
+                Text(driver.email ?? 'No Email'),
                 Text(
-                  driver.user.phone ?? 'No Phone',
+                  driver.phone ?? 'No Phone',
                 ),
               ],
             ),
@@ -148,16 +148,16 @@ class DriversScreen extends GetView<DriverController> {
         child: Column(
           children: <Widget>[
             ModalListCard(
-                title: 'First Name', value: driver.user.firstName ?? '--'),
+                title: 'First Name', value: driver.firstName ?? '--'),
             ModalListCard(
-                title: 'Last Name', value: driver.user.lastName ?? '--'),
+                title: 'Last Name', value: driver.lastName ?? '--'),
             ModalListCard(
               title: 'Email',
-              value: driver.user.email ?? '--',
+              value: driver.email ?? '--',
             ),
             ModalListCard(
               title: 'Phone',
-              value: driver.user.phone ?? '--',
+              value: driver.phone ?? '--',
             ),
             ModalListCard(
               title: 'License',

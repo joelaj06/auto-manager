@@ -4,9 +4,6 @@ import 'package:dartz/dartz.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
-import '../../../../../core/errors/failure.dart';
-import '../../../../../core/presentation/routes/app_routes.dart';
-import '../../../../../core/presentation/utils/utils.dart';
 import '../../../data/models/models.dart';
 import '../../../domain/usecase/usecase.dart';
 
