@@ -31,7 +31,7 @@ class DashboardScreen extends GetView<DashboardController> {
             alignment: Alignment.centerLeft,
             child: Obx(
               () => Text(
-                controller.company.value.name ?? 'Auto Manager',
+                controller.company.value.name ?? 'AutoForce Manager',
                 textAlign: TextAlign.left,
               ),
             ),
