@@ -138,7 +138,7 @@ class _AppSelectFieldState<T> extends State<AppSelectField<T>> {
                           final TextButton childListItem = TextButton(
                             style: TextButton.styleFrom(
                               backgroundColor: selected
-                                  ? context.colorScheme.primary.withOpacity(0.2)
+                                  ? context.colorScheme.primary.withValues(alpha:0.2)
                                   : Colors.transparent,
                             ),
                             onPressed: () {

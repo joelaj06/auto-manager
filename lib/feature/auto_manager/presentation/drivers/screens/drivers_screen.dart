@@ -37,68 +37,75 @@ class DriversScreen extends GetView<DriverController> {
       onRefresh: () {
         return Future<void>.sync(() => controller.pagingController.refresh());
       },
-      child: PagedListView<int, Driver>(
-          pagingController: controller.pagingController,
-          builderDelegate: PagedChildBuilderDelegate<Driver>(
-            itemBuilder: (BuildContext context, Driver driver, int index) {
-              return Slidable(
-                endActionPane: ActionPane(
-                  motion: const DrawerMotion(),
-                  children: <Widget>[
-                    Visibility(
-                      visible: UserPermissions.validator.canUpdateDriver,
-                      child: SlidableAction(
-                        backgroundColor: context.colorScheme.background,
-                        icon: IconlyLight.edit,
-                        label: 'Edit',
-                        onPressed: (BuildContext context) {
-                          controller.navigateToUpdateDriverScreen(driver);
-                        },
-                      ),
+      child: PagingListener<int, Driver>(
+        controller: controller.pagingController,
+        builder: (BuildContext context, PagingState<int, Driver> state, VoidCallback fetchNextPage) {
+          return PagedListView<int, Driver>(
+              fetchNextPage: fetchNextPage,
+              state: state,
+           
+              builderDelegate: PagedChildBuilderDelegate<Driver>(
+                itemBuilder: (BuildContext context, Driver driver, int index) {
+                  return Slidable(
+                    endActionPane: ActionPane(
+                      motion: const DrawerMotion(),
+                      children: <Widget>[
+                        Visibility(
+                          visible: UserPermissions.validator.canUpdateDriver,
+                          child: SlidableAction(
+                            backgroundColor: context.colorScheme.surface,
+                            icon: IconlyLight.edit,
+                            label: 'Edit',
+                            onPressed: (BuildContext context) {
+                              controller.navigateToUpdateDriverScreen(driver);
+                            },
+                          ),
+                        ),
+                        Visibility(
+                          visible: UserPermissions.validator.canDeleteDriver,
+                          child: SlidableAction(
+                            backgroundColor: context.colorScheme.surface,
+                            foregroundColor: Colors.red,
+                            icon: IconlyLight.delete,
+                            label: 'Delete',
+                            onPressed: (BuildContext context) async {
+                              await AppDialogs.showDialogWithButtons(
+                                context,
+                                onConfirmPressed: () =>
+                                    controller.deleteTheDriver(driver),
+                                content: const Text(
+                                  'Are you sure you want to delete this driver?',
+                                  textAlign: TextAlign.center,
+                                ),
+                                confirmText: 'Delete',
+                              );
+                            },
+                          ),
+                        ),
+                      ],
                     ),
-                    Visibility(
-                      visible: UserPermissions.validator.canDeleteDriver,
-                      child: SlidableAction(
-                        backgroundColor: context.colorScheme.background,
-                        foregroundColor: Colors.red,
-                        icon: IconlyLight.delete,
-                        label: 'Delete',
-                        onPressed: (BuildContext context) async {
-                          await AppDialogs.showDialogWithButtons(
-                            context,
-                            onConfirmPressed: () =>
-                                controller.deleteTheDriver(driver),
-                            content: const Text(
-                              'Are you sure you want to delete this driver?',
-                              textAlign: TextAlign.center,
-                            ),
-                            confirmText: 'Delete',
-                          );
-                        },
-                      ),
-                    ),
-                  ],
+                    child: _buildRentalsListTile(context, index, driver),
+                  );
+                },
+                firstPageErrorIndicatorBuilder: (BuildContext context) =>
+                    ErrorIndicator(
+                  error: controller.pagingController.value.error as Failure,
+                  onTryAgain: () => controller.pagingController.refresh(),
                 ),
-                child: _buildRentalsListTile(context, index, driver),
-              );
-            },
-            firstPageErrorIndicatorBuilder: (BuildContext context) =>
-                ErrorIndicator(
-              error: controller.pagingController.value.error as Failure,
-              onTryAgain: () => controller.pagingController.refresh(),
-            ),
-            noItemsFoundIndicatorBuilder: (BuildContext context) =>
-                const EmptyListIndicator(),
-            newPageProgressIndicatorBuilder: (BuildContext context) =>
-                const Center(
-              child: CircularProgressIndicator.adaptive(),
-            ),
-            firstPageProgressIndicatorBuilder: (BuildContext context) =>
-                const Center(
-              child: CircularProgressIndicator.adaptive(),
-            ),
-          ),
-          shrinkWrap: true),
+                noItemsFoundIndicatorBuilder: (BuildContext context) =>
+                    const EmptyListIndicator(),
+                newPageProgressIndicatorBuilder: (BuildContext context) =>
+                    const Center(
+                  child: CircularProgressIndicator.adaptive(),
+                ),
+                firstPageProgressIndicatorBuilder: (BuildContext context) =>
+                    const Center(
+                  child: CircularProgressIndicator.adaptive(),
+                ),
+              ),
+              shrinkWrap: true);
+        }
+      ),
     );
   }
 

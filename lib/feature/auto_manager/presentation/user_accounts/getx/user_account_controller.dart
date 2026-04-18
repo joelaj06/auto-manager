@@ -44,14 +44,21 @@ class UserAccountController extends GetxController {
   final Rx<Role> selectedRole = Role.empty().obs;
 
   //paging controller
-  final PagingController<int, User> pagingController =
-      PagingController<int, User>(firstPageKey: 1);
+  late final PagingController<int, User> pagingController;
 
   @override
   void onInit() {
-    pagingController.addPageRequestListener((int pageKey) {
-      getUsers(pageKey);
-    });
+    pagingController = PagingController<int, User>(
+      getNextPageKey: (PagingState<int, User> state) {
+        if (state.hasNextPage) {
+          return (state.keys?.last ?? 0) + 1;
+        }
+        return null;
+      },
+      fetchPage: (int pageKey) {
+        return getUsers(pageKey);
+      },
+    );
     super.onInit();
   }
 
@@ -129,7 +136,7 @@ class UserAccountController extends GetxController {
     });
   }
 
-  void getUsers(int pageKey) async {
+  Future<List<User>> getUsers(int pageKey) async {
     isLoading(true);
     final Either<Failure, ListPage<User>> failureOrUsers =
         await fetchUsers(PageParams(
@@ -137,9 +144,12 @@ class UserAccountController extends GetxController {
       pageSize: 10,
       query: query.value,
     ));
-    failureOrUsers.fold((Failure failure) {
+    return failureOrUsers.fold((Failure failure) {
       isLoading(false);
-      pagingController.error = failure;
+      pagingController.value = pagingController.value.copyWith(
+        error: failure,
+      );
+      throw failure;
     }, (ListPage<User> newPage) {
       isLoading(false);
 
@@ -148,18 +158,17 @@ class UserAccountController extends GetxController {
       if (meta != null) {
         totalCount(meta['totalCount']);
       }
-      //check if the new page is the last page
-      final int previouslyFetchedItemsCount =
-          pagingController.itemList?.length ?? 0;
-
-      final bool isLastPage = newPage.isLastPage(previouslyFetchedItemsCount);
+      
+      final PagingState<int, User> currentState = pagingController.value;
+      final bool isLastPage = newPage.isLastPage(currentState.items?.length ?? 0);
       final List<User> newItems = newPage.itemList;
-      if (isLastPage) {
-        pagingController.appendLastPage(newItems);
-      } else {
-        final int nextPageKey = pageKey + 1;
-        pagingController.appendPage(newItems, nextPageKey);
-      }
+
+      pagingController.value = currentState.copyWith(
+        hasNextPage: !isLastPage,
+        error: null,
+      );
+
+      return newItems;
     });
   }
 

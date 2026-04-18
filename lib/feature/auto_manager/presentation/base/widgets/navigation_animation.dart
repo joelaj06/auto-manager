@@ -65,7 +65,7 @@ class _NavigationAnimationState extends State<NavigationAnimation>
     return Container(
       width: double.infinity,
       height: double.infinity,
-      color: context.colorScheme.secondary.withOpacity(0.1),
+      color: context.colorScheme.secondary.withValues(alpha:0.1),
       child: Center(
         child: animation == null
             ? const SizedBox()

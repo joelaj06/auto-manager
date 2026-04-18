@@ -69,69 +69,75 @@ class VehicleScreen extends GetView<VehicleController> {
       onRefresh: () {
         return Future<void>.sync(() => controller.pagingController.refresh());
       },
-      child: PagedListView<int, Vehicle>(
-          pagingController: controller.pagingController,
-          builderDelegate: PagedChildBuilderDelegate<Vehicle>(
-            itemBuilder: (BuildContext context, Vehicle vehicle, int index) {
-              return Slidable(
-                endActionPane: ActionPane(
-                  motion: const DrawerMotion(),
-                  children: <Widget>[
-                    Visibility(
-                      visible: UserPermissions.validator.canUpdateVehicle,
-                      child: SlidableAction(
-                        backgroundColor: context.colorScheme.background,
-                        icon: IconlyLight.edit,
-                        label: 'Edit',
-                        onPressed: (BuildContext context) {
-                          controller.navigateToUpdateVehicleScreen(vehicle);
-                        },
-                      ),
-                    ),
-                    Visibility(
-                      visible: UserPermissions.validator.canDeleteVehicle,
-                      child: SlidableAction(
-                        backgroundColor: context.colorScheme.background,
-                        foregroundColor: Colors.red,
-                        icon: IconlyLight.delete,
-                        label: 'Delete',
-                        onPressed: (BuildContext context) async {
+      child: PagingListener<int, Vehicle>(
+        controller: controller.pagingController,
+        builder: (BuildContext context, PagingState<int, Vehicle> state, VoidCallback fetchNextPage) {
+          return PagedListView<int, Vehicle>(
+              fetchNextPage: fetchNextPage,
+              state: state, 
+              builderDelegate: PagedChildBuilderDelegate<Vehicle>(
+                itemBuilder: (BuildContext context, Vehicle vehicle, int index) {
+                  return Slidable(
+                    endActionPane: ActionPane(
+                      motion: const DrawerMotion(),
+                      children: <Widget>[
+                        Visibility(
+                          visible: UserPermissions.validator.canUpdateVehicle,
+                          child: SlidableAction(
+                            backgroundColor: context.colorScheme.surface,
+                            icon: IconlyLight.edit,
+                            label: 'Edit',
+                            onPressed: (BuildContext context) {
+                              controller.navigateToUpdateVehicleScreen(vehicle);
+                            },
+                          ),
+                        ),
+                        Visibility(
+                          visible: UserPermissions.validator.canDeleteVehicle,
+                          child: SlidableAction(
+                            backgroundColor: context.colorScheme.surface,
+                            foregroundColor: Colors.red,
+                            icon: IconlyLight.delete,
+                            label: 'Delete',
+                            onPressed: (BuildContext context) async {
 
-                          await AppDialogs.showDialogWithButtons(
-                            context,
-                            onConfirmPressed: () =>
-                                controller.deleteTheVehicle(vehicle.id!),
-                            content: const Text(
-                              'Are you sure you want to delete this vehicle?',
-                              textAlign: TextAlign.center,
-                            ),
-                            confirmText: 'Delete',
-                          );
-                        },
-                      ),
+                              await AppDialogs.showDialogWithButtons(
+                                context,
+                                onConfirmPressed: () =>
+                                    controller.deleteTheVehicle(vehicle.id!),
+                                content: const Text(
+                                  'Are you sure you want to delete this vehicle?',
+                                  textAlign: TextAlign.center,
+                                ),
+                                confirmText: 'Delete',
+                              );
+                            },
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
+                    child: _buildVehiclesListTile(context, index, vehicle),
+                  );
+                },
+                firstPageErrorIndicatorBuilder: (BuildContext context) =>
+                    ErrorIndicator(
+                  error: controller.pagingController.value.error as Failure,
+                  onTryAgain: () => controller.pagingController.refresh(),
                 ),
-                child: _buildVehiclesListTile(context, index, vehicle),
-              );
-            },
-            firstPageErrorIndicatorBuilder: (BuildContext context) =>
-                ErrorIndicator(
-              error: controller.pagingController.value.error as Failure,
-              onTryAgain: () => controller.pagingController.refresh(),
-            ),
-            noItemsFoundIndicatorBuilder: (BuildContext context) =>
-                const EmptyListIndicator(),
-            newPageProgressIndicatorBuilder: (BuildContext context) =>
-                const Center(
-              child: CircularProgressIndicator.adaptive(),
-            ),
-            firstPageProgressIndicatorBuilder: (BuildContext context) =>
-                const Center(
-              child: CircularProgressIndicator.adaptive(),
-            ),
-          ),
-          shrinkWrap: true,
+                noItemsFoundIndicatorBuilder: (BuildContext context) =>
+                    const EmptyListIndicator(),
+                newPageProgressIndicatorBuilder: (BuildContext context) =>
+                    const Center(
+                  child: CircularProgressIndicator.adaptive(),
+                ),
+                firstPageProgressIndicatorBuilder: (BuildContext context) =>
+                    const Center(
+                  child: CircularProgressIndicator.adaptive(),
+                ),
+              ),
+              shrinkWrap: true,
+          );
+        }
       ),
     );
   }

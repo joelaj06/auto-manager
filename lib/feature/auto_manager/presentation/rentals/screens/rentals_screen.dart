@@ -67,93 +67,99 @@ class RentalScreen extends GetView<RentalController> {
               return Future<void>.sync(
                   () => controller.pagingController.refresh());
             },
-            child: PagedListView<int, Rental>(
-                pagingController: controller.pagingController,
-                builderDelegate: PagedChildBuilderDelegate<Rental>(
-                  itemBuilder:
-                      (BuildContext context, Rental rental, int index) {
-                    return Slidable(
-                      startActionPane: ActionPane(
-                        motion: const DrawerMotion(),
-                        children: <Widget>[
-                          Visibility(
-                            visible: UserPermissions.validator.canDeleteRental,
-                            child: SlidableAction(
-                              backgroundColor: context.colorScheme.surface,
-                              foregroundColor: Colors.red,
-                              icon: IconlyLight.delete,
-                              label: 'Delete',
-                              onPressed: (BuildContext context) async {
-                                await AppDialogs.showDialogWithButtons(
-                                  context,
-                                  onConfirmPressed: () =>
-                                      controller.deleteTheRental(rental),
-                                  content: const Text(
-                                    'Are you sure you want to delete this rental?',
-                                    textAlign: TextAlign.center,
-                                  ),
-                                  confirmText: 'Delete',
-                                );
-                              },
-                            ),
+            child: PagingListener<int, Rental>(
+              controller: controller.pagingController,
+              builder: (BuildContext context, PagingState<int, Rental> state, VoidCallback fetchNextPage) {
+                return PagedListView<int, Rental>(
+                    fetchNextPage: fetchNextPage,
+                    state: state,
+                    builderDelegate: PagedChildBuilderDelegate<Rental>(
+                      itemBuilder:
+                          (BuildContext context, Rental rental, int index) {
+                        return Slidable(
+                          startActionPane: ActionPane(
+                            motion: const DrawerMotion(),
+                            children: <Widget>[
+                              Visibility(
+                                visible: UserPermissions.validator.canDeleteRental,
+                                child: SlidableAction(
+                                  backgroundColor: context.colorScheme.surface,
+                                  foregroundColor: Colors.red,
+                                  icon: IconlyLight.delete,
+                                  label: 'Delete',
+                                  onPressed: (BuildContext context) async {
+                                    await AppDialogs.showDialogWithButtons(
+                                      context,
+                                      onConfirmPressed: () =>
+                                          controller.deleteTheRental(rental),
+                                      content: const Text(
+                                        'Are you sure you want to delete this rental?',
+                                        textAlign: TextAlign.center,
+                                      ),
+                                      confirmText: 'Delete',
+                                    );
+                                  },
+                                ),
+                              ),
+                            ],
                           ),
-                        ],
+                          endActionPane: ActionPane(
+                            motion: const DrawerMotion(),
+                            children: <Widget>[
+                              Visibility(
+                                visible: UserPermissions.validator.canUpdateRental,
+                                child: SlidableAction(
+                                  backgroundColor: context.colorScheme.surface,
+                                  icon: IconlyLight.edit,
+                                  label: 'Edit',
+                                  onPressed: (BuildContext context) {
+                                    controller.navigateToUpdateRentalScreen(rental);
+                                  },
+                                ),
+                              ),
+                              Visibility(
+                                visible: UserPermissions.validator.canCreateRentalExtension,
+                                child: SlidableAction(
+                                  backgroundColor: context.colorScheme.surface,
+                                  icon: Icons.add,
+                                  label: 'Extend',
+                                  onPressed: (BuildContext context) {
+                                    showModalBottomSheet<dynamic>(
+                                      context: context,
+                                      isScrollControlled: true,
+                                      builder: (BuildContext context) =>
+                                          FractionallySizedBox(
+                                        heightFactor: 0.8,
+                                        child: _buildExtensionForm(context, rental),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                          child: _buildRentalsListTile(context, index, rental),
+                        );
+                      },
+                      firstPageErrorIndicatorBuilder: (BuildContext context) =>
+                          ErrorIndicator(
+                        error: controller.pagingController.value.error as Failure,
+                        onTryAgain: () => controller.pagingController.refresh(),
                       ),
-                      endActionPane: ActionPane(
-                        motion: const DrawerMotion(),
-                        children: <Widget>[
-                          Visibility(
-                            visible: UserPermissions.validator.canUpdateRental,
-                            child: SlidableAction(
-                              backgroundColor: context.colorScheme.surface,
-                              icon: IconlyLight.edit,
-                              label: 'Edit',
-                              onPressed: (BuildContext context) {
-                                controller.navigateToUpdateRentalScreen(rental);
-                              },
-                            ),
-                          ),
-                          Visibility(
-                            visible: UserPermissions.validator.canCreateRentalExtension,
-                            child: SlidableAction(
-                              backgroundColor: context.colorScheme.surface,
-                              icon: Icons.add,
-                              label: 'Extend',
-                              onPressed: (BuildContext context) {
-                                showModalBottomSheet<dynamic>(
-                                  context: context,
-                                  isScrollControlled: true,
-                                  builder: (BuildContext context) =>
-                                      FractionallySizedBox(
-                                    heightFactor: 0.8,
-                                    child: _buildExtensionForm(context, rental),
-                                  ),
-                                );
-                              },
-                            ),
-                          ),
-                        ],
+                      noItemsFoundIndicatorBuilder: (BuildContext context) =>
+                          const EmptyListIndicator(),
+                      newPageProgressIndicatorBuilder: (BuildContext context) =>
+                          const Center(
+                        child: CircularProgressIndicator.adaptive(),
                       ),
-                      child: _buildRentalsListTile(context, index, rental),
-                    );
-                  },
-                  firstPageErrorIndicatorBuilder: (BuildContext context) =>
-                      ErrorIndicator(
-                    error: controller.pagingController.value.error as Failure,
-                    onTryAgain: () => controller.pagingController.refresh(),
-                  ),
-                  noItemsFoundIndicatorBuilder: (BuildContext context) =>
-                      const EmptyListIndicator(),
-                  newPageProgressIndicatorBuilder: (BuildContext context) =>
-                      const Center(
-                    child: CircularProgressIndicator.adaptive(),
-                  ),
-                  firstPageProgressIndicatorBuilder: (BuildContext context) =>
-                      const Center(
-                    child: CircularProgressIndicator.adaptive(),
-                  ),
-                ),
-                shrinkWrap: true),
+                      firstPageProgressIndicatorBuilder: (BuildContext context) =>
+                          const Center(
+                        child: CircularProgressIndicator.adaptive(),
+                      ),
+                    ),
+                    shrinkWrap: true);
+              }
+            ),
           ),
         ),
       ],

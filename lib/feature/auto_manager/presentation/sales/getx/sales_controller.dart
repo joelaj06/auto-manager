@@ -51,8 +51,7 @@ class SalesController extends GetxController
   RxString filteredDriverId = ''.obs;
 
   //paging controller
-  final PagingController<int, Sale> pagingController =
-      PagingController<int, Sale>(firstPageKey: 1);
+  late final PagingController<int, Sale> pagingController;
 
   late AnimationController animationController;
   late Animation<double> animation;
@@ -60,9 +59,17 @@ class SalesController extends GetxController
   @override
   void onInit() {
     generateExpandableItems();
-    pagingController.addPageRequestListener((int pageKey) {
-      getSales(pageKey);
-    });
+    pagingController = PagingController<int, Sale>(
+      getNextPageKey: (PagingState<int, Sale> state) {
+        if (state.hasNextPage) {
+          return (state.keys?.last ?? 0) + 1;
+        }
+        return null;
+      },
+      fetchPage: (int pageKey) {
+        return getSales(pageKey);
+      },
+    );
     animationController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 300),
@@ -248,7 +255,7 @@ class SalesController extends GetxController
     pagingController.refresh();
   }
 
-  void getSales(int pageKey) async {
+  Future<List<Sale>> getSales(int pageKey) async {
     isLoading(true);
     final Either<Failure, ListPage<Sale>> failureOrSales =
         await fetchSales(PageParams(
@@ -261,8 +268,12 @@ class SalesController extends GetxController
       query: query.value,
     ));
 
-    failureOrSales.fold((Failure failure) {
-      pagingController.error = (failure);
+    return failureOrSales.fold((Failure failure) {
+      isLoading(false);
+      pagingController.value = pagingController.value.copyWith(
+        error: failure,
+      );
+      throw failure;
     }, (ListPage<Sale> newPage) {
       isLoading(false);
 
@@ -272,18 +283,17 @@ class SalesController extends GetxController
         totalCount(meta['totalCount']);
         totalAmount(double.tryParse(meta['totalSales']) ?? 0.0);
       }
-      //check if the new page is the last page
-      final int previouslyFetchedItemsCount =
-          pagingController.itemList?.length ?? 0;
-
-      final bool isLastPage = newPage.isLastPage(previouslyFetchedItemsCount);
+      
+      final PagingState<int, Sale> currentState = pagingController.value;
+      final bool isLastPage = newPage.isLastPage(currentState.items?.length ?? 0);
       final List<Sale> newItems = newPage.itemList;
-      if (isLastPage) {
-        pagingController.appendLastPage(newItems);
-      } else {
-        final int nextPageKey = pageKey + 1;
-        pagingController.appendPage(newItems, nextPageKey);
-      }
+
+      pagingController.value = currentState.copyWith(
+        hasNextPage: !isLastPage,
+        error: null,
+      );
+
+      return newItems;
     });
   }
 

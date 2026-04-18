@@ -94,7 +94,7 @@ class LoginScreenWeb extends GetView<LoginController> {
                   end: Alignment.bottomCenter,
                   colors: <Color>[
                     Colors.transparent,
-                    Colors.black.withOpacity(0.9),
+                    Colors.black.withValues(alpha:0.9),
                   ],
                 ),
               ),

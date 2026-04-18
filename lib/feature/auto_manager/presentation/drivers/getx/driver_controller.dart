@@ -41,14 +41,22 @@ class DriverController extends GetxController {
   Rx<DateTime> selectedLicenseExpiryDate = DateTime.now().obs;
 
   //paging controller
-  final PagingController<int, Driver> pagingController =
-      PagingController<int, Driver>(firstPageKey: 1);
+  late final PagingController<int, Driver> pagingController;
 
   @override
   void onInit() {
-    pagingController.addPageRequestListener((int pageKey) {
-      getDrivers(pageKey);
-    });
+    pagingController = PagingController<int, Driver>(
+      getNextPageKey: (PagingState<int, Driver> state) {
+        // Only return next page key if there are more pages
+        if (state.hasNextPage) {
+          return (state.keys?.last ?? 0) + 1;
+        }
+        return null; // This prevents infinite loading
+      },
+      fetchPage: (int pageKey) {
+        return getDrivers(pageKey);
+      },
+    );
     fetchAllVehicles();
     super.onInit();
   }
@@ -127,7 +135,8 @@ class DriverController extends GetxController {
     });
   }
 
-  void getDrivers(int pageKey) async {
+  Future<List<Driver>> getDrivers(int pageKey) async {
+    isLoading(true);
     final Either<Failure, ListPage<Driver>> failureOrDrivers =
         await fetchDrivers(PageParams(
       query: query.value,
@@ -135,27 +144,31 @@ class DriverController extends GetxController {
       pageSize: 10,
     ));
 
-    failureOrDrivers.fold((Failure failure) {
+    return failureOrDrivers.fold((Failure failure) {
       isLoading(false);
-      pagingController.error = failure;
+      pagingController.value = pagingController.value.copyWith(
+        error: failure,
+      ); // Important: throw the error
+      throw failure;
     }, (ListPage<Driver> newPage) {
       isLoading(false);
+      final List<Driver> newItems = newPage.itemList;
       final Map<String, dynamic>? meta = newPage.metaData;
       if (meta != null) {
         totalCount(meta['totalCount']);
       }
-      //check if the new page is the last page
-      final int previouslyFetchedItemsCount =
-          pagingController.itemList?.length ?? 0;
+      
+      final PagingState<int, Driver> currentState = pagingController.value;
+      // Check if this is the last page.
+      final bool isLastPage = newPage.isLastPage(currentState.items?.length ?? 0);
 
-      final bool isLastPage = newPage.isLastPage(previouslyFetchedItemsCount);
-      final List<Driver> newItems = newPage.itemList;
-      if (isLastPage) {
-        pagingController.appendLastPage(newItems);
-      } else {
-        final int nextPageKey = pageKey + 1;
-        pagingController.appendPage(newItems, nextPageKey);
-      }
+      // Update the controller's value with the new state.
+      pagingController.value = currentState.copyWith(
+        hasNextPage: !isLastPage, // Set to false to stop fetching!
+        error: null, // Always clear previous errors on success.
+      );
+
+      return newItems;
     });
   }
 
@@ -253,6 +266,14 @@ class DriverController extends GetxController {
 
   void onLastNameInputChanged(String value) {
     lastName(value);
+  }
+
+  void onSearchFieldInputChanged(String value) {
+    query(value);
+  }
+
+  void onSearchQuerySubmitted() {
+    pagingController.refresh();
   }
 
   String? validateField(String? value) {

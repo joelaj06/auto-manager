@@ -38,7 +38,7 @@ class AppSnack {
             : status == SnackStatus.info
             ? Colors.orange
             : Colors.red,*/
-        backgroundColor: Colors.white.withOpacity(0.4),
+        backgroundColor: Colors.white.withValues(alpha:0.4),
         snackPosition: SnackPosition.TOP,
         borderWidth: 1.0,
         borderColor:  status == SnackStatus.success

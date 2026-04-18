@@ -70,8 +70,6 @@ class AppColorScheme {
       scrim: Color(0xff000000),
       inverseSurface: Color(0xff303030),
       inversePrimary: Color(0xffc6c6c6),
-      background: Color(0xffffffff),
-      onBackground: Color(0xffffffff),
     );
   }
 
@@ -105,8 +103,6 @@ class AppColorScheme {
       scrim: Color(0xff000000),
       inverseSurface: Color(0xff303030),
       inversePrimary: Color(0xffececec),
-      background: Color(0xffffffff),
-      onBackground: Color(0xffffffff),
     );
   }
 
@@ -141,8 +137,6 @@ class AppColorScheme {
       scrim: Color(0xff000000),
       inverseSurface: Color(0xffe2e2e2),
       inversePrimary: Color(0xff5e5e5e),
-      background: Color(0xff141313),
-      onBackground: Color(0xffe5e2e1),
     );
   }
 
@@ -177,8 +171,6 @@ class AppColorScheme {
       scrim: Color(0xff000000),
       inverseSurface: Color(0xffe2e2e2),
       inversePrimary: Color(0xff484848),
-      background: Color(0xff141313),
-      onBackground: Color(0xffe5e2e1),
     );
   }
 
@@ -213,8 +205,6 @@ class AppColorScheme {
       scrim: Color(0xff000000),
       inverseSurface: Color(0xffe2e2e2),
       inversePrimary: Color(0xff2a2a2a),
-      background: Color(0xff141313),
-      onBackground: Color(0xffe5e2e1),
     );
   }
 
