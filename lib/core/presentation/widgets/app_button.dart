@@ -54,7 +54,7 @@ class _AppButtonState extends State<AppButton> {
   @override
   Widget build(BuildContext context) {
     widget.backgroundColor =
-        widget.backgroundColor ?? Color(primaryColor.value);
+        widget.backgroundColor ?? Color(primaryColor.toARGB32());
     return Padding(
       padding: AppPaddings.mV,
       child: GestureDetector(
@@ -81,9 +81,9 @@ class _AppButtonState extends State<AppButton> {
             decoration: BoxDecoration(
               color: widget.enabled
                   ?  _isHovered
-                  ? widget.backgroundColor?.withOpacity(0.8) // Darker on hover
+                  ? widget.backgroundColor?.withValues(alpha:0.8) // Darker on hover
                   : widget.backgroundColor
-                  : context.colorScheme.inversePrimary.withOpacity(0.4),
+                  : context.colorScheme.inversePrimary.withValues(alpha:0.4),
               borderRadius: BorderRadius.circular(15),
             ),
             duration: const Duration(
@@ -98,7 +98,7 @@ class _AppButtonState extends State<AppButton> {
                     fontWeight: FontWeight.w400,
                     color: widget.enabled && !widget.loading
                         ? Colors.white
-                        : context.colorScheme.onPrimaryContainer.withOpacity(0.4),
+                        : context.colorScheme.onPrimaryContainer.withValues(alpha:0.4),
                     fontSize: widget.fontSize ?? 20,
                   ),
                 ),

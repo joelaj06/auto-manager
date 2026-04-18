@@ -66,68 +66,74 @@ class CustomerScreen extends GetView<CustomerController> {
       onRefresh: () {
         return Future<void>.sync(() => controller.pagingController.refresh());
       },
-      child: PagedListView<int, Customer>(
-          pagingController: controller.pagingController,
-          builderDelegate: PagedChildBuilderDelegate<Customer>(
-            itemBuilder: (BuildContext context, Customer customer, int index) {
-              return Slidable(
-                endActionPane: ActionPane(
-                  motion: const DrawerMotion(),
-                  children: <Widget>[
-                    Visibility(
-                      visible: UserPermissions.validator.canUpdateCustomer,
-                      child: SlidableAction(
-                        backgroundColor: context.colorScheme.background,
-                        icon: IconlyLight.edit,
-                        label: 'Edit',
-                        onPressed: (BuildContext context) {
-                          controller.navigateToUpdateCustomerScreen(customer);
-                        },
-                      ),
+      child: PagingListener<int, Customer>(
+          controller: controller.pagingController,
+        builder: (BuildContext context, PagingState<int, Customer> state, VoidCallback fetchNextPage) {
+          return PagedListView<int, Customer>(
+              fetchNextPage: fetchNextPage,
+              state: state,
+              builderDelegate: PagedChildBuilderDelegate<Customer>(
+                itemBuilder: (BuildContext context, Customer customer, int index) {
+                  return Slidable(
+                    endActionPane: ActionPane(
+                      motion: const DrawerMotion(),
+                      children: <Widget>[
+                        Visibility(
+                          visible: UserPermissions.validator.canUpdateCustomer,
+                          child: SlidableAction(
+                            backgroundColor: context.colorScheme.surface,
+                            icon: IconlyLight.edit,
+                            label: 'Edit',
+                            onPressed: (BuildContext context) {
+                              controller.navigateToUpdateCustomerScreen(customer);
+                            },
+                          ),
+                        ),
+                        Visibility(
+                          visible: UserPermissions.validator.canDeleteCustomer,
+                          child: SlidableAction(
+                            backgroundColor: context.colorScheme.surface,
+                            foregroundColor: Colors.red,
+                            icon: IconlyLight.delete,
+                            label: 'Delete',
+                            onPressed: (BuildContext context) async {
+                              await AppDialogs.showDialogWithButtons(
+                                context,
+                                onConfirmPressed: () =>
+                                    controller.deleteTheCustomer(customer.id),
+                                content: const Text(
+                                  'Are you sure you want to delete this customer?',
+                                  textAlign: TextAlign.center,
+                                ),
+                                confirmText: 'Delete',
+                              );
+                            },
+                          ),
+                        ),
+                      ],
                     ),
-                    Visibility(
-                      visible: UserPermissions.validator.canDeleteCustomer,
-                      child: SlidableAction(
-                        backgroundColor: context.colorScheme.background,
-                        foregroundColor: Colors.red,
-                        icon: IconlyLight.delete,
-                        label: 'Delete',
-                        onPressed: (BuildContext context) async {
-                          await AppDialogs.showDialogWithButtons(
-                            context,
-                            onConfirmPressed: () =>
-                                controller.deleteTheCustomer(customer.id),
-                            content: const Text(
-                              'Are you sure you want to delete this customer?',
-                              textAlign: TextAlign.center,
-                            ),
-                            confirmText: 'Delete',
-                          );
-                        },
-                      ),
-                    ),
-                  ],
+                    child: _buildCustomersListTile(context, index, customer),
+                  );
+                },
+                firstPageErrorIndicatorBuilder: (BuildContext context) =>
+                    ErrorIndicator(
+                  error: controller.pagingController.value.error as Failure,
+                  onTryAgain: () => controller.pagingController.refresh(),
                 ),
-                child: _buildCustomersListTile(context, index, customer),
-              );
-            },
-            firstPageErrorIndicatorBuilder: (BuildContext context) =>
-                ErrorIndicator(
-              error: controller.pagingController.value.error as Failure,
-              onTryAgain: () => controller.pagingController.refresh(),
-            ),
-            noItemsFoundIndicatorBuilder: (BuildContext context) =>
-                const EmptyListIndicator(),
-            newPageProgressIndicatorBuilder: (BuildContext context) =>
-                const Center(
-              child: CircularProgressIndicator.adaptive(),
-            ),
-            firstPageProgressIndicatorBuilder: (BuildContext context) =>
-                const Center(
-              child: CircularProgressIndicator.adaptive(),
-            ),
-          ),
-          shrinkWrap: true),
+                noItemsFoundIndicatorBuilder: (BuildContext context) =>
+                    const EmptyListIndicator(),
+                newPageProgressIndicatorBuilder: (BuildContext context) =>
+                    const Center(
+                  child: CircularProgressIndicator.adaptive(),
+                ),
+                firstPageProgressIndicatorBuilder: (BuildContext context) =>
+                    const Center(
+                  child: CircularProgressIndicator.adaptive(),
+                ),
+              ),
+              shrinkWrap: true);
+        }
+      ),
     );
   }
 

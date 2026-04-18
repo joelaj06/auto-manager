@@ -39,14 +39,21 @@ class VehicleController extends GetxController {
   RxString status = ''.obs;
 
   //paging controller
-  final PagingController<int, Vehicle> pagingController =
-      PagingController<int, Vehicle>(firstPageKey: 1);
+  late final PagingController<int, Vehicle> pagingController;
 
   @override
   void onInit() {
-    pagingController.addPageRequestListener((int pageKey) {
-      getVehicles(pageKey);
-    });
+    pagingController = PagingController<int, Vehicle>(
+      getNextPageKey: (PagingState<int, Vehicle> state) {
+        if (state.hasNextPage) {
+          return (state.keys?.last ?? 0) + 1;
+        }
+        return null;
+      },
+      fetchPage: (int pageKey) {
+        return getVehicles(pageKey);
+      },
+    );
     super.onInit();
   }
 
@@ -114,7 +121,7 @@ class VehicleController extends GetxController {
     });
   }
 
-  void getVehicles(int pageKey) async {
+  Future<List<Vehicle>> getVehicles(int pageKey) async {
     isLoading(true);
     final Either<Failure, ListPage<Vehicle>> failureOrVehicles =
         await fetchVehicles(PageParams(
@@ -123,28 +130,29 @@ class VehicleController extends GetxController {
       query: query.value,
     ));
 
-    failureOrVehicles.fold((Failure failure) {
+    return failureOrVehicles.fold((Failure failure) {
       isLoading(false);
-      pagingController.error = failure;
+      pagingController.value = pagingController.value.copyWith(
+        error: failure,
+      );
+      throw failure;
     }, (ListPage<Vehicle> newPage) {
       isLoading(false);
-      //get meta data
+      final List<Vehicle> newItems = newPage.itemList;
       final Map<String, dynamic>? meta = newPage.metaData;
       if (meta != null) {
         totalCount(meta['totalCount']);
       }
-      //check if the new page is the last page
-      final int previouslyFetchedItemsCount =
-          pagingController.itemList?.length ?? 0;
+      
+      final PagingState<int, Vehicle> currentState = pagingController.value;
+      final bool isLastPage = newPage.isLastPage(currentState.items?.length ?? 0);
 
-      final bool isLastPage = newPage.isLastPage(previouslyFetchedItemsCount);
-      final List<Vehicle> newItems = newPage.itemList;
-      if (isLastPage) {
-        pagingController.appendLastPage(newItems);
-      } else {
-        final int nextPageKey = pageKey + 1;
-        pagingController.appendPage(newItems, nextPageKey);
-      }
+      pagingController.value = currentState.copyWith(
+        hasNextPage: !isLastPage,
+        error: null,
+      );
+
+      return newItems;
     });
   }
 

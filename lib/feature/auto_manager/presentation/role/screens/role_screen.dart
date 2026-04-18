@@ -51,7 +51,7 @@ class RoleScreen extends GetView<RoleController> {
                         Visibility(
                           visible: UserPermissions.validator.canUpdateDriver,
                           child: SlidableAction(
-                            backgroundColor: context.colorScheme.background,
+                            backgroundColor: context.colorScheme.surface,
                             icon: IconlyLight.edit,
                             label: 'Edit',
                             onPressed: (BuildContext context) {

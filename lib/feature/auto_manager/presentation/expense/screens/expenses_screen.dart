@@ -85,70 +85,77 @@ class ExpensesScreen extends GetView<ExpenseController> {
                 () => controller.pagingController.refresh(),
               );
             },
-            child: PagedListView<int, Expense>(
-                pagingController: controller.pagingController,
-                builderDelegate: PagedChildBuilderDelegate<Expense>(
-                  itemBuilder:
-                      (BuildContext context, Expense expense, int index) {
-                    return Slidable(
-                      endActionPane: ActionPane(
-                        motion: const DrawerMotion(),
-                        children: <Widget>[
-                          Visibility(
-                            visible: UserPermissions.validator.canUpdateExpense,
-                            child: SlidableAction(
-                              backgroundColor: context.colorScheme.surface,
-                              //  foregroundColor: Colors.red,
-                              icon: IconlyLight.edit,
-                              label: 'Edit',
-                              onPressed: (BuildContext context) {
-                                controller.navigateToUpdateExpenseScreen(expense);
-                              },
-                            ),
+            child: PagingListener<int, Expense>(
+              controller: controller.pagingController,
+              builder: (BuildContext context, PagingState<int, Expense> state, VoidCallback fetchNextPage) {
+                return PagedListView<int, Expense>(
+                    fetchNextPage: fetchNextPage,
+                    state: state,
+
+                    builderDelegate: PagedChildBuilderDelegate<Expense>(
+                      itemBuilder:
+                          (BuildContext context, Expense expense, int index) {
+                        return Slidable(
+                          endActionPane: ActionPane(
+                            motion: const DrawerMotion(),
+                            children: <Widget>[
+                              Visibility(
+                                visible: UserPermissions.validator.canUpdateExpense,
+                                child: SlidableAction(
+                                  backgroundColor: context.colorScheme.surface,
+                                  //  foregroundColor: Colors.red,
+                                  icon: IconlyLight.edit,
+                                  label: 'Edit',
+                                  onPressed: (BuildContext context) {
+                                    controller.navigateToUpdateExpenseScreen(expense);
+                                  },
+                                ),
+                              ),
+                              Visibility(
+                                visible: UserPermissions.validator.canDeleteExpense,
+                                child: SlidableAction(
+                                  backgroundColor: context.colorScheme.surface,
+                                  foregroundColor: Colors.red,
+                                  icon: IconlyLight.delete,
+                                  label: 'Delete',
+                                  onPressed: (BuildContext context) async {
+                                    await AppDialogs.showDialogWithButtons(
+                                      context,
+                                      onConfirmPressed: () =>
+                                          controller.deleteTheExpense(expense.id),
+                                      content: const Text(
+                                        'Are you sure you want to delete this expense?',
+                                        textAlign: TextAlign.center,
+                                      ),
+                                      confirmText: 'Delete',
+                                    );
+                                  },
+                                ),
+                              ),
+                            ],
                           ),
-                          Visibility(
-                            visible: UserPermissions.validator.canDeleteExpense,
-                            child: SlidableAction(
-                              backgroundColor: context.colorScheme.surface,
-                              foregroundColor: Colors.red,
-                              icon: IconlyLight.delete,
-                              label: 'Delete',
-                              onPressed: (BuildContext context) async {
-                                await AppDialogs.showDialogWithButtons(
-                                  context,
-                                  onConfirmPressed: () =>
-                                      controller.deleteExpense(expense.id),
-                                  content: const Text(
-                                    'Are you sure you want to delete this expense?',
-                                    textAlign: TextAlign.center,
-                                  ),
-                                  confirmText: 'Delete',
-                                );
-                              },
-                            ),
-                          ),
-                        ],
+                          child: _buildExpensesListTile(context, index, expense),
+                        );
+                      },
+                      firstPageErrorIndicatorBuilder: (BuildContext context) =>
+                          ErrorIndicator(
+                        error: controller.pagingController.value.error as Failure,
+                        onTryAgain: () => controller.pagingController.refresh(),
                       ),
-                      child: _buildExpensesListTile(context, index, expense),
-                    );
-                  },
-                  firstPageErrorIndicatorBuilder: (BuildContext context) =>
-                      ErrorIndicator(
-                    error: controller.pagingController.value.error as Failure,
-                    onTryAgain: () => controller.pagingController.refresh(),
-                  ),
-                  noItemsFoundIndicatorBuilder: (BuildContext context) =>
-                      const EmptyListIndicator(),
-                  newPageProgressIndicatorBuilder: (BuildContext context) =>
-                      const Center(
-                    child: CircularProgressIndicator.adaptive(),
-                  ),
-                  firstPageProgressIndicatorBuilder: (BuildContext context) =>
-                      const Center(
-                    child: CircularProgressIndicator.adaptive(),
-                  ),
-                ),
-                shrinkWrap: true),
+                      noItemsFoundIndicatorBuilder: (BuildContext context) =>
+                          const EmptyListIndicator(),
+                      newPageProgressIndicatorBuilder: (BuildContext context) =>
+                          const Center(
+                        child: CircularProgressIndicator.adaptive(),
+                      ),
+                      firstPageProgressIndicatorBuilder: (BuildContext context) =>
+                          const Center(
+                        child: CircularProgressIndicator.adaptive(),
+                      ),
+                    ),
+                    shrinkWrap: true);
+              }
+            ),
           ),
         ),
       ],

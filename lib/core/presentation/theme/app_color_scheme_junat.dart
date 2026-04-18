@@ -34,8 +34,6 @@ class AppColorSchemeJunat {
       scrim: Color(0xff000000),
       inverseSurface: Color(0xff2e3036),
       inversePrimary: Color(0xffaac7ff),
-      background: Color(0xffffffff),
-      onBackground: Color(0xffffffff),
     );
   }
 
@@ -69,8 +67,6 @@ class AppColorSchemeJunat {
       scrim: Color(0xff000000),
       inverseSurface: Color(0xffe2e2e9),
       inversePrimary: Color(0xff415f91),
-      background: Color(0xff141313),
-      onBackground: Color(0xffe5e2e1),
     );
   }
 

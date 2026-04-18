@@ -75,7 +75,7 @@ class AddRoleScreen extends GetView<RoleController> {
                 contentPadding: const EdgeInsets.symmetric(horizontal: 20),
                 title: Text(action,
                     style: TextStyle(
-                      color: context.colorScheme.onSurface.withOpacity(.8),
+                      color: context.colorScheme.onSurface.withValues(alpha:.8),
                       fontSize: 14,
                     )),
                 value: controller.selectedPermissions.contains(permission),

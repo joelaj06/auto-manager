@@ -70,15 +70,22 @@ class RentalController extends GetxController {
   RxBool isExtLoading = false.obs;
 
   //paging controller
-  final PagingController<int, Rental> pagingController =
-      PagingController<int, Rental>(firstPageKey: 1);
+  late final PagingController<int, Rental> pagingController;
   Timer? _debounceTimer;
 
   @override
   void onInit() {
-    pagingController.addPageRequestListener((int pageKey) {
-      getRentals(pageKey);
-    });
+    pagingController = PagingController<int, Rental>(
+      getNextPageKey: (PagingState<int, Rental> state) {
+        if (state.hasNextPage) {
+          return (state.keys?.last ?? 0) + 1;
+        }
+        return null;
+      },
+      fetchPage: (int pageKey) {
+        return getRentals(pageKey);
+      },
+    );
     super.onInit();
   }
 
@@ -264,7 +271,7 @@ class RentalController extends GetxController {
     );
   }
 
-  void getRentals(int pageKey) async {
+  Future<List<Rental>> getRentals(int pageKey) async {
     isLoading(true);
     final Either<Failure, ListPage<Rental>> failureOrRentals =
         await fetchRentals(
@@ -276,9 +283,12 @@ class RentalController extends GetxController {
       ),
     );
 
-    failureOrRentals.fold((Failure failure) {
+    return failureOrRentals.fold((Failure failure) {
       isLoading(false);
-      pagingController.error = failure;
+      pagingController.value = pagingController.value.copyWith(
+        error: failure,
+      );
+      throw failure;
     }, (ListPage<Rental> newPage) {
       isLoading(false);
       final Map<String, dynamic>? meta = newPage.metaData;
@@ -286,18 +296,17 @@ class RentalController extends GetxController {
         totalCount(meta['totalCount']);
         totalAmount(double.tryParse(meta['totalRentals']) ?? 0.0);
       }
-      //check if the new page is the last page
-      final int previouslyFetchedItemsCount =
-          pagingController.itemList?.length ?? 0;
-
-      final bool isLastPage = newPage.isLastPage(previouslyFetchedItemsCount);
+      
+      final PagingState<int, Rental> currentState = pagingController.value;
+      final bool isLastPage = newPage.isLastPage(currentState.items?.length ?? 0);
       final List<Rental> newItems = newPage.itemList;
-      if (isLastPage) {
-        pagingController.appendLastPage(newItems);
-      } else {
-        final int nextPageKey = pageKey + 1;
-        pagingController.appendPage(newItems, nextPageKey);
-      }
+
+      pagingController.value = currentState.copyWith(
+        hasNextPage: !isLastPage,
+        error: null,
+      );
+
+      return newItems;
     });
   }
 

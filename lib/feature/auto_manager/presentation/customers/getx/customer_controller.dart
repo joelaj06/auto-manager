@@ -42,14 +42,22 @@ class CustomerController extends GetxController {
       TextEditingController().obs;
 
   //paging controller
-  final PagingController<int, Customer> pagingController =
-      PagingController<int, Customer>(firstPageKey: 1);
+  late final PagingController<int, Customer> pagingController ;
 
   @override
   void onInit() {
-    pagingController.addPageRequestListener((int pageKey) {
-      getCustomers(pageKey);
-    });
+    pagingController = PagingController<int, Customer>(
+      getNextPageKey: (PagingState<int, Customer> state) {
+        // Only return next page key if there are more pages
+        if (state.hasNextPage) {
+          return (state.keys?.last ?? 0) + 1;
+        }
+        return null; // This prevents infinite loading
+      },
+      fetchPage: (int pageKey) {
+        return getCustomers(pageKey);
+      },
+    );
     super.onInit();
   }
 
@@ -137,7 +145,7 @@ class CustomerController extends GetxController {
     }
   }
 
-  void getCustomers(int pageKey) async {
+  Future<List<Customer>> getCustomers(int pageKey) async {
     isLoading(true);
     final Either<Failure, ListPage<Customer>> failureOrCustomers =
         await fetchCustomers(PageParams(
@@ -146,29 +154,33 @@ class CustomerController extends GetxController {
       query: query.value,
     ));
 
-    failureOrCustomers.fold((Failure failure) {
+    return failureOrCustomers.fold((Failure failure) {
       isLoading(false);
-      pagingController.error = failure;
+      pagingController.value = pagingController.value.copyWith(
+        error: failure,
+      ); // Important: throw the error
+      throw failure;
     }, (ListPage<Customer> newPage) {
       isLoading(false);
-
+      final List<Customer> newItems = newPage.itemList;
       //get meta data
       final Map<String, dynamic>? meta = newPage.metaData;
       if (meta != null) {
         totalCount(meta['totalCount']);
       }
-      //check if the new page is the last page
-      final int previouslyFetchedItemsCount =
-          pagingController.itemList?.length ?? 0;
+      final PagingState<int, Customer> currentState = pagingController.value;
+      // Update the PagingController state properly
+      // Check if this is the last page.
+      final bool isLastPage =
+      newPage.isLastPage(currentState.items?.length ?? 0);
 
-      final bool isLastPage = newPage.isLastPage(previouslyFetchedItemsCount);
-      final List<Customer> newItems = newPage.itemList;
-      if (isLastPage) {
-        pagingController.appendLastPage(newItems);
-      } else {
-        final int nextPageKey = pageKey + 1;
-        pagingController.appendPage(newItems, nextPageKey);
-      }
+      // Update the controller's value with the new state.
+      pagingController.value = currentState.copyWith(
+        hasNextPage: !isLastPage, // Set to false to stop fetching!
+        error: null, // Always clear previous errors on success.
+      );
+
+      return newItems;
     });
   }
 

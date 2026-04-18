@@ -99,7 +99,7 @@ class _BaseScreenState extends State<BaseScreen> {
             ),
           );
         },
-        backgroundColor: context.colorScheme.background,
+        backgroundColor: context.colorScheme.surface,
         activeIndex: _selectedIndex,
         splashColor: context.colorScheme.primary,
         splashSpeedInMilliseconds: 300,

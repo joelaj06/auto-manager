@@ -125,7 +125,7 @@ class _AppTextInputFieldState extends State<AppTextInputField> {
                 width: 1,
                 color: widget.enabled
                     ? context.colorScheme.inverseSurface
-                    : context.colorScheme.inverseSurface.withOpacity(0.5),
+                    : context.colorScheme.inverseSurface.withValues(alpha:0.5),
               )),
           child: Row(
             children: <Widget>[

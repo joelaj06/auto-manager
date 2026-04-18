@@ -66,68 +66,74 @@ class UserAccountScreen extends GetView<UserAccountController> {
       onRefresh: () {
         return Future<void>.sync(() => controller.pagingController.refresh());
       },
-      child: PagedListView<int, User>(
-          pagingController: controller.pagingController,
-          builderDelegate: PagedChildBuilderDelegate<User>(
-            itemBuilder: (BuildContext context, User user, int index) {
-              return Slidable(
-                endActionPane: ActionPane(
-                  motion: const DrawerMotion(),
-                  children: <Widget>[
-                    Visibility(
-                      visible: UserPermissions.validator.canUpdateUser,
-                      child: SlidableAction(
-                        backgroundColor: context.colorScheme.background,
-                        icon: IconlyLight.edit,
-                        label: 'Edit',
-                        onPressed: (BuildContext context) {
-                          controller.navigateToUpdateUserScreen(user);
-                        },
-                      ),
+      child: PagingListener<int, User>(
+        controller: controller.pagingController,
+        builder: (BuildContext context, PagingState<int, User> state, VoidCallback fetchNextPage) {
+          return PagedListView<int, User>(
+              fetchNextPage: fetchNextPage,
+              state: state, 
+              builderDelegate: PagedChildBuilderDelegate<User>(
+                itemBuilder: (BuildContext context, User user, int index) {
+                  return Slidable(
+                    endActionPane: ActionPane(
+                      motion: const DrawerMotion(),
+                      children: <Widget>[
+                        Visibility(
+                          visible: UserPermissions.validator.canUpdateUser,
+                          child: SlidableAction(
+                            backgroundColor: context.colorScheme.surface,
+                            icon: IconlyLight.edit,
+                            label: 'Edit',
+                            onPressed: (BuildContext context) {
+                              controller.navigateToUpdateUserScreen(user);
+                            },
+                          ),
+                        ),
+                        Visibility(
+                          visible: UserPermissions.validator.canDeleteUser,
+                          child: SlidableAction(
+                            backgroundColor: context.colorScheme.surface,
+                            foregroundColor: Colors.red,
+                            icon: IconlyLight.delete,
+                            label: 'Delete',
+                            onPressed: (BuildContext context) async {
+                              await AppDialogs.showDialogWithButtons(
+                                context,
+                                onConfirmPressed: () =>
+                                    controller.deleteUserAccount(user.id),
+                                content: const Text(
+                                  'Are you sure you want to delete this user?',
+                                  textAlign: TextAlign.center,
+                                ),
+                                confirmText: 'Delete',
+                              );
+                            },
+                          ),
+                        ),
+                      ],
                     ),
-                    Visibility(
-                      visible: UserPermissions.validator.canDeleteUser,
-                      child: SlidableAction(
-                        backgroundColor: context.colorScheme.background,
-                        foregroundColor: Colors.red,
-                        icon: IconlyLight.delete,
-                        label: 'Delete',
-                        onPressed: (BuildContext context) async {
-                          await AppDialogs.showDialogWithButtons(
-                            context,
-                            onConfirmPressed: () =>
-                                controller.deleteUserAccount(user.id),
-                            content: const Text(
-                              'Are you sure you want to delete this user?',
-                              textAlign: TextAlign.center,
-                            ),
-                            confirmText: 'Delete',
-                          );
-                        },
-                      ),
-                    ),
-                  ],
+                    child: _buildUsersListTile(context, index, user),
+                  );
+                },
+                firstPageErrorIndicatorBuilder: (BuildContext context) =>
+                    ErrorIndicator(
+                  error: controller.pagingController.value.error as Failure,
+                  onTryAgain: () => controller.pagingController.refresh(),
                 ),
-                child: _buildUsersListTile(context, index, user),
-              );
-            },
-            firstPageErrorIndicatorBuilder: (BuildContext context) =>
-                ErrorIndicator(
-              error: controller.pagingController.value.error as Failure,
-              onTryAgain: () => controller.pagingController.refresh(),
-            ),
-            noItemsFoundIndicatorBuilder: (BuildContext context) =>
-                const EmptyListIndicator(),
-            newPageProgressIndicatorBuilder: (BuildContext context) =>
-                const Center(
-              child: CircularProgressIndicator.adaptive(),
-            ),
-            firstPageProgressIndicatorBuilder: (BuildContext context) =>
-                const Center(
-              child: CircularProgressIndicator.adaptive(),
-            ),
-          ),
-          shrinkWrap: true),
+                noItemsFoundIndicatorBuilder: (BuildContext context) =>
+                    const EmptyListIndicator(),
+                newPageProgressIndicatorBuilder: (BuildContext context) =>
+                    const Center(
+                  child: CircularProgressIndicator.adaptive(),
+                ),
+                firstPageProgressIndicatorBuilder: (BuildContext context) =>
+                    const Center(
+                  child: CircularProgressIndicator.adaptive(),
+                ),
+              ),
+              shrinkWrap: true);
+        }
+      ),
     );
   }
 

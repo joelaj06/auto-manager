@@ -145,57 +145,63 @@ class SalesScreen extends GetView<SalesController> {
                 () => controller.pagingController.refresh(),
               );
             },
-            child: PagedListView<int, Sale>(
-              pagingController: controller.pagingController,
-              builderDelegate: PagedChildBuilderDelegate<Sale>(
-                itemBuilder: (BuildContext context, Sale sale, int index) {
-                  return Slidable(
-                    endActionPane: ActionPane(
-                      motion: const DrawerMotion(),
-                      children: <Widget>[
-                        Visibility(
-                          visible: UserPermissions.validator.canDeleteSale,
-                          child: SlidableAction(
-                            backgroundColor: context.colorScheme.surface,
-                            foregroundColor: Colors.red,
-                            icon: IconlyLight.delete,
-                            label: 'Delete',
-                            onPressed: (BuildContext context) async {
-                              await AppDialogs.showDialogWithButtons(
-                                context,
-                                onConfirmPressed:
-                                    () => controller.deleteASale(sale.id),
-                                content: const Text(
-                                  'Are you sure you want to delete this sale?',
-                                  textAlign: TextAlign.center,
-                                ),
-                                confirmText: 'Delete',
-                              );
-                            },
-                          ),
+            child: PagingListener<int, Sale>(
+              controller: controller.pagingController,
+              builder: (BuildContext context, PagingState<int, Sale> state, VoidCallback fetchNextPage) {
+                return PagedListView<int, Sale>(
+                  fetchNextPage: fetchNextPage,
+                  state: state,
+                  builderDelegate: PagedChildBuilderDelegate<Sale>(
+                    itemBuilder: (BuildContext context, Sale sale, int index) {
+                      return Slidable(
+                        endActionPane: ActionPane(
+                          motion: const DrawerMotion(),
+                          children: <Widget>[
+                            Visibility(
+                              visible: UserPermissions.validator.canDeleteSale,
+                              child: SlidableAction(
+                                backgroundColor: context.colorScheme.surface,
+                                foregroundColor: Colors.red,
+                                icon: IconlyLight.delete,
+                                label: 'Delete',
+                                onPressed: (BuildContext context) async {
+                                  await AppDialogs.showDialogWithButtons(
+                                    context,
+                                    onConfirmPressed:
+                                        () => controller.deleteASale(sale.id),
+                                    content: const Text(
+                                      'Are you sure you want to delete this sale?',
+                                      textAlign: TextAlign.center,
+                                    ),
+                                    confirmText: 'Delete',
+                                  );
+                                },
+                              ),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                    child: _buildSalesListTile(context, index, sale),
-                  );
-                },
-                firstPageErrorIndicatorBuilder:
-                    (BuildContext context) => ErrorIndicator(
-                      error: controller.pagingController.value.error as Failure,
-                      onTryAgain: () => controller.pagingController.refresh(),
-                    ),
-                noItemsFoundIndicatorBuilder:
-                    (BuildContext context) => const EmptyListIndicator(),
-                newPageProgressIndicatorBuilder:
-                    (BuildContext context) => const Center(
-                      child: CircularProgressIndicator.adaptive(),
-                    ),
-                firstPageProgressIndicatorBuilder:
-                    (BuildContext context) => const Center(
-                      child: CircularProgressIndicator.adaptive(),
-                    ),
-              ),
-              shrinkWrap: true,
+                        child: _buildSalesListTile(context, index, sale),
+                      );
+                    },
+                    firstPageErrorIndicatorBuilder:
+                        (BuildContext context) => ErrorIndicator(
+                          error: controller.pagingController.value.error as Failure,
+                          onTryAgain: () => controller.pagingController.refresh(),
+                        ),
+                    noItemsFoundIndicatorBuilder:
+                        (BuildContext context) => const EmptyListIndicator(),
+                    newPageProgressIndicatorBuilder:
+                        (BuildContext context) => const Center(
+                          child: CircularProgressIndicator.adaptive(),
+                        ),
+                    firstPageProgressIndicatorBuilder:
+                        (BuildContext context) => const Center(
+                          child: CircularProgressIndicator.adaptive(),
+                        ),
+                  ),
+                  shrinkWrap: true,
+                );
+              }
             ),
           ),
         ),

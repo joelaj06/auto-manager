@@ -49,17 +49,24 @@ class ExpenseController extends GetxController {
   RxString filteredCategoryId = ''.obs;
 
   //paging controller
-  final PagingController<int, Expense> pagingController =
-      PagingController<int, Expense>(firstPageKey: 1);
+  late final PagingController<int, Expense> pagingController;
 
   final SalesController salesController = Get.find();
 
   @override
   void onInit() {
     generateExpandableItems();
-    pagingController.addPageRequestListener((int pageKey) {
-      getAllExpenses(pageKey);
-    });
+    pagingController = PagingController<int, Expense>(
+      getNextPageKey: (PagingState<int, Expense> state) {
+        if (state.hasNextPage) {
+          return (state.keys?.last ?? 0) + 1;
+        }
+        return null;
+      },
+      fetchPage: (int pageKey) {
+        return getAllExpenses(pageKey);
+      },
+    );
 
     getVehicles();
     super.onInit();
@@ -241,12 +248,12 @@ class ExpenseController extends GetxController {
     }
   }
 
-  void getAllExpenses(int pageKey) async {
+  Future<List<Expense>> getAllExpenses(int pageKey) async {
     isLoading(true);
     final Either<Failure, ListPage<Expense>> failureOrExpense =
         await fetchExpenses(
       PageParams(
-        pageIndex: 1,
+        pageIndex: pageKey,
         pageSize: 10,
         startDate: startDate.value.toIso8601String(),
         endDate: endDate.value.toIso8601String(),
@@ -258,10 +265,13 @@ class ExpenseController extends GetxController {
       ),
     );
 
-    failureOrExpense.fold((Failure failure) {
+    return failureOrExpense.fold((Failure failure) {
       isLoading(false);
-      pagingController.error = failure;
+      pagingController.value = pagingController.value.copyWith(
+        error: failure,
+      );
       AppSnack.show(message: failure.message, status: SnackStatus.error);
+      throw failure;
     }, (ListPage<Expense> newPage) {
       isLoading(false);
 
@@ -271,18 +281,17 @@ class ExpenseController extends GetxController {
         totalCount(meta['totalCount']);
         totalAmount(double.tryParse(meta['totalExpenses']) ?? 0.0);
       }
-      //check if the new page is the last page
-      final int previouslyFetchedItemsCount =
-          pagingController.itemList?.length ?? 0;
-
-      final bool isLastPage = newPage.isLastPage(previouslyFetchedItemsCount);
+      
+      final PagingState<int, Expense> currentState = pagingController.value;
+      final bool isLastPage = newPage.isLastPage(currentState.items?.length ?? 0);
       final List<Expense> newItems = newPage.itemList;
-      if (isLastPage) {
-        pagingController.appendLastPage(newItems);
-      } else {
-        final int nextPageKey = pageKey + 1;
-        pagingController.appendPage(newItems, nextPageKey);
-      }
+
+      pagingController.value = currentState.copyWith(
+        hasNextPage: !isLastPage,
+        error: null,
+      );
+
+      return newItems;
     });
   }
 
