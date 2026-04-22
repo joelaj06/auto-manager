@@ -1,57 +1,39 @@
-name: Flutter Build
+name: Flutter Build & Distribute
 
 on:
   push:
     branches:
-      - master
-  pull_request:
-    branches:
-      - master
+      - main
 
 jobs:
   build:
-    name: Build & Release
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name : Setup Dart
-        uses: dart-lang/setup-dart@v1
-        with : 
-          sdk: '3.11.1'
-
-      - name : Setup Dart
-        uses: dart-lang/setup-dart@v1
-        with : 
-          sdk: '3.7.2'
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: '17'
 
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.41.4'
-          channel : 'stable'
+          channel: 'stable'
 
-      - name: Install dependencies
+      - name: Install Dependencies
         run: flutter pub get
 
-      - name: Generate models
-        run: dart run build_runner build -d
-
+      - name: Generate Models
+        run: dart run build_runner build
 
       - name: Build APK
-        run: flutter build apk -t lib/main.dart --release --split-per-abi
+        run: flutter build apk --release
 
-      - name: List build directory (for debugging)
-        run: ls -R build/
-
-      - name: Archive Build Outputs
-        uses: actions/upload-artifact@v4
+      - name: Upload to Firebase App Distribution
+        uses: w9jds/firebase-action@master
         with:
-          name: flutter-apk
-          path: |
-            build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
-            build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
-            build/app/outputs/flutter-apk/app-x86_64-release.apk
-
+          args: appdistribution:distribute build/app/outputs/flutter-apk/app-release.apk --app ${{ secrets.FIREBASE_APP_ID }} --groups "qa-team"
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
