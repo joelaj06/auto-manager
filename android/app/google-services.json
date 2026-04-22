@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "804306464678",
+    "project_id": "autoforce-manager",
+    "storage_bucket": "autoforce-manager.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:804306464678:android:11b0db05b4d09bbbb52967",
+        "android_client_info": {
+          "package_name": "com.joelaj.autoforce_manager"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyASFfp6iGuxi0Fk6UPvocEyZ_3jIr7pkDU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

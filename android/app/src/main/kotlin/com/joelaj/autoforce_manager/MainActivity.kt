@@ -1,4 +1,4 @@
-package com.example.automanager
+package com.joelaj.autoforce_manager
 
 import io.flutter.embedding.android.FlutterActivity
 
