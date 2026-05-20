@@ -17,10 +17,7 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      throw UnsupportedError(
-        'DefaultFirebaseOptions have not been configured for web - '
-        'you can reconfigure this by running the FlutterFire CLI again.',
-      );
+      return web;
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
@@ -59,4 +56,15 @@ class DefaultFirebaseOptions {
     projectId: 'autoforce-manager',
     storageBucket: 'autoforce-manager.firebasestorage.app',
   );
+
+  static const FirebaseOptions web = FirebaseOptions(
+    apiKey: 'AIzaSyAxRwJ7KeG--1i_FZVYDK8JAPSkvq2F_UY',
+    appId: '1:804306464678:web:08372a4e7abdeb75b52967',
+    messagingSenderId: '804306464678',
+    projectId: 'autoforce-manager',
+    authDomain: 'autoforce-manager.firebaseapp.com',
+    storageBucket: 'autoforce-manager.firebasestorage.app',
+    measurementId: 'G-2CFEKQPYW1',
+  );
+
 }

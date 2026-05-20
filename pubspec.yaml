@@ -64,6 +64,8 @@ dependencies:
   syncfusion_flutter_charts: ^33.1.49
   open_filex: ^4.7.0
   firebase_core: ^4.7.0
+  syncfusion_flutter_datagrid: ^33.2.6
+  dropdown_search: ^7.0.0
 
 dev_dependencies:
   flutter_test:

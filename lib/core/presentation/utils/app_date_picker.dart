@@ -33,10 +33,11 @@ class AppDatePicker {
       value: _dialogCalendarPickerValue,
       borderRadius: BorderRadius.circular(15),
     );
-    final DateRangeValues values = DateRangeValues(
-      startDate: results?.first,
-      endDate: results?.last,
+    final DateRangeValues values =  DateRangeValues(
+      startDate: DateTime.tryParse(results?.first?.toIso8601String() ?? ''),
+      endDate: DateTime.tryParse(results?.last?.toIso8601String() ?? ''),
     );
+
     return values;
   }
 

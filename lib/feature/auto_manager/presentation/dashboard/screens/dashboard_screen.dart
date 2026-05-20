@@ -19,7 +19,7 @@ class DashboardScreen extends GetView<DashboardController> {
 
   @override
   Widget build(BuildContext context) {
-    controller.loadDependencies();
+
     return Scaffold(
       appBar: AppBar(
         centerTitle: false,

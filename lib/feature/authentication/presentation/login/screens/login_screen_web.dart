@@ -13,7 +13,6 @@ class LoginScreenWeb extends GetView<LoginController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      //  bottomNavigationBar: _buildBottomNavBar(context),
       body: Obx(
         () => controller.isLoadingLocalData.value
             ? const Center(
@@ -139,7 +138,7 @@ class LoginScreenWeb extends GetView<LoginController> {
             width: 150,
             height: 150,
             child: Image.asset(
-              AssetImages.logoWhite,
+              AssetImages.appLogoWhite,
             ),
           )
         ],

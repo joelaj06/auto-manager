@@ -15,7 +15,7 @@ class AutoManager extends StatelessWidget {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Auto Manager',
-      themeMode: kIsWeb ? ThemeMode.light : ThemeMode.system,
+      themeMode: ThemeMode.system,
       theme: AppTheme.light,
       darkTheme: AppTheme.dark,
       initialRoute:  initialRoute,

@@ -12,3 +12,19 @@ const DashboardScreen(),
   const RentalScreen(),
   const MoreScreen(),
 ];
+
+
+List<Widget> tabNavPages = <Widget>[
+const DashboardScreen(),
+  const SalesScreen(),
+  const ExpensesScreen(),
+  const RentalScreen(),
+  const CustomerScreen(),
+  const DriversScreen(),
+  const VehicleScreen(),
+  const UserAccountScreen(),
+  const UpdateCompanyScreen(),
+  const RoleScreen(),
+  //const MoreScreen(),
+];
+
