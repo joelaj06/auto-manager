@@ -24,7 +24,7 @@ class _WebSalesLayoutState extends State<WebSalesLayout> {
   Sale? _selectedSale;
   late _SalesDataGridSource _dataSource;
   final DataPagerController _dataPagerController = DataPagerController();
-  static const int _rowsPerPage = 25;
+  static const int _rowsPerPage = 10;
 
   SalesController get ctrl => widget.controller;
 
@@ -196,17 +196,23 @@ class _WebSalesLayoutState extends State<WebSalesLayout> {
                             // Shown as a slim progress bar at the bottom while
                             // a subsequent page is being fetched, so the
                             // existing rows remain visible and interactive.
-                           // if(ctrl.isWebLoading.value ==true) Positioned(
-                           //    left: 0,
-                           //    right: 0,
-                           //    bottom: 0,
-                           //    child: Obx(
-                           //      () => ctrl.isWebLoading.value &&
-                           //          ctrl.currentPageSales.isNotEmpty
-                           //          ? LinearProgressIndicator(minHeight: 2)
-                           //          : SizedBox.shrink(),
-                           //    ),
-                           //  ),
+                            // Obx(() {
+                            //   // Show the indicator ONLY if it's loading AND we already have items on the screen
+                            //   final showLinearProgress =
+                            //       ctrl.isWebLoading.value &&
+                            //       ctrl.currentPageSales.isNotEmpty;
+                            //
+                            //   if (!showLinearProgress) {
+                            //     return const SizedBox.shrink();
+                            //   }
+                            //
+                            //   return const Positioned(
+                            //     left: 0,
+                            //     right: 0,
+                            //     bottom: 0,
+                            //     child: LinearProgressIndicator(minHeight: 2),
+                            //   );
+                            // }),
                           ],
                         );
                       }),

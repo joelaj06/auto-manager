@@ -47,6 +47,10 @@ class ExpenseController extends GetxController {
       <ExpandableItem<dynamic>>[].obs;
   RxString filteredVehicleId = ''.obs;
   RxString filteredCategoryId = ''.obs;
+  final RxList<Expense> currentPageExpenses = <Expense>[].obs;
+  RxBool showPager = false.obs;
+  final RxBool isWebLoading = false.obs;
+  final Rxn<Failure> webError = Rxn<Failure>();
 
   //paging controller
   late final PagingController<int, Expense> pagingController;
@@ -119,6 +123,11 @@ class ExpenseController extends GetxController {
     dateController.value.text = DataFormatter.formatDateToString(
       exp.date.toString(),
     );
+    selectedCategory(exp.category);
+    selectedVehicle(exp.vehicle);
+    amount(exp.amount?.toDouble() ?? 0.0);
+    description(exp.description ?? '');
+    selectedDate(DateTime.tryParse(exp.date ?? '') ?? DateTime.now());
   }
 
   void updateTheExpense(String expenseId) async {
@@ -248,8 +257,76 @@ class ExpenseController extends GetxController {
     }
   }
 
-  Future<List<Expense>> getAllExpenses(int pageKey) async {
+  void reload() {
+    getAllExpensesWeb(1);
+  }
+
+  void navigateToAddExpenseWeb() async {
+    final dynamic res = await Get.to(AddExpenseScreen(),
+      opaque: true, transition: Transition.fadeIn,
+    );
+    if (res != null) {
+      AppSnack.show(
+        message: 'Expense added successfully',
+        status: SnackStatus.success,
+      );
+      reload();
+    }
+  }
+  void navigateToUpdateExpenseWeb(Expense expense) async {
+    final dynamic res = await Get.to(AddExpenseScreen(),
+      opaque: true, transition: Transition.fadeIn,
+      arguments: AddExpenseArgument(expense),
+    );
+    if (res != null) {
+      AppSnack.show(
+        message: 'Expense updated successfully',
+        status: SnackStatus.success,
+      );
+      reload();
+    }
+  }
+
+  Future<void> getAllExpensesWeb(int pageKey) async {
     isLoading(true);
+    final Either<Failure, ListPage<Expense>> failureOrExpense =
+    await fetchExpenses(
+      PageParams(
+        pageIndex: pageKey,
+        pageSize: 10,
+        startDate: startDate.value.toIso8601String(),
+        endDate: endDate.value.toIso8601String(),
+        categoryId: filteredCategoryId.value.isNotEmpty
+            ? filteredCategoryId.value
+            : null,
+        vehicleId:
+        filteredVehicleId.value.isNotEmpty ? filteredVehicleId.value : null,
+      ),
+    );
+
+    return failureOrExpense.fold((Failure failure) {
+      isWebLoading(false);
+      webError(failure);
+      AppSnack.show(message: failure.message, status: SnackStatus.error);
+      throw failure;
+    }, (ListPage<Expense> newPage) {
+      isWebLoading(false);
+
+      //get meta data
+      final Map<String, dynamic>? meta = newPage.metaData;
+      if (meta != null) {
+        totalCount(meta['totalCount']);
+        totalAmount(double.tryParse(meta['totalExpenses']) ?? 0.0);
+      }
+
+      final List<Expense> newItems = newPage.itemList;
+      currentPageExpenses.value = newItems;
+
+    });
+  }
+
+  Future<List<Expense>> getAllExpenses(int pageKey) async {
+    isWebLoading(true);
     final Either<Failure, ListPage<Expense>> failureOrExpense =
         await fetchExpenses(
       PageParams(

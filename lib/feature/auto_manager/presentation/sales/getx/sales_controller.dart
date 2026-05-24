@@ -312,7 +312,6 @@ class SalesController extends GetxController
 
   Future<List<Sale>> getSales(int pageKey) async {
     isLoading(true);
-    isWebLoading(true);
     final Either<Failure, ListPage<Sale>> failureOrSales =
         await fetchSales(PageParams(
       pageIndex: pageKey,
@@ -326,15 +325,12 @@ class SalesController extends GetxController
 
     return failureOrSales.fold((Failure failure) {
       isLoading(false);
-      isWebLoading(false);
-      webError(failure);
       pagingController.value = pagingController.value.copyWith(
         error: failure,
       );
       throw failure;
     }, (ListPage<Sale> newPage) {
       isLoading(false);
-      isWebLoading(false);
       //get meta data
       final Map<String, dynamic>? meta = newPage.metaData;
       if (meta != null) {
