@@ -130,7 +130,7 @@ class LoginController extends GetxController {
       (User user) {
         isLoading(false);
         AppSnack.show(message: 'Login Successful', status: SnackStatus.success);
-        Get.toNamed<dynamic>(AppRoutes.base);
+        Get.offAllNamed<dynamic>(AppRoutes.base);
       },
     );
   }

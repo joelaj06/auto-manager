@@ -36,7 +36,6 @@ class DashboardController extends GetxController {
   RxInt year = DateTime.now().year.obs;
   Rx<DateTime> selectedMonthYear = DateTime.now().obs;
   Rx<Company> company = Company.empty().obs;
-  RxString junatCompanyName = 'Junat Transport & Logistics'.obs;
 
   User loginResponse = User.empty();
 
@@ -56,6 +55,11 @@ class DashboardController extends GetxController {
     super.onInit();
   }
 
+  @override
+  void onReady() {
+    loadDependencies();
+    super.onReady();
+  }
   @override
   void onClose() {
     chartSeriesController = null;
@@ -93,6 +97,8 @@ class DashboardController extends GetxController {
   void onDateRangeSelected(BuildContext context) async {
     final DateRangeValues dateRangeValues =
         await AppDatePicker.showDateRangePicker(context);
+
+
     startDate(dateRangeValues.startDate);
     endDate(dateRangeValues.endDate);
     getTextDate(dateRangeValues);

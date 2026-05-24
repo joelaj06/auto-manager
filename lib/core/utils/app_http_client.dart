@@ -166,6 +166,7 @@ class AppHTTPClient {
       case 200:
         final dynamic responseJson =
             jsonDecode(utf8.decode(response.bodyBytes));
+
         final dynamic xPagination =
             jsonDecode(response.headers['x-pagination'].toString());
         AppLog.i(
@@ -178,13 +179,13 @@ class AppHTTPClient {
         if (responseJson is List) {
           data = <String, dynamic>{
             'items': responseJson,
-            'totalCount': xPagination != null ? xPagination['totalCount'] : '',
+            'totalCount': xPagination != null ? xPagination['totalCount'] : 0,
             'meta': <String, dynamic>{
               'totalCount':
-                  xPagination != null ? xPagination['totalCount'] : '',
-              'totalSales': response.headers['_meta_total_sales'] ?? '',
-              'totalExpenses': response.headers['_meta_total_expenses'] ?? '',
-              'totalRentals': response.headers['_meta_total_rentals'] ?? '',
+                  xPagination != null ? xPagination['totalCount'] : 0,
+              'totalSales': response.headers['_meta_total_sales'] ?? 0,
+              'totalExpenses': response.headers['_meta_total_expenses'] ?? 0,
+              'totalRentals': response.headers['_meta_total_rentals'] ?? 0,
             }
           };
         }

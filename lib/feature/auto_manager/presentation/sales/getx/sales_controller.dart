@@ -8,6 +8,8 @@ import 'package:iconly/iconly.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:ionicons/ionicons.dart';
 
+import '../screens/add_sale_screen.dart';
+
 class SalesController extends GetxController
     with GetSingleTickerProviderStateMixin {
   SalesController(
@@ -49,6 +51,10 @@ class SalesController extends GetxController
       <ExpandableItem<dynamic>>[].obs;
   RxString filteredVehicleId = ''.obs;
   RxString filteredDriverId = ''.obs;
+  final RxList<Sale> currentPageSales = <Sale>[].obs;
+  RxBool showPager = false.obs;
+  final RxBool isWebLoading = false.obs;
+  final Rxn<Failure> webError = Rxn<Failure>();
 
   //paging controller
   late final PagingController<int, Sale> pagingController;
@@ -95,6 +101,10 @@ class SalesController extends GetxController
     fetchAllVehicles();
     fetchAllDrivers();
     resetFields();
+  }
+
+  void reload() {
+    getSales(1);
   }
 
   void resetFilters() {
@@ -221,6 +231,19 @@ class SalesController extends GetxController
     }
   }
 
+  void navigateToAddSalesWeb() async {
+    final dynamic res = await Get.to(AddSaleScreen(),
+      opaque: true, transition: Transition.fadeIn,
+    );
+    if (res != null) {
+      AppSnack.show(
+        message: 'Sale added successfully',
+        status: SnackStatus.success,
+      );
+      reload();
+    }
+  }
+
   //toggle the search on search icon pressed
   void toggleSearch() {
     isSearching(!isSearching.value);
@@ -255,8 +278,41 @@ class SalesController extends GetxController
     pagingController.refresh();
   }
 
+  Future<void> getWebSales(int pageKey) async {
+    isWebLoading(true);
+    final Either<Failure, ListPage<Sale>> failureOrSales =
+    await fetchSales(PageParams(
+      pageIndex: pageKey,
+      pageSize: 10,
+      startDate: startDate.value.toIso8601String(),
+      endDate: endDate.value.toIso8601String(),
+      driverId: filteredDriverId.value,
+      vehicleId: filteredVehicleId.value,
+      query: query.value,
+    ));
+
+    return failureOrSales.fold((Failure failure) {
+      isWebLoading(false);
+      webError(failure);
+      throw failure;
+    }, (ListPage<Sale> newPage) {
+      isWebLoading(false);
+      //get meta data
+      final Map<String, dynamic>? meta = newPage.metaData;
+      if (meta != null) {
+        totalCount(meta['totalCount']);
+        totalAmount(double.tryParse(meta['totalSales'].toString()) ?? 0.0);
+      }
+
+      final List<Sale> newItems = newPage.itemList;
+      currentPageSales.assignAll(newItems);
+    });
+  }
+
+
   Future<List<Sale>> getSales(int pageKey) async {
     isLoading(true);
+    isWebLoading(true);
     final Either<Failure, ListPage<Sale>> failureOrSales =
         await fetchSales(PageParams(
       pageIndex: pageKey,
@@ -270,23 +326,26 @@ class SalesController extends GetxController
 
     return failureOrSales.fold((Failure failure) {
       isLoading(false);
+      isWebLoading(false);
+      webError(failure);
       pagingController.value = pagingController.value.copyWith(
         error: failure,
       );
       throw failure;
     }, (ListPage<Sale> newPage) {
       isLoading(false);
-
+      isWebLoading(false);
       //get meta data
       final Map<String, dynamic>? meta = newPage.metaData;
       if (meta != null) {
         totalCount(meta['totalCount']);
-        totalAmount(double.tryParse(meta['totalSales']) ?? 0.0);
+        totalAmount(double.tryParse(meta['totalSales'].toString()) ?? 0.0);
       }
       
       final PagingState<int, Sale> currentState = pagingController.value;
       final bool isLastPage = newPage.isLastPage(currentState.items?.length ?? 0);
       final List<Sale> newItems = newPage.itemList;
+      currentPageSales.assignAll(newItems);
 
       pagingController.value = currentState.copyWith(
         hasNextPage: !isLastPage,
