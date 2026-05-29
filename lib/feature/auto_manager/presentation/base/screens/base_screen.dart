@@ -6,9 +6,13 @@ import 'package:get/get.dart';
 import '../../../../../core/presentation/nav/bottom_nav_icons.dart';
 import '../../../../../core/presentation/nav/bottom_nav_tabs.dart';
 import '../../../../../core/presentation/theme/app_theme.dart';
+import '../../../../../core/presentation/utils/app_dialogs.dart';
 import '../../dashboard/getx/dashboard_controller.dart';
+import '../../more/getx/more_controller.dart';
+import '../widgets/change_password_sheet.dart';
 import '../widgets/logo_icon.dart';
 import '../widgets/navigation_animation.dart';
+import '../widgets/popup_row.dart';
 
 // Responsive breakpoints
 const double kTabletBreakpoint = 768.0;
@@ -25,6 +29,7 @@ int _selectedIndex = 0;
 
 class _BaseScreenState extends State<BaseScreen> {
   DateTime? currentBackPressTime;
+  bool _sidebarExpanded = true;
 
 
   Future<bool> onWillPop() {
@@ -49,6 +54,15 @@ class _BaseScreenState extends State<BaseScreen> {
     return MediaQuery.of(context).size.width >= kDesktopBreakpoint;
   }
 
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      setState(() {
+        _sidebarExpanded = _isDesktop(context);
+      });
+    });
+  }
 
 
   @override
@@ -75,13 +89,16 @@ class _BaseScreenState extends State<BaseScreen> {
   // ─── Wide layout: Sidebar + content ───────────────────────────────────────
 
   Widget _buildWideNavigationScreen(BuildContext context) {
-    final bool isDesktop = _isDesktop(context);
+   // final bool isDesktop = _isDesktop(context);
 
     return Row(
       children: <Widget>[
         _AppSidebar(
           selectedIndex: _selectedIndex,
-          isExpanded: isDesktop,
+          isExpanded: _sidebarExpanded,
+          onToggleExpanded: () {
+            setState(() => _sidebarExpanded = !_sidebarExpanded);
+          },
           onDestinationSelected: (int index) {
             setState(() => _selectedIndex = index);
           },
@@ -173,11 +190,13 @@ class _AppSidebar extends StatefulWidget {
     required this.selectedIndex,
     required this.isExpanded,
     required this.onDestinationSelected,
+    required this.onToggleExpanded,
   });
 
   final int selectedIndex;
   final bool isExpanded;
   final ValueChanged<int> onDestinationSelected;
+  final VoidCallback onToggleExpanded;
 
   @override
   State<_AppSidebar> createState() => _AppSidebarState();
@@ -220,26 +239,64 @@ class _AppSidebarState extends State<_AppSidebar> {
             child: Padding(
               padding: const EdgeInsets.symmetric(
                 horizontal: 16,
-                vertical: 20,
+                vertical: 14,
               ),
               child: widget.isExpanded
                   ? Row(
                 children: <Widget>[
-                  LogoIcon(logoUrl: dashboardController.company.value.logoUrl,),
-                  const SizedBox(width: 12),
-                  Obx(() => Text(
-                      dashboardController.company.value.name ?? 'AutoForce Manager',
-                      style: context.appBarTitle.copyWith(
-                        fontWeight: FontWeight.w700,
-                        color: colors.onSurface,
+                  LogoIcon(
+                    logoUrl: dashboardController.company.value.logoUrl,
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Obx(
+                          () => Text(
+                        dashboardController.company.value.name ??
+                            'AutoForce Manager',
+                        style: context.appBarTitle.copyWith(
+                          fontWeight: FontWeight.w700,
+                          color: colors.onSurface,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  // ← toggle collapse button
+                  IconButton(
+                    onPressed: widget.onToggleExpanded,
+                    tooltip: 'Collapse sidebar',
+                    padding: EdgeInsets.zero,
+                    visualDensity: VisualDensity.compact,
+                    icon: Icon(
+                      Icons.menu_open_rounded,
+                      size: 20,
+                      color: colors.onSurfaceVariant,
                     ),
                   ),
                 ],
               )
-                  : Center(child: LogoIcon(logoUrl: dashboardController.company.value.logoUrl,)),
+                  : Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  LogoIcon(
+                    logoUrl: dashboardController.company.value.logoUrl,
+                  ),
+                  const SizedBox(height: 8),
+                  // ← toggle expand button when collapsed
+                  IconButton(
+                    onPressed: widget.onToggleExpanded,
+                    tooltip: 'Expand sidebar',
+                    padding: EdgeInsets.zero,
+                    visualDensity: VisualDensity.compact,
+                    icon: Icon(
+                      Icons.menu_rounded,
+                      size: 20,
+                      color: colors.onSurfaceVariant,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
 
@@ -270,7 +327,9 @@ class _AppSidebarState extends State<_AppSidebar> {
             padding: const EdgeInsets.all(12),
             child: _ProfileTile(isExpanded: widget.isExpanded,
             firstName: dashboardController.loginResponse.firstName,
-            lastName: dashboardController.loginResponse.lastName,),
+            lastName: dashboardController.loginResponse.lastName,
+              role: dashboardController.loginResponse.role?.name ?? 'User',
+            ),
           ),
           const SizedBox(height: 8),
         ],
@@ -367,12 +426,119 @@ class _SidebarItem extends StatelessWidget {
 // ─── Profile tile at the bottom of sidebar ───────────────────────────────────
 
 class _ProfileTile extends StatelessWidget {
-  const _ProfileTile({required this.isExpanded,
-  required this.firstName,required this.lastName});
+  const _ProfileTile({
+    required this.isExpanded,
+    required this.firstName,
+    required this.lastName,
+    required this.role,
+  });
 
   final bool isExpanded;
   final String firstName;
   final String lastName;
+  final String role;
+
+  void _showMorePopup(BuildContext context) {
+    // MoreController is already injected via BaseScreen bindings
+    final MoreController moreCtrl = Get.find<MoreController>();
+    final ColorScheme colors = context.colorScheme;
+    final RenderBox button = context.findRenderObject()! as RenderBox;
+    final RenderBox overlay =
+    Navigator.of(context).overlay!.context.findRenderObject()! as RenderBox;
+    final Offset offset = button.localToGlobal(
+      Offset.zero,
+      ancestor: overlay,
+    );
+
+    showMenu<String>(
+      context: context,
+      // Anchor above the profile tile
+      position: RelativeRect.fromLTRB(
+        offset.dx,
+        offset.dy - 160,
+        offset.dx + button.size.width,
+        offset.dy,
+      ),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: BorderSide(
+          color: colors.outlineVariant.withValues(alpha: 0.5),
+          width: 0.5,
+        ),
+      ),
+      elevation: 4,
+      items: <PopupMenuEntry<String>>[
+        // ── Theme toggle ──────────────────────────────────────────────
+        PopupMenuItem<String>(
+          value: 'theme',
+          onTap: moreCtrl.toggleTheme,
+          child: Obx(
+                () => PopupRow(
+              icon: moreCtrl.isDarkMode.value
+                  ? Icons.light_mode_rounded
+                  : Icons.dark_mode_rounded,
+              label: moreCtrl.isDarkMode.value ? 'Light mode' : 'Dark mode',
+            ),
+          ),
+        ),
+
+        const PopupMenuDivider(height: 1),
+
+        // ── Change password ───────────────────────────────────────────
+        PopupMenuItem<String>(
+          value: 'password',
+          onTap: () {
+            // Small delay so the menu closes before the sheet opens
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              _showChangePasswordSheet(context, moreCtrl);
+            });
+          },
+          child: const PopupRow(
+            icon: Icons.lock_outline_rounded,
+            label: 'Change password',
+          ),
+        ),
+
+        const PopupMenuDivider(height: 1),
+
+        // ── Logout ────────────────────────────────────────────────────
+        PopupMenuItem<String>(
+          value: 'logout',
+          onTap: () {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              AppDialogs.showDialogWithButtons(
+                context,
+                onConfirmPressed: moreCtrl.logUserOut,
+                content: const Text(
+                  'Are you sure you want to logout?',
+                  textAlign: TextAlign.center,
+                ),
+                confirmText: 'Logout',
+              );
+            });
+          },
+          child: PopupRow(
+            icon: Icons.logout_rounded,
+            label: 'Logout',
+            color: colors.error,
+          ),
+        ),
+      ],
+    );
+  }
+
+  void _showChangePasswordSheet(
+      BuildContext context, MoreController ctrl) {
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (BuildContext context) =>
+          ChangePasswordSheet(controller: ctrl),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -389,7 +555,16 @@ class _ProfileTile extends StatelessWidget {
     );
 
     if (!isExpanded) {
-      return Center(child: avatar);
+      // Collapsed: just the avatar, tap it to open popup
+      return Center(
+        child: GestureDetector(
+          onTap: () => _showMorePopup(context),
+          child: Tooltip(
+            message: 'More options',
+            child: avatar,
+          ),
+        ),
+      );
     }
 
     return Row(
@@ -402,7 +577,7 @@ class _ProfileTile extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               Text(
-               '$firstName $lastName',
+                '$firstName $lastName',
                 style: TextStyle(
                   fontSize: 13,
                   fontWeight: FontWeight.w600,
@@ -411,7 +586,7 @@ class _ProfileTile extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
               ),
               Text(
-                'Admin',
+                role,
                 style: TextStyle(
                   fontSize: 11,
                   color: colors.onSurfaceVariant,
@@ -420,10 +595,19 @@ class _ProfileTile extends StatelessWidget {
             ],
           ),
         ),
-        Icon(
-          Icons.more_horiz_rounded,
-          size: 18,
-          color: colors.onSurfaceVariant,
+        // ── Three-dot trigger ──────────────────────────────────────────
+        Builder(
+          builder: (BuildContext btnContext) => IconButton(
+            onPressed: () => _showMorePopup(btnContext),
+            tooltip: 'More options',
+            padding: EdgeInsets.zero,
+            visualDensity: VisualDensity.compact,
+            icon: Icon(
+              Icons.more_horiz_rounded,
+              size: 18,
+              color: colors.onSurfaceVariant,
+            ),
+          ),
         ),
       ],
     );
