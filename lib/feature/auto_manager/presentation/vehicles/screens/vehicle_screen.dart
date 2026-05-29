@@ -1,5 +1,6 @@
 import 'package:automanager/core/presentation/theme/app_theme.dart';
 import 'package:automanager/feature/auto_manager/presentation/presentation.dart';
+import 'package:automanager/feature/auto_manager/presentation/vehicles/widgets/web_vehicle_layout.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -20,25 +21,35 @@ class VehicleScreen extends GetView<VehicleController> {
 
   @override
   Widget build(BuildContext context) {
+    final bool isWide = MediaQuery.of(context).size.width >= 768;
+
     return Scaffold(
-      appBar: AppBar(
-        title: Obx(
-          () => Text(
-              'Vehicles${controller.totalCount.value == 0 ? '' : '(${controller.totalCount.value})'}'),
-        ),
-      ),
-      floatingActionButton: UserPermissions.validator.canCreateVehicle ? FloatingActionButton(
-        onPressed: controller.navigateToAddVehicleScreen,
-        child: const Icon(IconlyLight.plus),
-      ) : null,
-      body: Column(
-        children: <Widget>[
-          _buildDriverSearchField(context),
-          Expanded(
-            child: _buildDriversList(context),
-          ),
-        ],
-      ),
+      appBar: isWide
+          ? null
+          : AppBar(
+              title: Obx(
+                () => Text(
+                    'Vehicles${controller.totalCount.value == 0 ? '' : '(${controller.totalCount.value})'}'),
+              ),
+            ),
+      floatingActionButton: isWide
+          ? null
+          : (UserPermissions.validator.canCreateVehicle
+              ? FloatingActionButton(
+                  onPressed: controller.navigateToAddVehicleScreen,
+                  child: const Icon(IconlyLight.plus),
+                )
+              : null),
+      body: isWide
+          ? WebVehicleLayout(controller: controller)
+          : Column(
+              children: <Widget>[
+                _buildDriverSearchField(context),
+                Expanded(
+                  child: _buildDriversList(context),
+                ),
+              ],
+            ),
     );
   }
 

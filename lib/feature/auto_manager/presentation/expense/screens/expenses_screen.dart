@@ -497,6 +497,7 @@ class ExpensesScreen extends GetView<ExpenseController> {
                     padding: const EdgeInsets.all(12),
                     onPressed: () {
                       controller.pagingController.refresh();
+                      controller.getAllExpensesWeb(1, refresh: true);
                       Get.back();
                     },
                     text: 'Apply',

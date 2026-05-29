@@ -1,9 +1,11 @@
-import 'package:automanager/feature/auto_manager/presentation/customers/customers.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../../../core/presentation/utils/utils.dart';
-import '../../../../../core/presentation/widgets/widgets.dart';
+import '../../../../../core/presentation/presentation.dart';
+import '../../../../../core/presentation/theme/app_theme.dart';
+import '../arguments/customer_argument.dart';
+import '../getx/customer_controller.dart';
+import '../widgets/customer_form_fields.dart';
 
 class AddCustomerScreen extends GetView<CustomerController> {
   const AddCustomerScreen({super.key});
@@ -13,103 +15,111 @@ class AddCustomerScreen extends GetView<CustomerController> {
     final CustomerArgument? args = Get.arguments as CustomerArgument?;
 
     controller.clearFields();
-
     if (args != null) {
       controller.getCustomerDataFromArgs(args.customer);
     }
+
+    final bool isWide = MediaQuery.of(context).size.width >= 768;
+
+    return isWide
+        ? _WebAddCustomerModal(controller: controller, args: args)
+        : _MobileAddCustomerScreen(controller: controller, args: args);
+  }
+}
+
+class _MobileAddCustomerScreen extends StatelessWidget {
+  const _MobileAddCustomerScreen({required this.controller, this.args});
+
+  final CustomerController controller;
+  final CustomerArgument? args;
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title:  Text(args != null ? 'Edit Customer' : 'New Customer',),
+        title: Text(args != null ? 'Update Customer' : 'New Customer'),
       ),
-      bottomNavigationBar: _buildBottomBar(context, arg: args),
+      bottomNavigationBar: _buildBottomBar(context),
       body: SingleChildScrollView(
         child: Padding(
           padding: AppPaddings.mA,
-          child: Column(
-            children: <Widget>[
-              AppTextInputField(
-                labelText: 'Name',
-                onChanged: controller.onNameInputChanged,
-                validator: controller.validateField,
-                initialValue: args != null ? args.customer.name : '',
-              ),
-              const AppSpacing(v: 10),
-              AppTextInputField(
-                labelText: 'Email',
-                onChanged: controller.onEmailInputChanged,
-                initialValue: args != null ? args.customer.email : '',
-              ),
-              const AppSpacing(v: 10),
-              AppTextInputField(
-                labelText: 'address',
-                initialValue: args != null ? args.customer.address : '',
-              ),
-              const AppSpacing(v: 10),
-              AppTextInputField(
-                labelText: 'Phone',
-                onChanged: controller.onPhoneInputChanged,
-                textInputType: TextInputType.phone,
-                validator: controller.validateField,
-                initialValue: args != null ? args.customer.phone : '',
-              ),
-              const AppSpacing(v: 10),
-              AppTextInputField(
-                labelText: 'ID Number',
-                onChanged: controller.onIdNumberInputChanged,
-                initialValue:
-                    args != null ? args.customer.identificationNumber : '',
-              ),
-              const AppSpacing(v: 10),
-              AppTextInputField(
-                labelText: 'Occupation',
-                onChanged: controller.onOccupationInputChanged,
-                initialValue: args != null ? args.customer.occupation : '',
-              ),
-              const AppSpacing(v: 10),
-              AppTextInputField(
-                labelText: 'Business',
-                onChanged: controller.onBusinessInputChanged,
-                initialValue: args != null ? args.customer.business : '',
-              ),
-              const AppSpacing(v: 10),
-              Obx(
-                () => AppTextInputField(
-                  controller: controller.dobTextEditingController.value,
-                  labelText: 'Date Of Birth',
-                  validator: (String? value) => null,
-                  textInputType: TextInputType.datetime,
-                  hintText: controller.dobTextEditingController.value.text,
-                  readOnly: true,
-                  onTap: () {
-                    controller.selectDateOfBirth(context);
-                  },
-                ),
-              ),
-            ],
-          ),
+          child: CustomerFormFields(controller: controller),
         ),
       ),
     );
   }
 
-  Widget _buildBottomBar(BuildContext context,
-      {required CustomerArgument? arg}) {
+  Widget _buildBottomBar(BuildContext context) {
     return Padding(
       padding: AppPaddings.mA,
       child: SizedBox(
         height: 70,
         child: Obx(
           () => AppButton(
-            text: arg != null ? 'Update' : 'Save',
+            text: args != null ? 'Update' : 'Save',
             onPressed: () {
-              arg != null
-                  ? controller.updateTheCustomer(arg.customer.id!)
+              args != null
+                  ? controller.updateTheCustomer(args!.customer.id)
                   : controller.addNewCustomer();
             },
-            enabled: arg != null
-                ? !controller.isLoading.value
-                : controller.customerFormIsValid.value &&
-                    !controller.isLoading.value,
+            enabled: controller.customerFormIsValid.value && !controller.isLoading.value,
+            loading: controller.isLoading.value,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _WebAddCustomerModal extends StatelessWidget {
+  const _WebAddCustomerModal({required this.controller, this.args});
+
+  final CustomerController controller;
+  final CustomerArgument? args;
+
+  @override
+  Widget build(BuildContext context) {
+    final ColorScheme colors = context.colorScheme;
+
+    return Scaffold(
+      backgroundColor: Colors.black.withValues(alpha: 0.45),
+      body: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 500),
+          child: Material(
+            color: colors.surface,
+            borderRadius: BorderRadius.circular(14),
+            clipBehavior: Clip.antiAlias,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                ModalHeader(
+                  title: args != null ? 'Update Customer' : 'New Customer',
+                  onClose: () => Get.back(),
+                ),
+                Flexible(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.fromLTRB(24, 20, 24, 8),
+                    child: CustomerFormFields(controller: controller),
+                  ),
+                ),
+                Obx(
+                  () => ModalFooter(
+                    onSave: controller.customerFormIsValid.value && !controller.isLoading.value
+                        ? () {
+                            if (args != null) {
+                              controller.updateTheCustomer(args!.customer.id);
+                            } else {
+                              controller.addNewCustomer();
+                            }
+                          }
+                        : null,
+                    isLoading: controller.isLoading.value,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

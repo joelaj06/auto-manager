@@ -68,6 +68,10 @@ class RentalController extends GetxController {
   RxString extendedNotes = ''.obs;
   RxList<RentalExtension> rentalExtensions = <RentalExtension>[].obs;
   RxBool isExtLoading = false.obs;
+  final RxList<Rental> currentPageRentals = <Rental>[].obs;
+  final RxBool isWebLoading = false.obs;
+  final Rxn<Failure> webError = Rxn<Failure>();
+  int _currentWebPage = -1;
 
   //paging controller
   late final PagingController<int, Rental> pagingController;
@@ -108,6 +112,7 @@ class RentalController extends GetxController {
       AppSnack.show(message: failure.message, status: SnackStatus.error);
     }, (Rental rental) {
       pagingController.refresh();
+      getRentalsWeb(1);
       Get.back();
       AppSnack.show(message: 'Rental Extended', status: SnackStatus.success);
     });
@@ -131,6 +136,7 @@ class RentalController extends GetxController {
      rentalExtensions.remove(extension);
       AppSnack.show(message: 'Extension removed', status: SnackStatus.success);
       pagingController.refresh();
+      getRentalsWeb(1);
 
     });
   }
@@ -142,6 +148,7 @@ class RentalController extends GetxController {
       AppSnack.show(message: failure.message, status: SnackStatus.error);
     }, (Rental rental) {
       pagingController.refresh();
+      getRentalsWeb(1);
     });
   }
 
@@ -173,6 +180,7 @@ class RentalController extends GetxController {
       AppSnack.show(message: failure.message, status: SnackStatus.error);
     }, (Rental rental) {
       pagingController.refresh();
+      //getRentalsWeb(1);
       Get.back<dynamic>(result: rental);
     });
   }
@@ -271,6 +279,39 @@ class RentalController extends GetxController {
     );
   }
 
+  Future<void> getRentalsWeb(int pageKey, {bool refresh = false}) async {
+    if (isWebLoading.value) return;
+    if (!refresh && pageKey == _currentWebPage && currentPageRentals.isNotEmpty) {
+      return;
+    }
+    _currentWebPage = pageKey;
+    isWebLoading(true);
+    final Either<Failure, ListPage<Rental>> failureOrRentals =
+        await fetchRentals(
+      PageParams(
+        pageIndex: pageKey,
+        pageSize: 10,
+        startDate: startDate.value.toIso8601String(),
+        endDate: endDate.value.toIso8601String(),
+      ),
+    );
+
+    failureOrRentals.fold((Failure failure) {
+      isWebLoading(false);
+      webError(failure);
+      _currentWebPage = -1; // Allow retry
+    }, (ListPage<Rental> newPage) {
+      isWebLoading(false);
+      webError(null);
+      final Map<String, dynamic>? meta = newPage.metaData;
+      if (meta != null) {
+        totalCount(meta['totalCount']);
+        totalAmount(double.tryParse(meta['totalRentals']) ?? 0.0);
+      }
+      currentPageRentals.assignAll(newPage.itemList);
+    });
+  }
+
   Future<List<Rental>> getRentals(int pageKey) async {
     isLoading(true);
     final Either<Failure, ListPage<Rental>> failureOrRentals =
@@ -333,6 +374,31 @@ class RentalController extends GetxController {
     }
   }
 
+  void navigateToAddRentalWeb() async {
+    final dynamic result = await Get.toNamed(AppRoutes.addRental);
+    if (result != null) {
+      getRentalsWeb(1);
+      AppSnack.show(
+        message: 'Rental added successfully',
+        status: SnackStatus.success,
+      );
+    }
+  }
+
+  void navigateToUpdateRentalWeb(Rental rental) async {
+    final dynamic result = await Get.toNamed(
+      AppRoutes.addRental,
+      arguments: AddRentalArgument(rental),
+    );
+    if (result != null) {
+      getRentalsWeb(1);
+      AppSnack.show(
+        message: 'Rental updated successfully',
+        status: SnackStatus.success,
+      );
+    }
+  }
+
   void selectExtendedDate(BuildContext context) async {
     final DateTime? res = await AppDatePicker.showOnlyDatePicker(context);
     if (res != null) {
@@ -349,6 +415,7 @@ class RentalController extends GetxController {
     endDate(dateRangeValues.endDate);
     dateText(AppDatePicker.getTextDate(dateRangeValues));
     pagingController.refresh();
+    getRentalsWeb(1, refresh: true);
   }
 
 

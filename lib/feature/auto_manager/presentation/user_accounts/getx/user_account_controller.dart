@@ -32,6 +32,10 @@ class UserAccountController extends GetxController {
   final RxInt totalCount = 0.obs;
   final RxString query = ''.obs;
   final RxBool isLoading = false.obs;
+  final RxList<User> currentPageUsers = <User>[].obs;
+  final RxBool isWebLoading = false.obs;
+  final Rxn<Failure> webError = Rxn<Failure>();
+  int _currentWebPage = -1;
   final RxString firstName = ''.obs;
   final RxString lastName = ''.obs;
   final RxString email = ''.obs;
@@ -110,6 +114,7 @@ class UserAccountController extends GetxController {
           message: 'User Account Deleted Successfully',
           status: SnackStatus.success);
       pagingController.refresh();
+      getUsersWeb(_currentWebPage, refresh: true);
     });
   }
 
@@ -202,6 +207,63 @@ class UserAccountController extends GetxController {
         status: SnackStatus.success,
       );
     }
+  }
+
+  void reload() {
+    getUsersWeb(_currentWebPage, refresh: true);
+  }
+
+  void navigateToAddUserWeb() async {
+    final dynamic result = await Get.toNamed(AppRoutes.addUser);
+    if (result != null) {
+      reload();
+      AppSnack.show(
+        message: 'User added successfully',
+        status: SnackStatus.success,
+      );
+    }
+  }
+
+  void navigateToUpdateUserWeb(User user) async {
+    final dynamic result = await Get.toNamed(AppRoutes.addUser,
+        arguments: UserAccountArgument(user));
+    if (result != null) {
+      reload();
+      AppSnack.show(
+        message: 'User updated successfully',
+        status: SnackStatus.success,
+      );
+    }
+  }
+
+  Future<void> getUsersWeb(int pageKey, {bool refresh = false}) async {
+    if (isWebLoading.value) return;
+    if (!refresh && pageKey == _currentWebPage && currentPageUsers.isNotEmpty) {
+      return;
+    }
+    _currentWebPage = pageKey;
+    isWebLoading(true);
+    final Either<Failure, ListPage<User>> failureOrUsers =
+        await fetchUsers(PageParams(
+      pageIndex: pageKey,
+      pageSize: 10,
+      query: query.value,
+    ));
+    failureOrUsers.fold((Failure failure) {
+      isWebLoading(false);
+      webError(failure);
+      _currentWebPage = -1;
+    }, (ListPage<User> newPage) {
+      isWebLoading(false);
+      webError(null);
+
+      //get meta data
+      final Map<String, dynamic>? meta = newPage.metaData;
+      if (meta != null) {
+        totalCount(meta['totalCount']);
+      }
+      currentPageUsers.assignAll(newPage.itemList);
+    });
   }
 
   void navigateToUpdateUserScreen(User user) async {
@@ -298,12 +360,25 @@ class UserAccountController extends GetxController {
   }
 
 
-  RxBool get clientFormIsValid => (validateEmail(email.value) == null &&
-      validatePasswordConfirmation(passwordConfirmation.value) == null &&
+  void getUserDataFromArgs(User user) {
+    firstName(user.firstName);
+    lastName(user.lastName);
+    email(user.email);
+    phone(user.phone);
+    address(user.address);
+    selectedRole(user.role);
+    // Don't populate password on edit
+  }
+
+  RxBool get userFormIsValid => (validateEmail(email.value) == null &&
       validateField(firstName.value) == null &&
       validateField(phone.value) == null &&
       validateField(lastName.value) == null &&
-      validatePassword(password.value) == null &&
       validateField(selectedRole.value.name) == null )
+      .obs;
+
+  RxBool get clientFormIsValid => (userFormIsValid.value &&
+      validatePasswordConfirmation(passwordConfirmation.value) == null &&
+      validatePassword(password.value) == null)
       .obs;
 }

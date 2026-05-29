@@ -1,230 +1,125 @@
-import 'package:automanager/core/presentation/theme/app_theme.dart';
-import 'package:automanager/feature/auto_manager/presentation/presentation.dart';
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:iconly/iconly.dart';
 
-import '../../../../../core/presentation/utils/utils.dart';
-import '../../../../../core/presentation/widgets/widgets.dart';
-import '../../../../../core/utils/utils.dart';
+import '../../../../../core/presentation/presentation.dart';
+import '../../../../../core/presentation/theme/app_theme.dart';
+import '../arguments/vehicle_argument.dart';
+import '../getx/vehicle_controller.dart';
+import '../widgets/vehicle_form_fields.dart';
 
 class AddVehicleScreen extends GetView<VehicleController> {
   const AddVehicleScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final VehicleArgument? args = ModalRoute.of(context)?.settings.arguments as VehicleArgument?;
+    final VehicleArgument? args = Get.arguments as VehicleArgument?;
+
     controller.clearFields();
     if (args != null) {
       controller.getVehicleDataFromArgs(args.vehicle);
     }
+
+    final bool isWide = MediaQuery.of(context).size.width >= 768;
+
+    return isWide
+        ? _WebAddVehicleModal(controller: controller, args: args)
+        : _MobileAddVehicleScreen(controller: controller, args: args);
+  }
+}
+
+class _MobileAddVehicleScreen extends StatelessWidget {
+  const _MobileAddVehicleScreen({required this.controller, this.args});
+
+  final VehicleController controller;
+  final VehicleArgument? args;
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          args != null ? 'Edit Vehicle' : 'New Vehicle',
-        ),
+        title: Text(args != null ? 'Update Vehicle' : 'New Vehicle'),
       ),
-      bottomNavigationBar: _buildBottomBar(context, arg: args),
+      bottomNavigationBar: _buildBottomBar(context),
       body: SingleChildScrollView(
         child: Padding(
           padding: AppPaddings.mA,
-          child: Column(
-            children: <Widget>[
-              _buildVehicleImage(context),
-              const AppSpacing(v: 10),
-              Visibility(
-                visible: args != null
-                    ? args.vehicle.isRented == true
-                    : false,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                     Text(
-                      'Release Vehicle',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: context.colorScheme.primary,
-                      ),
-                    ),
-                    Obx(
-                      () => Switch(
-                        value: controller.isVehicleReleased.value,
-                        onChanged: controller.toggleVehicleRelease,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const AppSpacing(v: 10),
-              AppTextInputField(
-                labelText: 'Make',
-                onChanged: controller.onMakeInputChanged,
-                validator: controller.validateField,
-                initialValue: args != null ? args.vehicle.make : '',
-              ),
-              const AppSpacing(v: 10),
-              AppTextInputField(
-                labelText: 'Model',
-                onChanged: controller.onModelInputChanged,
-                validator: controller.validateField,
-                initialValue: args != null ? args.vehicle.model : '',
-              ),
-              const AppSpacing(v: 10),
-              AppTextInputField(
-                labelText: 'Year',
-                onChanged: controller.onYearInputChanged,
-                textInputType: TextInputType.number,
-                validator: controller.validateField,
-                initialValue: args != null ? args.vehicle.year.toString() : '',
-              ),
-              const AppSpacing(v: 10),
-              AppTextInputField(
-                labelText: 'Color',
-                onChanged: controller.onColorInputChanged,
-                validator: controller.validateField,
-                initialValue: args != null ? args.vehicle.color : '',
-              ),
-              const AppSpacing(v: 10),
-              AppTextInputField(
-                labelText: 'Plate Number',
-                onChanged: controller.onPlateNumberInputChanged,
-                validator: controller.validateField,
-                initialValue: args != null ? args.vehicle.licensePlate : '',
-              ),
-            ],
-          ),
+          child: VehicleFormFields(controller: controller),
         ),
       ),
     );
   }
 
-  Widget _buildVehicleImage(BuildContext context) {
-    return Stack(
-      children: <Widget>[
-        Container(
-          decoration: BoxDecoration(
-            border: Border.all(
-              color: context.colorScheme.primary,
-              width: 2,
-            ),
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(10),
-            child: Obx(
-              () => Container(
-                height: 180,
-                width: 180,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: controller.image.value.isEmpty
-                    ? Image.asset(
-                        AssetImages.speedometer,
-                        fit: BoxFit.cover,
-                      )
-                    : controller.image.value.contains('http')
-                        ? CachedNetworkImage(
-                            fit: BoxFit.cover,
-                            imageUrl: controller.image.value,
-                            placeholder: (BuildContext context, String url) =>
-                                Image.asset(AssetImages.speedometer),
-                            errorWidget: (BuildContext context, String url,
-                                    dynamic error) =>
-                                Image.asset(AssetImages.speedometer)
-                          )
-                        : Image.memory(
-                            fit: BoxFit.cover,
-                            Base64Convertor().base64toImage(
-                              controller.image.value,
-                            ),
-                          ),
-              ),
-            ),
-          ),
-        ),
-        Positioned(
-          bottom: 5,
-          right: 4,
-          child: CircleAvatar(
-            backgroundColor: context.colorScheme.primary,
-            child: IconButton(
-              color: context.colorScheme.onPrimary,
-              onPressed: () {
-                showModalBottomSheet<dynamic>(
-                  context: context,
-                  builder: (BuildContext context) => SizedBox(
-                    height: 150,
-                    child: SingleChildScrollView(
-                      child: Padding(
-                        padding: AppPaddings.mA,
-                        child: _buildImageOptions(context),
-                      ),
-                    ),
-                  ),
-                );
-              },
-              icon: const Icon(IconlyLight.camera),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildImageOptions(BuildContext context) {
-    return Column(
-      children: <Widget>[
-        const Align(
-          alignment: Alignment.center,
-          child: Text(
-            'Choose an option',
-            style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
-          ),
-        ),
-        const AppSpacing(
-          v: 10,
-        ),
-        ImageModalListCard(
-          onTap: () {
-            controller.addImage();
-            Navigator.pop(context);
-          },
-          title: 'Upload Image',
-          icon: IconlyBold.paper_upload,
-        ),
-        ImageModalListCard(
-          onTap: () {
-            controller.removeProfileImage();
-            Navigator.pop(context);
-          },
-          title: 'Remove',
-          icon: IconlyBold.delete,
-        ),
-      ],
-    );
-  }
-
-  Widget _buildBottomBar(BuildContext context,
-      {required VehicleArgument? arg}) {
+  Widget _buildBottomBar(BuildContext context) {
     return Padding(
       padding: AppPaddings.mA,
       child: SizedBox(
         height: 70,
         child: Obx(
           () => AppButton(
-            text: arg != null ? 'Update' : 'Save',
+            text: args != null ? 'Update' : 'Save',
             onPressed: () {
-              arg != null
-                  ? controller.updateTheVehicle(arg.vehicle.id!)
+              args != null
+                  ? controller.updateTheVehicle(args!.vehicle.id!)
                   : controller.addNewVehicle();
             },
-            enabled: arg != null
-                ? !controller.isLoading.value
-                : controller.customerFormIsValid.value &&
-                    !controller.isLoading.value,
+            enabled: controller.customerFormIsValid.value && !controller.isLoading.value,
+            loading: controller.isLoading.value,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _WebAddVehicleModal extends StatelessWidget {
+  const _WebAddVehicleModal({required this.controller, this.args});
+
+  final VehicleController controller;
+  final VehicleArgument? args;
+
+  @override
+  Widget build(BuildContext context) {
+    final ColorScheme colors = context.colorScheme;
+
+    return Scaffold(
+      backgroundColor: Colors.black.withValues(alpha: 0.45),
+      body: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 500),
+          child: Material(
+            color: colors.surface,
+            borderRadius: BorderRadius.circular(14),
+            clipBehavior: Clip.antiAlias,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                ModalHeader(
+                  title: args != null ? 'Update Vehicle' : 'New Vehicle',
+                  onClose: () => Get.back(),
+                ),
+                Flexible(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.fromLTRB(24, 20, 24, 8),
+                    child: VehicleFormFields(controller: controller),
+                  ),
+                ),
+                Obx(
+                  () => ModalFooter(
+                    onSave: controller.customerFormIsValid.value && !controller.isLoading.value
+                        ? () {
+                            if (args != null) {
+                              controller.updateTheVehicle(args!.vehicle.id!);
+                            } else {
+                              controller.addNewVehicle();
+                            }
+                          }
+                        : null,
+                    isLoading: controller.isLoading.value,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

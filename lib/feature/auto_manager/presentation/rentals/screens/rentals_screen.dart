@@ -1,5 +1,6 @@
 import 'package:automanager/core/presentation/theme/app_theme.dart';
 import 'package:automanager/feature/auto_manager/presentation/presentation.dart';
+import 'package:automanager/feature/auto_manager/presentation/rentals/widgets/web_rental_layout.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:get/get.dart';
@@ -17,42 +18,58 @@ class RentalScreen extends GetView<RentalController> {
 
   @override
   Widget build(BuildContext context) {
+    final bool isWide = MediaQuery.of(context).size.width >= 768;
+
     return Scaffold(
-      floatingActionButton: UserPermissions.validator.canCreateRental ? FloatingActionButton(
-        onPressed: controller.navigateToAddRentalScreen,
-        child: const Icon(IconlyLight.plus),
-      ) :null,
-      appBar: AppBar(
-        title: Obx(
-          () => Text(
-              'Rentals${controller.totalCount.value == 0 ? '' : '(${controller.totalCount.value})'}'),
-        ),
-        leading: IconButton(
-          onPressed: () {
-            controller.onDateRangeSelected(context);
-          },
-          icon: const Icon(
-            IconlyLight.calendar,
-          ),
+      floatingActionButton: isWide
+          ? null
+          : (UserPermissions.validator.canCreateRental
+              ? FloatingActionButton(
+                  onPressed: controller.navigateToAddRentalScreen,
+                  child: const Icon(IconlyLight.plus),
+                )
+              : null),
+      appBar: isWide ? null : _buildMobileAppBar(context),
+      body: isWide
+          ? WebRentalLayout(controller: controller)
+          : _buildMobileBody(context),
+    );
+  }
+
+  AppBar _buildMobileAppBar(BuildContext context) {
+    return AppBar(
+      title: Obx(
+        () => Text(
+            'Rentals${controller.totalCount.value == 0 ? '' : '(${controller.totalCount.value})'}'),
+      ),
+      leading: IconButton(
+        onPressed: () {
+          controller.onDateRangeSelected(context);
+        },
+        icon: const Icon(
+          IconlyLight.calendar,
         ),
       ),
-      body: Column(
-        children: <Widget>[
-          Align(
-            alignment: Alignment.centerLeft,
-            child: Padding(
-              padding: AppPaddings.mH,
-              child: SizedBox(
-                height: context.height * 0.09,
-                child: _buildTotalAmountCard(context),
-              ),
+    );
+  }
+
+  Widget _buildMobileBody(BuildContext context) {
+    return Column(
+      children: <Widget>[
+        Align(
+          alignment: Alignment.centerLeft,
+          child: Padding(
+            padding: AppPaddings.mH,
+            child: SizedBox(
+              height: context.height * 0.09,
+              child: _buildTotalAmountCard(context),
             ),
           ),
-          Expanded(
-            child: _buildRentalList(context),
-          ),
-        ],
-      ),
+        ),
+        Expanded(
+          child: _buildRentalList(context),
+        ),
+      ],
     );
   }
 

@@ -2,9 +2,11 @@ import 'package:automanager/feature/authentication/data/data.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../../../core/presentation/utils/utils.dart';
-import '../../../../../core/presentation/widgets/widgets.dart';
+import '../../../../../core/presentation/presentation.dart';
+import '../../../../../core/presentation/theme/app_theme.dart';
+import '../getx/user_account_controller.dart';
 import '../user_account.dart';
+import '../widgets/user_form_fields.dart';
 
 class AddUserScreen extends GetView<UserAccountController> {
   const AddUserScreen({super.key});
@@ -13,167 +15,112 @@ class AddUserScreen extends GetView<UserAccountController> {
   Widget build(BuildContext context) {
     final UserAccountArgument? args = Get.arguments as UserAccountArgument?;
     controller.getRoles();
+    controller.clearFields();
+    if (args != null) {
+      controller.getUserDataFromArgs(args.user);
+    }
+
+    final bool isWide = MediaQuery.of(context).size.width >= 768;
+
+    return isWide
+        ? _WebAddUserModal(controller: controller, args: args)
+        : _MobileAddUserScreen(controller: controller, args: args);
+  }
+}
+
+class _MobileAddUserScreen extends StatelessWidget {
+  const _MobileAddUserScreen({required this.controller, this.args});
+
+  final UserAccountController controller;
+  final UserAccountArgument? args;
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          args != null ? 'Edit Customer' : 'New Customer',
-        ),
+        title: Text(args != null ? 'Update User' : 'New User'),
       ),
-      bottomNavigationBar: _buildBottomBar(context, arg: args),
+      bottomNavigationBar: _buildBottomBar(context),
       body: SingleChildScrollView(
         child: Padding(
           padding: AppPaddings.mA,
-          child: Column(
-            children: <Widget>[
-              AppTextInputField(
-                labelText: 'First Name',
-                onChanged: controller.onFirstNameInputChanged,
-                validator: controller.validateField,
-                initialValue: args != null ? args.user.firstName : '',
-              ),
-              const AppSpacing(v: 10),
-              AppTextInputField(
-                labelText: 'Last Name',
-                onChanged: controller.onLastNameInputChanged,
-                validator: controller.validateField,
-                initialValue: args != null ? args.user.lastName : '',
-              ),
-              const AppSpacing(v: 10),
-              AppTextInputField(
-                labelText: 'Email',
-                onChanged: controller.onEmailInputChanged,
-                initialValue: args != null ? args.user.email : '',
-              ),
-              const AppSpacing(v: 10),
-              AppTextInputField(
-                labelText: 'Phone',
-                onChanged: controller.onPhoneInputChanged,
-                textInputType: TextInputType.phone,
-                validator: controller.validateField,
-                initialValue: args != null ? args.user.phone : '',
-              ),
-              const AppSpacing(v: 10),
-              AppSelectField<Role>(
-                labelText: 'Role',
-                onChanged: (Role role) {
-                  controller.onRoleSelected(role);
-                },
-                value: args != null
-                    ? args.user.role
-                    : controller.selectedRole.value,
-                options: controller.roles,
-                titleBuilder: (_, Role role) => role.name.toTitleCase(),
-                validator: (Role role) => controller.validateField(role.name),
-              ),
-              const AppSpacing(v: 10),
-              if (args != null)
-                const SizedBox.shrink()
-              else
-                Obx(
-                  () => AppTextInputField(
-                    maxLines: 1,
-                    labelText: 'Password',
-                    onChanged: controller.onPasswordInputChanged,
-                    validator: controller.validatePassword,
-                    textInputType: TextInputType.visiblePassword,
-                    obscureText: !controller.showPassword.value,
-                    suffixIcon: AnimatedSwitcher(
-                      reverseDuration: Duration.zero,
-                      transitionBuilder:
-                          (Widget? child, Animation<double> animation) {
-                        final Animation<double> offset =
-                            Tween<double>(begin: 0, end: 1.0)
-                                .animate(animation);
-                        return ScaleTransition(scale: offset, child: child);
-                      },
-                      switchInCurve: Curves.elasticOut,
-                      duration: const Duration(milliseconds: 700),
-                      child: IconButton(
-                        key: ValueKey<bool>(controller.showPassword.value),
-                        onPressed: controller.togglePassword,
-                        icon: Obx(
-                          () => controller.showPassword.value
-                              ? const Icon(
-                                  Icons.visibility,
-                                  size: 20,
-                                )
-                              : const Icon(
-                                  Icons.visibility_off,
-                                  size: 20,
-                                ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              const AppSpacing(
-                v: 10,
-              ),
-              if (args != null)
-                const SizedBox.shrink()
-              else
-                Obx(
-                  () => AppTextInputField(
-                    maxLines: 1,
-                    labelText: 'Confirm Password',
-                    onChanged: controller.onConfirmPasswordInputChanged,
-                    validator: controller.validatePasswordConfirmation,
-                    obscureText: !controller.showPassword.value,
-                    textInputType: TextInputType.visiblePassword,
-                    suffixIcon: AnimatedSwitcher(
-                      reverseDuration: Duration.zero,
-                      transitionBuilder:
-                          (Widget? child, Animation<double> animation) {
-                        final Animation<double> offset =
-                            Tween<double>(begin: 0, end: 1.0)
-                                .animate(animation);
-                        return ScaleTransition(scale: offset, child: child);
-                      },
-                      switchInCurve: Curves.elasticOut,
-                      duration: const Duration(milliseconds: 700),
-                      child: IconButton(
-                        key: ValueKey<bool>(controller.showPassword.value),
-                        onPressed: controller.togglePassword,
-                        icon: Obx(
-                          () => controller.showPassword.value
-                              ? const Icon(
-                                  Icons.visibility,
-                                  size: 20,
-                                )
-                              : const Icon(
-                                  Icons.visibility_off,
-                                  size: 20,
-                                ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-            ],
-          ),
+          child: UserFormFields(controller: controller, isUpdate: args != null),
         ),
       ),
     );
   }
 
-  Widget _buildBottomBar(BuildContext context,
-      {required UserAccountArgument? arg}) {
+  Widget _buildBottomBar(BuildContext context) {
     return Padding(
       padding: AppPaddings.mA,
       child: SizedBox(
         height: 70,
         child: Obx(
           () => AppButton(
-            text: arg != null ? 'Update' : 'Save',
+            text: controller.isLoading.value ? 'Loading...' : args != null ? 'Update' : 'Save',
             onPressed: () {
-              arg != null
-                  ? controller.updateUserAccount(arg.user.id)
+              args != null
+                  ? controller.updateUserAccount(args!.user.id)
                   : controller.addUserAccount();
             },
-            enabled: arg != null
-                ? !controller.isLoading.value
-                : controller.clientFormIsValid.value &&
-                    !controller.isLoading.value,
+            enabled: (args != null ? controller.userFormIsValid.value : controller.clientFormIsValid.value) && !controller.isLoading.value,
+            loading: controller.isLoading.value,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _WebAddUserModal extends StatelessWidget {
+  const _WebAddUserModal({required this.controller, this.args});
+
+  final UserAccountController controller;
+  final UserAccountArgument? args;
+
+  @override
+  Widget build(BuildContext context) {
+    final ColorScheme colors = context.colorScheme;
+
+    return Scaffold(
+      backgroundColor: Colors.black.withValues(alpha: 0.45),
+      body: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 500),
+          child: Material(
+            color: colors.surface,
+            borderRadius: BorderRadius.circular(14),
+            clipBehavior: Clip.antiAlias,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                ModalHeader(
+                  title: args != null ? 'Update User' : 'New User',
+                  onClose: () => Get.back(),
+                ),
+                Flexible(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.fromLTRB(24, 20, 24, 8),
+                    child: UserFormFields(controller: controller, isUpdate: args != null),
+                  ),
+                ),
+                Obx(
+                  () => ModalFooter(
+                    onSave: (args != null ? controller.userFormIsValid.value : controller.clientFormIsValid.value) && !controller.isLoading.value
+                        ? () {
+                            if (args != null) {
+                              controller.updateUserAccount(args!.user.id);
+                            } else {
+                              controller.addUserAccount();
+                            }
+                          }
+                        : null,
+                    isLoading: controller.isLoading.value,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

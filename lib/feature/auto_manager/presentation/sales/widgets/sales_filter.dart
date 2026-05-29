@@ -140,6 +140,7 @@ class SalesFilter extends StatelessWidget {
                     padding: const EdgeInsets.all(12),
                     onPressed: () {
                       controller.pagingController.refresh();
+                      controller.getWebSales(1, refresh: true);
                       Get.back();
                     },
                     text: 'Apply',

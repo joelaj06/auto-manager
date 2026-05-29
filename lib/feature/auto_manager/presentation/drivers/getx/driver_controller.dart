@@ -27,6 +27,10 @@ class DriverController extends GetxController {
   RxBool isLoading = false.obs;
   RxInt totalCount = 0.obs;
   RxList<Driver> drivers = <Driver>[].obs;
+  final RxList<Driver> currentPageDrivers = <Driver>[].obs;
+  final RxBool isWebLoading = false.obs;
+  final Rxn<Failure> webError = Rxn<Failure>();
+  int _currentWebPage = -1;
   RxString query = ''.obs;
   RxString firstName = ''.obs;
   RxString lastName = ''.obs;
@@ -79,6 +83,7 @@ class DriverController extends GetxController {
       AppSnack.show(
           message: 'Driver deleted successfully', status: SnackStatus.success);
       pagingController.refresh();
+      getDriversWeb(_currentWebPage, refresh: true);
     });
   }
 
@@ -193,6 +198,64 @@ class DriverController extends GetxController {
       AppSnack.show(
           message: 'Driver added successfully', status: SnackStatus.success);
     }
+  }
+
+  void reload() {
+    getDriversWeb(_currentWebPage, refresh: true);
+  }
+
+  void navigateToAddDriverWeb() async {
+    final dynamic result = await Get.toNamed(AppRoutes.addDriver);
+    if (result != null) {
+      reload();
+      AppSnack.show(
+        message: 'Driver added successfully',
+        status: SnackStatus.success,
+      );
+    }
+  }
+
+  void navigateToUpdateDriverWeb(Driver driver) async {
+    final dynamic result = await Get.toNamed(
+      AppRoutes.addDriver,
+      arguments: DriverArgument(driver),
+    );
+    if (result != null) {
+      reload();
+      AppSnack.show(
+        message: 'Driver updated successfully',
+        status: SnackStatus.success,
+      );
+    }
+  }
+
+  Future<void> getDriversWeb(int pageKey, {bool refresh = false}) async {
+    if (isWebLoading.value) return;
+    if (!refresh && pageKey == _currentWebPage && currentPageDrivers.isNotEmpty) {
+      return;
+    }
+    _currentWebPage = pageKey;
+    isWebLoading(true);
+    final Either<Failure, ListPage<Driver>> failureOrDrivers =
+        await fetchDrivers(PageParams(
+      query: query.value,
+      pageIndex: pageKey,
+      pageSize: 10,
+    ));
+
+    failureOrDrivers.fold((Failure failure) {
+      isWebLoading(false);
+      webError(failure);
+      _currentWebPage = -1;
+    }, (ListPage<Driver> newPage) {
+      isWebLoading(false);
+      webError(null);
+      final Map<String, dynamic>? meta = newPage.metaData;
+      if (meta != null) {
+        totalCount(meta['totalCount']);
+      }
+      currentPageDrivers.assignAll(newPage.itemList);
+    });
   }
 
   void navigateToUpdateDriverScreen(Driver driver) async {

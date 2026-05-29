@@ -30,6 +30,10 @@ class CustomerController extends GetxController {
   RxInt totalCount = 0.obs;
   RxString query = ''.obs;
   RxBool isLoading = false.obs;
+  final RxList<Customer> currentPageCustomers = <Customer>[].obs;
+  final RxBool isWebLoading = false.obs;
+  final Rxn<Failure> webError = Rxn<Failure>();
+  int _currentWebPage = -1;
   RxString name = ''.obs;
   RxString email = ''.obs;
   RxString phone = ''.obs;
@@ -71,6 +75,7 @@ class CustomerController extends GetxController {
     }, (Customer customer) {
       isLoading(false);
       pagingController.refresh();
+      getCustomersWeb(_currentWebPage, refresh: true);
     });
   }
   void updateTheCustomer(String customerId) async {
@@ -143,6 +148,64 @@ class CustomerController extends GetxController {
         status: SnackStatus.success,
       );
     }
+  }
+
+  void reload() {
+    getCustomersWeb(_currentWebPage, refresh: true);
+  }
+
+  void navigateToAddCustomerWeb() async {
+    final dynamic result = await Get.toNamed(AppRoutes.addCustomer);
+    if (result != null) {
+      reload();
+      AppSnack.show(
+        message: 'Customer added successfully',
+        status: SnackStatus.success,
+      );
+    }
+  }
+
+  void navigateToUpdateCustomerWeb(Customer customer) async {
+    final dynamic result = await Get.toNamed(
+      AppRoutes.addCustomer,
+      arguments: CustomerArgument(customer),
+    );
+    if (result != null) {
+      reload();
+      AppSnack.show(
+        message: 'Customer updated successfully',
+        status: SnackStatus.success,
+      );
+    }
+  }
+
+  Future<void> getCustomersWeb(int pageKey, {bool refresh = false}) async {
+    if (isWebLoading.value) return;
+    if (!refresh && pageKey == _currentWebPage && currentPageCustomers.isNotEmpty) {
+      return;
+    }
+    _currentWebPage = pageKey;
+    isWebLoading(true);
+    final Either<Failure, ListPage<Customer>> failureOrCustomers =
+        await fetchCustomers(PageParams(
+      pageIndex: pageKey,
+      pageSize: 10,
+      query: query.value,
+    ));
+
+    failureOrCustomers.fold((Failure failure) {
+      isWebLoading(false);
+      webError(failure);
+      _currentWebPage = -1;
+    }, (ListPage<Customer> newPage) {
+      isWebLoading(false);
+      webError(null);
+      final Map<String, dynamic>? meta = newPage.metaData;
+      if (meta != null) {
+        totalCount(meta['totalCount']);
+      }
+      currentPageCustomers.assignAll(newPage.itemList);
+    });
   }
 
   Future<List<Customer>> getCustomers(int pageKey) async {
