@@ -20,9 +20,7 @@ class AppFlavorEnvironment {
       case FlavorEnvironment.junat:
         environmentName = 'junat';
         break;
-      default:
-        environmentName = 'automanager';
-    }
+      }
   }
 
 }

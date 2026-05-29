@@ -55,6 +55,7 @@ class SalesController extends GetxController
   RxBool showPager = false.obs;
   final RxBool isWebLoading = false.obs;
   final Rxn<Failure> webError = Rxn<Failure>();
+  int _currentWebPage = -1;
 
   //paging controller
   late final PagingController<int, Sale> pagingController;
@@ -276,9 +277,15 @@ class SalesController extends GetxController
     endDate(dateRangeValues.endDate);
     getTextDate(dateRangeValues);
     pagingController.refresh();
+    getWebSales(1, refresh: true);
   }
 
-  Future<void> getWebSales(int pageKey) async {
+  Future<void> getWebSales(int pageKey, {bool refresh = false}) async {
+    if (isWebLoading.value) return;
+    if (!refresh && pageKey == _currentWebPage && currentPageSales.isNotEmpty) {
+      return;
+    }
+    _currentWebPage = pageKey;
     isWebLoading(true);
     final Either<Failure, ListPage<Sale>> failureOrSales =
     await fetchSales(PageParams(
@@ -291,12 +298,13 @@ class SalesController extends GetxController
       query: query.value,
     ));
 
-    return failureOrSales.fold((Failure failure) {
+    failureOrSales.fold((Failure failure) {
       isWebLoading(false);
       webError(failure);
-      throw failure;
+      _currentWebPage = -1;
     }, (ListPage<Sale> newPage) {
       isWebLoading(false);
+      webError(null);
       //get meta data
       final Map<String, dynamic>? meta = newPage.metaData;
       if (meta != null) {

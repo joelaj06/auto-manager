@@ -1,5 +1,6 @@
 import 'package:automanager/core/presentation/theme/app_theme.dart';
 import 'package:automanager/feature/auto_manager/presentation/customers/customers.dart';
+import 'package:automanager/feature/auto_manager/presentation/customers/widgets/web_customer_layout.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -21,25 +22,35 @@ class CustomerScreen extends GetView<CustomerController> {
 
   @override
   Widget build(BuildContext context) {
+    final bool isWide = MediaQuery.of(context).size.width >= 768;
+
     return Scaffold(
-      appBar: AppBar(
-        title: Obx(
-          () => Text(
-              'Customers${controller.totalCount.value == 0 ? '' : '(${controller.totalCount.value})'}'),
-        ),
-      ),
-      floatingActionButton: UserPermissions.validator.canCreateCustomer ?FloatingActionButton(
-        onPressed: controller.navigateToAddCustomerScreen,
-        child: const Icon(IconlyLight.plus),
-      ) : null,
-      body: Column(
-        children: <Widget>[
-          _buildCustomerSearchField(context),
-          Expanded(
-            child: _buildCustomerList(context),
-          ),
-        ],
-      ),
+      appBar: isWide
+          ? null
+          : AppBar(
+              title: Obx(
+                () => Text(
+                    'Customers${controller.totalCount.value == 0 ? '' : '(${controller.totalCount.value})'}'),
+              ),
+            ),
+      floatingActionButton: isWide
+          ? null
+          : (UserPermissions.validator.canCreateCustomer
+              ? FloatingActionButton(
+                  onPressed: controller.navigateToAddCustomerScreen,
+                  child: const Icon(IconlyLight.plus),
+                )
+              : null),
+      body: isWide
+          ? WebCustomerLayout(controller: controller)
+          : Column(
+              children: <Widget>[
+                _buildCustomerSearchField(context),
+                Expanded(
+                  child: _buildCustomerList(context),
+                ),
+              ],
+            ),
     );
   }
 
@@ -201,7 +212,7 @@ class CustomerScreen extends GetView<CustomerController> {
         physics: const BouncingScrollPhysics(),
         child: Column(
           children: <Widget>[
-            ModalListCard(title: 'Name', value: customer.name ?? '--'),
+            ModalListCard(title: 'Name', value: customer.name),
             ModalListCard(
               title: 'Email',
               value: customer.email ?? '--',

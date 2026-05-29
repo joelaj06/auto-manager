@@ -3,7 +3,6 @@ import 'package:iconly/iconly.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:ionicons/ionicons.dart';
 
-import '../../utils/permissions.dart';
 
 List<IconData> mobileNavIcons = <IconData>[
   //if (UserPermissions.validator.canViewDashboard)

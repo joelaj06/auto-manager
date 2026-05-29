@@ -1,5 +1,6 @@
 import 'package:automanager/core/core.dart';
 import 'package:automanager/core/presentation/theme/app_theme.dart';
+import 'package:automanager/feature/auto_manager/presentation/drivers/widgets/web_driver_layout.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:get/get.dart';
@@ -15,20 +16,30 @@ class DriversScreen extends GetView<DriverController> {
 
   @override
   Widget build(BuildContext context) {
+    final bool isWide = MediaQuery.of(context).size.width >= 768;
+
     return Scaffold(
-      appBar: AppBar(
-        title: Obx(
-          () => Text(
-              'Drivers${controller.totalCount.value == 0 ? '' : '(${controller.totalCount.value})'}'),
-        ),
-      ),
-      floatingActionButton: UserPermissions.validator.canCreateDriver ? FloatingActionButton(
-        onPressed: controller.navigateToAddDriverScreen,
-        child: const Icon(IconlyLight.plus),
-      ) : null,
-      body: SizedBox(
-        child: _buildDriversList(context),
-      ),
+      appBar: isWide
+          ? null
+          : AppBar(
+              title: Obx(
+                () => Text(
+                    'Drivers${controller.totalCount.value == 0 ? '' : '(${controller.totalCount.value})'}'),
+              ),
+            ),
+      floatingActionButton: isWide
+          ? null
+          : (UserPermissions.validator.canCreateDriver
+              ? FloatingActionButton(
+                  onPressed: controller.navigateToAddDriverScreen,
+                  child: const Icon(IconlyLight.plus),
+                )
+              : null),
+      body: isWide
+          ? WebDriverLayout(controller: controller)
+          : SizedBox(
+              child: _buildDriversList(context),
+            ),
     );
   }
 
@@ -155,9 +166,9 @@ class DriversScreen extends GetView<DriverController> {
         child: Column(
           children: <Widget>[
             ModalListCard(
-                title: 'First Name', value: driver.firstName ?? '--'),
+                title: 'First Name', value: driver.firstName),
             ModalListCard(
-                title: 'Last Name', value: driver.lastName ?? '--'),
+                title: 'Last Name', value: driver.lastName),
             ModalListCard(
               title: 'Email',
               value: driver.email ?? '--',

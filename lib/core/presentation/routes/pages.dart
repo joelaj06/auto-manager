@@ -4,6 +4,7 @@ import '../../../feature/auto_manager/presentation/presentation.dart';
 import 'app_routes.dart';
 
 class Pages {
+
   static final List<GetPage<AppRoutes>> pages = <GetPage<AppRoutes>>[
     GetPage<AppRoutes>(
       name: AppRoutes.onBoarding,
@@ -28,6 +29,12 @@ class Pages {
           ExpenseBindings(),
           RentalBindings(),
           MoreBindings(),
+          DriverBindings(),
+          VehicleBindings(),
+          CustomerBindings(),
+          UserAccountBindings(),
+          CompanyBindings(),
+          RoleBindings(),
         ]),
     GetPage<AppRoutes>(
       name: AppRoutes.addCompany,

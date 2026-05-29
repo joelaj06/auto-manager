@@ -1,5 +1,6 @@
 import 'package:automanager/core/presentation/theme/app_theme.dart';
 import 'package:automanager/feature/authentication/data/data.dart';
+import 'package:automanager/feature/auto_manager/presentation/user_accounts/widgets/web_user_layout.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -20,25 +21,35 @@ class UserAccountScreen extends GetView<UserAccountController> {
 
   @override
   Widget build(BuildContext context) {
+    final bool isWide = MediaQuery.of(context).size.width >= 768;
+
     return Scaffold(
-      appBar: AppBar(
-        title: Obx(
-          () => Text(
-              'User Accounts${controller.totalCount.value == 0 ? '' : '(${controller.totalCount.value})'}'),
-        ),
-      ),
-      floatingActionButton: UserPermissions.validator.canCreateUser ? FloatingActionButton(
-        onPressed: controller.navigateToAddUserScreen,
-        child: const Icon(IconlyLight.plus),
-      ): null,
-      body: Column(
-        children: <Widget>[
-          _buildUserSearchField(context),
-          Expanded(
-            child: _buildUserList(context),
-          ),
-        ],
-      ),
+      appBar: isWide
+          ? null
+          : AppBar(
+              title: Obx(
+                () => Text(
+                    'User Accounts${controller.totalCount.value == 0 ? '' : '(${controller.totalCount.value})'}'),
+              ),
+            ),
+      floatingActionButton: isWide
+          ? null
+          : (UserPermissions.validator.canCreateUser
+              ? FloatingActionButton(
+                  onPressed: controller.navigateToAddUserScreen,
+                  child: const Icon(IconlyLight.plus),
+                )
+              : null),
+      body: isWide
+          ? WebUserLayout(controller: controller)
+          : Column(
+              children: <Widget>[
+                _buildUserSearchField(context),
+                Expanded(
+                  child: _buildUserList(context),
+                ),
+              ],
+            ),
     );
   }
 

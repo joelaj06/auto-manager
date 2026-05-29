@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -7,7 +6,6 @@ import 'package:get/get.dart';
 import '../../../../../core/presentation/nav/bottom_nav_icons.dart';
 import '../../../../../core/presentation/nav/bottom_nav_tabs.dart';
 import '../../../../../core/presentation/theme/app_theme.dart';
-import '../../../../../core/presentation/widgets/app_logo.dart';
 import '../../dashboard/getx/dashboard_controller.dart';
 import '../widgets/logo_icon.dart';
 import '../widgets/navigation_animation.dart';

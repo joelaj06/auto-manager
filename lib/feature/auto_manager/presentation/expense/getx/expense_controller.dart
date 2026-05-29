@@ -51,6 +51,7 @@ class ExpenseController extends GetxController {
   RxBool showPager = false.obs;
   final RxBool isWebLoading = false.obs;
   final Rxn<Failure> webError = Rxn<Failure>();
+  int _currentWebPage = -1;
 
   //paging controller
   late final PagingController<int, Expense> pagingController;
@@ -287,8 +288,13 @@ class ExpenseController extends GetxController {
     }
   }
 
-  Future<void> getAllExpensesWeb(int pageKey) async {
-    isLoading(true);
+  Future<void> getAllExpensesWeb(int pageKey, {bool refresh = false}) async {
+    if (isWebLoading.value) return;
+    if (!refresh && pageKey == _currentWebPage && currentPageExpenses.isNotEmpty) {
+      return;
+    }
+    _currentWebPage = pageKey;
+    isWebLoading(true);
     final Either<Failure, ListPage<Expense>> failureOrExpense =
     await fetchExpenses(
       PageParams(
@@ -304,13 +310,14 @@ class ExpenseController extends GetxController {
       ),
     );
 
-    return failureOrExpense.fold((Failure failure) {
+    failureOrExpense.fold((Failure failure) {
       isWebLoading(false);
       webError(failure);
+      _currentWebPage = -1;
       AppSnack.show(message: failure.message, status: SnackStatus.error);
-      throw failure;
     }, (ListPage<Expense> newPage) {
       isWebLoading(false);
+      webError(null);
 
       //get meta data
       final Map<String, dynamic>? meta = newPage.metaData;
@@ -320,13 +327,12 @@ class ExpenseController extends GetxController {
       }
 
       final List<Expense> newItems = newPage.itemList;
-      currentPageExpenses.value = newItems;
-
+      currentPageExpenses.assignAll(newItems);
     });
   }
 
   Future<List<Expense>> getAllExpenses(int pageKey) async {
-    isWebLoading(true);
+    isLoading(true);
     final Either<Failure, ListPage<Expense>> failureOrExpense =
         await fetchExpenses(
       PageParams(
@@ -379,6 +385,7 @@ class ExpenseController extends GetxController {
     endDate(dateRangeValues.endDate);
     getTextDate(dateRangeValues);
     pagingController.refresh();
+    getAllExpensesWeb(1, refresh: true);
   }
 
   void getTextDate(DateRangeValues values) {

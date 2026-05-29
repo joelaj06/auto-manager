@@ -29,6 +29,10 @@ class VehicleController extends GetxController {
   RxInt totalCount = 0.obs;
   RxString query = ''.obs;
   RxBool isLoading = false.obs;
+  final RxList<Vehicle> currentPageVehicles = <Vehicle>[].obs;
+  final RxBool isWebLoading = false.obs;
+  final Rxn<Failure> webError = Rxn<Failure>();
+  int _currentWebPage = -1;
   RxString make = ''.obs;
   RxString model = ''.obs;
   RxString year = ''.obs;
@@ -114,6 +118,7 @@ class VehicleController extends GetxController {
       AppSnack.show(message: failure.message, status: SnackStatus.error);
     }, (Vehicle vehicle) {
       pagingController.refresh();
+      getVehiclesWeb(_currentWebPage, refresh: true);
       AppSnack.show(
         message: 'Vehicle deleted successfully',
         status: SnackStatus.success,
@@ -164,6 +169,64 @@ class VehicleController extends GetxController {
         status: SnackStatus.success,
       );
     }
+  }
+
+  void reload() {
+    getVehiclesWeb(_currentWebPage, refresh: true);
+  }
+
+  void navigateToAddVehicleWeb() async {
+    final dynamic result = await Get.toNamed(AppRoutes.addVehicle);
+    if (result != null) {
+      reload();
+      AppSnack.show(
+        message: 'Vehicle added successfully',
+        status: SnackStatus.success,
+      );
+    }
+  }
+
+  void navigateToUpdateVehicleWeb(Vehicle vehicle) async {
+    final dynamic result = await Get.toNamed(
+      AppRoutes.addVehicle,
+      arguments: VehicleArgument(vehicle),
+    );
+    if (result != null) {
+      reload();
+      AppSnack.show(
+        message: 'Vehicle updated successfully',
+        status: SnackStatus.success,
+      );
+    }
+  }
+
+  Future<void> getVehiclesWeb(int pageKey, {bool refresh = false}) async {
+    if (isWebLoading.value) return;
+    if (!refresh && pageKey == _currentWebPage && currentPageVehicles.isNotEmpty) {
+      return;
+    }
+    _currentWebPage = pageKey;
+    isWebLoading(true);
+    final Either<Failure, ListPage<Vehicle>> failureOrVehicles =
+        await fetchVehicles(PageParams(
+      pageIndex: pageKey,
+      pageSize: 10,
+      query: query.value,
+    ));
+
+    failureOrVehicles.fold((Failure failure) {
+      isWebLoading(false);
+      webError(failure);
+      _currentWebPage = -1;
+    }, (ListPage<Vehicle> newPage) {
+      isWebLoading(false);
+      webError(null);
+      final Map<String, dynamic>? meta = newPage.metaData;
+      if (meta != null) {
+        totalCount(meta['totalCount']);
+      }
+      currentPageVehicles.assignAll(newPage.itemList);
+    });
   }
 
   void navigateToUpdateVehicleScreen(Vehicle vehicle) async {
