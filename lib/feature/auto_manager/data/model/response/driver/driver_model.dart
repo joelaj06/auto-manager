@@ -9,7 +9,7 @@ part 'driver_model.freezed.dart';
 part 'driver_model.g.dart';
 
 @freezed
-class Driver with _$Driver {
+sealed class Driver with _$Driver {
   const factory Driver({
    @JsonKey(name: '_id') required String? id,
     String? licenseNumber,

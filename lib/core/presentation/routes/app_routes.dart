@@ -26,6 +26,8 @@ class AppRoutes{
   static const String passwordReset = '/passwordReset';
   static const String role = '/role';
   static const String addRole = '/addRole';
+  static const String workAndPay = '/workAndPay';
+  static const String driverDetails = '/driverDetails';
 
 
 

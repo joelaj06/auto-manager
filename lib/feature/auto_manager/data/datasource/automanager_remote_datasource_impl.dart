@@ -315,6 +315,14 @@ class AutoMangerRemoteDatasourceImpl implements AutoManagerRemoteDatasource {
   }
 
   @override
+  Future<Driver> fetchDriver(String driverId) async {
+    final Map<String, dynamic> json = await _client.get(
+      AutoManagerEndpoints.driver(driverId),
+    );
+    return Driver.fromJson(json);
+  }
+
+  @override
   Future<User> updateUser(
       {required UserRequest updateUserRequest, required String userId}) async {
     final Map<String, dynamic> json = await _client.put(
@@ -494,5 +502,60 @@ class AutoMangerRemoteDatasourceImpl implements AutoManagerRemoteDatasource {
     );
     return Driver.fromJson(json);
 
+  }
+
+  @override
+  Future<WorkAndPayAgreement> initiateWorkAndPayAgreement(
+      {required InitiateWorkAndPayRequest request}) async {
+    final Map<String, dynamic> json = await _client.post(
+      AutoManagerEndpoints.workPayAgreement,
+      body: request.toJson(),
+    );
+    return WorkAndPayAgreement.fromJson(json);
+  }
+
+  @override
+  Future<WorkAndPayPayment> recordWorkAndPayPayment(
+      {required RecordWorkAndPayPaymentRequest request}) async {
+    final Map<String, dynamic> json = await _client.post(
+      AutoManagerEndpoints.workPayPayment,
+      body: request.toJson(),
+    );
+    return WorkAndPayPayment.fromJson(json);
+  }
+
+  @override
+  Future<WorkAndPayAgreement> fetchWorkAndPayAgreement(
+      {required String agreementId}) async {
+    final Map<String, dynamic> json = await _client.get(
+      AutoManagerEndpoints.workPayAgreementDetail(agreementId),
+    );
+    // API returns nested under "data" key
+    final Map<String, dynamic> data = json['data'] as Map<String, dynamic>;
+    return WorkAndPayAgreement.fromJson(data);
+  }
+
+  @override
+  Future<List<WorkAndPayPayment>> fetchWorkAndPayPayments(
+      {required String agreementId}) async {
+    final Map<String, dynamic> json = await _client.get(
+      AutoManagerEndpoints.workPayAgreementPayments(agreementId),
+    );
+    // API returns plain array wrapped in response
+    final List<dynamic> data = json['items'] as List<dynamic>? ?? json as List<dynamic>;
+    return data
+        .map((dynamic payment) =>
+            WorkAndPayPayment.fromJson(payment as Map<String, dynamic>))
+        .toList();
+  }
+
+  @override
+  Future<WorkAndPayAgreement> fetchWorkAndPayAgreementByDriverId(
+      {required String driverId}) async {
+    final Map<String, dynamic> json = await _client.get(
+      AutoManagerEndpoints.workPayAgreementByDriver(driverId),
+    );
+    final Map<String, dynamic> data = json;
+    return WorkAndPayAgreement.fromJson(data);
   }
 }

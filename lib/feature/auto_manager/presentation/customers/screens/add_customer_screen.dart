@@ -14,11 +14,6 @@ class AddCustomerScreen extends GetView<CustomerController> {
   Widget build(BuildContext context) {
     final CustomerArgument? args = Get.arguments as CustomerArgument?;
 
-    controller.clearFields();
-    if (args != null) {
-      controller.getCustomerDataFromArgs(args.customer);
-    }
-
     final bool isWide = MediaQuery.of(context).size.width >= 768;
 
     return isWide

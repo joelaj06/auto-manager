@@ -6,7 +6,7 @@ part 'monthly_sales_model.freezed.dart';
 part 'monthly_sales_model.g.dart';
 
 @freezed
-class MonthlySales with _$MonthlySales {
+sealed class MonthlySales with _$MonthlySales {
   const factory MonthlySales({
     required List<int> weeks,
     required List<int> sales,

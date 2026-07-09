@@ -63,6 +63,15 @@ class UserAccountController extends GetxController {
         return getUsers(pageKey);
       },
     );
+    getRoles();
+
+    final UserAccountArgument? args = Get.arguments as UserAccountArgument?;
+    if (args != null) {
+      getUserDataFromArgs(args.user);
+    } else {
+      clearFields();
+    }
+
     super.onInit();
   }
 

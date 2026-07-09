@@ -7,3 +7,4 @@ export 'rentals/rentals.dart';
 export 'sales/sales.dart';
 export 'user/user.dart';
 export 'vehicle/vehicle.dart';
+export 'work_pay/work_pay.dart';

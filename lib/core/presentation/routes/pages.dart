@@ -141,5 +141,15 @@ class Pages {
       page: () => const AddRoleScreen(),
       binding: RoleBindings(),
     ),
+    GetPage<AppRoutes>(
+      name: AppRoutes.workAndPay,
+      page: () => const WorkAndPayScreen(),
+      binding: WorkAndPayBinding(),
+    ),
+    GetPage<AppRoutes>(
+      name: AppRoutes.driverDetails,
+      page: () => const DriverDetailScreen(),
+      binding: DriverDetailBindings(),
+    ),
   ];
 }

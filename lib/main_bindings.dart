@@ -47,5 +47,6 @@ class MainBindings extends Bindings {
         autoManagerRemoteDataSource: Get.find(),
       ),
     );
+
   }
 }

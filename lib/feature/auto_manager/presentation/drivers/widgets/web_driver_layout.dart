@@ -6,6 +6,7 @@ import '../../../../../core/core.dart';
 import '../../../../../core/presentation/theme/app_theme.dart';
 import '../../../../../core/utils/permissions.dart';
 import '../../../data/model/model.dart';
+import '../arguments/driver_argument.dart';
 import '../getx/driver_controller.dart';
 import 'driver_detail_drawer.dart';
 
@@ -123,11 +124,10 @@ class _WebDriverLayoutState extends State<WebDriverLayout> {
               onPageChanged: (int pageIndex) async {
                 await ctrl.getDriversWeb(pageIndex + 1);
               },
-              detailDrawerBuilder: (dynamic data, VoidCallback onClose) {
-                return DriverDetailDrawer(
-                  driver: data as Driver,
-                  controller: ctrl,
-                  onClose: onClose,
+              onRowTap: (Driver driver) {
+                Get.toNamed(
+                  AppRoutes.driverDetails,
+                  arguments: DriverArgument(driver),
                 );
               },
               drawerWidth: 320,

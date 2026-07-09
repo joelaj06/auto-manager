@@ -6,7 +6,7 @@ part 'address_model.freezed.dart';
 part 'address_model.g.dart';
 
 @freezed
-class Address with _$Address {
+sealed class Address with _$Address {
   const factory Address({
     String? street,
     String? city,

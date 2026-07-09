@@ -8,7 +8,7 @@ part 'user_model.freezed.dart';
 part 'user_model.g.dart';
 
 @freezed
-class User with _$User {
+sealed class User with _$User {
   const factory User({
     @JsonKey(name:'_id') required String id,
      required String firstName,

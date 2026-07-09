@@ -58,6 +58,14 @@ class VehicleController extends GetxController {
         return getVehicles(pageKey);
       },
     );
+
+    final VehicleArgument? args = Get.arguments as VehicleArgument?;
+    if (args != null) {
+      getVehicleDataFromArgs(args.vehicle);
+    } else {
+      clearFields();
+    }
+
     super.onInit();
   }
 

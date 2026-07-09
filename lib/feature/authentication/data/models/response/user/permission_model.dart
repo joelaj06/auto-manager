@@ -6,7 +6,7 @@ part 'permission_model.freezed.dart';
 part 'permission_model.g.dart';
 
 @freezed
-class UserPermission with _$UserPermission {
+sealed class UserPermission with _$UserPermission {
   const factory UserPermission({
     @JsonKey(name:'_id') required String id,
     required String name,

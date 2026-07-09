@@ -14,11 +14,6 @@ class AddUserScreen extends GetView<UserAccountController> {
   @override
   Widget build(BuildContext context) {
     final UserAccountArgument? args = Get.arguments as UserAccountArgument?;
-    controller.getRoles();
-    controller.clearFields();
-    if (args != null) {
-      controller.getUserDataFromArgs(args.user);
-    }
 
     final bool isWide = MediaQuery.of(context).size.width >= 768;
 

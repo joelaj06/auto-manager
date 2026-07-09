@@ -6,7 +6,7 @@ part 'extend_rental_request.freezed.dart';
 part 'extend_rental_request.g.dart';
 
 @freezed
-class ExtendRentalRequest with _$ExtendRentalRequest {
+sealed class ExtendRentalRequest with _$ExtendRentalRequest {
   const factory ExtendRentalRequest({
     String? id,
     String? extendedNote,

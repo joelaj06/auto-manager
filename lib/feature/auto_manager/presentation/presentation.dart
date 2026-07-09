@@ -12,3 +12,4 @@ export 'role/role.dart';
 export 'sales/sales.dart';
 export 'user_accounts/user_account.dart';
 export 'vehicles/vehicle.dart';
+export 'work_pay/work_pay.dart';

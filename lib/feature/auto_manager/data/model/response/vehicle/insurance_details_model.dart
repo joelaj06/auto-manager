@@ -6,7 +6,7 @@ part 'insurance_details_model.freezed.dart';
 part 'insurance_details_model.g.dart';
 
 @freezed
-class InsuranceDetail with _$InsuranceDetail {
+sealed class InsuranceDetail with _$InsuranceDetail {
   const factory InsuranceDetail({
     String? provider,
     String? policyNumber,

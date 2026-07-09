@@ -7,7 +7,7 @@ part 'message_response.freezed.dart';
 part 'message_response.g.dart';
 
 @freezed
-class MessageResponse with _$MessageResponse {
+sealed class MessageResponse with _$MessageResponse {
   const factory MessageResponse({
     String? message,
     String? status,

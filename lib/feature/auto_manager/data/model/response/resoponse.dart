@@ -7,3 +7,4 @@ export 'listpage/listpage.dart';
 export 'rentals/rental.dart';
 export 'sale/sale.dart';
 export 'vehicle/vehicle.dart';
+export 'work_and_pay/work_and_pay.dart';

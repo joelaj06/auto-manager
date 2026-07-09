@@ -233,6 +233,12 @@ class AppHTTPClient {
           errorJson['message'],
           response.request!.url.toString(),
         );
+        case 422:
+        final dynamic errorJson = jsonDecode(utf8.decode(response.bodyBytes));
+        throw UnprocessableEntity(
+          errorJson['message'],
+          response.request!.url.toString(),
+        );
       case 500:
         final dynamic errorJson = jsonDecode(utf8.decode(response.bodyBytes));
         throw FetchDataException(

@@ -62,6 +62,14 @@ class CustomerController extends GetxController {
         return getCustomers(pageKey);
       },
     );
+    
+    final CustomerArgument? args = Get.arguments as CustomerArgument?;
+    if (args != null) {
+      getCustomerDataFromArgs(args.customer);
+    } else {
+      clearFields();
+    }
+
     super.onInit();
   }
 
@@ -259,8 +267,18 @@ class CustomerController extends GetxController {
   }
 
   void getCustomerDataFromArgs(Customer customer) {
-    dobTextEditingController.value.text =
-        DataFormatter.formatDateToString(customer.dateOfBirth!);
+    name(customer.name);
+    email(customer.email ?? '');
+    phone(customer.phone ?? '');
+    address(customer.address ?? '');
+    idNumber(customer.identificationNumber ?? '');
+    occupation(customer.occupation ?? '');
+    business(customer.business ?? '');
+    if (customer.dateOfBirth != null) {
+      selectedDateOfBirth(DateTime.tryParse(customer.dateOfBirth!) ?? DateTime.now());
+      dobTextEditingController.value.text =
+          DataFormatter.formatDateToString(customer.dateOfBirth!);
+    }
   }
 
   void selectDateOfBirth(BuildContext context) async {

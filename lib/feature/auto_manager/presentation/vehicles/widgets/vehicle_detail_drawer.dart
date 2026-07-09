@@ -77,7 +77,7 @@ class VehicleDetailDrawer extends StatelessWidget {
             height: 180,
             width: double.infinity,
             color: colors.surfaceContainerHighest,
-            child: Icon(Icons.directions_car_outlined, size: 48, color: colors.onSurfaceVariant),
+            child: Image.asset(AssetImages.speedometer, fit: BoxFit.cover),
           ),
 
         // Info section

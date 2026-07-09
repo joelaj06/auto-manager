@@ -6,7 +6,7 @@ part 'update_expense_request.freezed.dart';
 part 'update_expense_request.g.dart';
 
 @freezed
-class UpdateExpenseRequest with _$UpdateExpenseRequest {
+sealed class UpdateExpenseRequest with _$UpdateExpenseRequest {
   const factory UpdateExpenseRequest({
     required String id,
      String? category,

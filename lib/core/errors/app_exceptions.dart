@@ -16,6 +16,11 @@ class BadRequestException extends AppException {
       : super(message, 'Bad Request', url);
 }
 
+class UnprocessableEntity extends AppException {
+  UnprocessableEntity(String message, String url)
+      : super(message, 'Unprocessable Entity', url);
+}
+
 class CacheException extends AppException {
   CacheException(String message, String url)
       : super(message, 'Couldn\'t find cached data.', url);

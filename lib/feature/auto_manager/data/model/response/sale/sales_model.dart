@@ -8,7 +8,7 @@ part 'sales_model.freezed.dart';
 part 'sales_model.g.dart';
 
 @freezed
-class Sale with _$Sale {
+sealed class Sale with _$Sale {
   const factory Sale({
    @JsonKey(name: '_id') required String id,
    required String saleId,

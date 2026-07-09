@@ -8,7 +8,7 @@ part 'company_model.freezed.dart';
 part 'company_model.g.dart';
 
 @freezed
-class Company with _$Company {
+sealed class Company with _$Company {
   const factory Company({
     @JsonKey(name: '_id') required String? id,
     String? name,

@@ -6,7 +6,7 @@ part 'add_expense_request.freezed.dart';
 part 'add_expense_request.g.dart';
 
 @freezed
-class AddExpenseRequest with _$AddExpenseRequest {
+sealed class AddExpenseRequest with _$AddExpenseRequest {
   const factory AddExpenseRequest({
     required String category,
     required double amount,
