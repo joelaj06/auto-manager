@@ -6,7 +6,7 @@ part 'dashboard_summary_model.freezed.dart';
 part 'dashboard_summary_model.g.dart';
 
 @freezed
-class DashboardSummary with _$DashboardSummary {
+sealed class DashboardSummary with _$DashboardSummary {
   const factory DashboardSummary({
     required int? revenue,
     required int? sales,

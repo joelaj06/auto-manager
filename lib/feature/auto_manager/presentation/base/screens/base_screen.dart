@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
+import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 
@@ -119,7 +119,9 @@ class _BaseScreenState extends State<BaseScreen> {
       children: <Widget>[
         Expanded(
           child: NavigationAnimation(
-            content: mobileNavPages[_selectedIndex],
+            content: mobileNavPages[_selectedIndex > mobileNavPages.length
+                ? 0
+                : _selectedIndex],
           ),
         ),
       ],

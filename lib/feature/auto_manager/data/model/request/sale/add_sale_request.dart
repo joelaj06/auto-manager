@@ -6,7 +6,7 @@ part 'add_sale_request.freezed.dart';
 part 'add_sale_request.g.dart';
 
 @freezed
-class AddSaleRequest with _$AddSaleRequest {
+sealed class AddSaleRequest with _$AddSaleRequest {
   const factory AddSaleRequest({
     required String vehicleId,
     required String driverId,

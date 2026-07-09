@@ -9,6 +9,7 @@ import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
 import '../../../data/model/response/driver/driver_model.dart';
 import '../../sales/widgets/modal_list_card.dart';
+import '../arguments/driver_argument.dart';
 import '../getx/driver_controller.dart';
 
 class DriversScreen extends GetView<DriverController> {
@@ -127,11 +128,9 @@ class DriversScreen extends GetView<DriverController> {
         children: <Widget>[
           ListTile(
             onTap: () {
-              showModalBottomSheet<dynamic>(
-                context: context,
-                builder: (BuildContext context) => SizedBox(
-                  child: _buildDriverDetailModal(context, driver),
-                ),
+              Get.toNamed(
+                AppRoutes.driverDetails,
+                arguments: DriverArgument(driver),
               );
             },
             title: Text(

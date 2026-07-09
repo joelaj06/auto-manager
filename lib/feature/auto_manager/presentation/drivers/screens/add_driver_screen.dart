@@ -14,11 +14,6 @@ class AddDriverScreen extends GetView<DriverController> {
   Widget build(BuildContext context) {
     final DriverArgument? args = Get.arguments as DriverArgument?;
 
-    controller.clearFields();
-    if (args != null) {
-      controller.getDriverDataFromArgs(args.driver);
-    }
-
     final bool isWide = MediaQuery.of(context).size.width >= 768;
 
     return isWide

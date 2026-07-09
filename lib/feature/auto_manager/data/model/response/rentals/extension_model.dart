@@ -6,7 +6,7 @@ part 'extension_model.freezed.dart';
 part 'extension_model.g.dart';
 
 @freezed
-class RentalExtension with _$RentalExtension {
+sealed class RentalExtension with _$RentalExtension {
   const factory RentalExtension({
     double? extendedAmount,
     String? extendedDate,

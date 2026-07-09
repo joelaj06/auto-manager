@@ -110,25 +110,25 @@ class AppDataTable<T> extends StatefulWidget {
   final double headerRowHeight;
 
   @override
-  State<AppDataTable> createState() => _AppDataTableState();
+  State<AppDataTable<T>> createState() => _AppDataTableState<T>();
 }
 
-class _AppDataTableState extends State<AppDataTable> {
-  late _AppDataGridSource _source;
+class _AppDataTableState<T> extends State<AppDataTable<T>> {
+  late _AppDataGridSource<T> _source;
   final DataPagerController _pagerController = DataPagerController();
-  dynamic _selectedData;
+  T? _selectedData;
 
   @override
   void initState() {
     super.initState();
-    _source = _AppDataGridSource(
+    _source = _AppDataGridSource<T>(
       rows: widget.rows,
       onPageChange: widget.onPageChanged,
     );
   }
 
   @override
-  void didUpdateWidget(covariant AppDataTable oldWidget) {
+  void didUpdateWidget(covariant AppDataTable<T> oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.rows != widget.rows) {
       _source.updateRows(widget.rows);
@@ -248,11 +248,11 @@ class _AppDataTableState extends State<AppDataTable> {
           if (added.isEmpty) return;
           final int idx = _source.rows.indexOf(added.first);
           if (idx < 0 || idx >= widget.rows.length) return;
-          final dynamic data = widget.rows[idx].data;
+          final T? data = widget.rows[idx].data;
 
           if (widget.detailDrawerBuilder != null) {
             setState(() => _selectedData = data);
-          } else {
+          } else if (data != null) {
             widget.onRowTap?.call(data);
           }
         },

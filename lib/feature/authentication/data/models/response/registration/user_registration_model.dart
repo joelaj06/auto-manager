@@ -7,7 +7,7 @@ part 'user_registration_model.freezed.dart';
 part 'user_registration_model.g.dart';
 
 @freezed
-class UserRegistration with _$UserRegistration {
+sealed class UserRegistration with _$UserRegistration {
   const factory UserRegistration({
     required String status,
     required String message,

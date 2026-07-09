@@ -6,7 +6,7 @@ part 'otp_verification_request.freezed.dart';
 part 'otp_verification_request.g.dart';
 
 @freezed
-class OtpVerificationRequest with _$OtpVerificationRequest {
+sealed class OtpVerificationRequest with _$OtpVerificationRequest {
   const factory OtpVerificationRequest({
     required String userId,
     required String otp,

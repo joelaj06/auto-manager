@@ -9,7 +9,7 @@ part 'vehicle_model.freezed.dart';
 part 'vehicle_model.g.dart';
 
 @freezed
-class Vehicle with _$Vehicle {
+sealed class Vehicle with _$Vehicle {
   const factory Vehicle({
     InsuranceDetail? insuranceDetails,
     @JsonKey(name: '_id')String? id,

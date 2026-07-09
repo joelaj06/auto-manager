@@ -6,7 +6,7 @@ part 'role_model.freezed.dart';
 part 'role_model.g.dart';
 
 @freezed
-class Role with _$Role {
+sealed class Role with _$Role {
   const factory Role({
     @JsonKey(name:'_id') required String id,
    required String name,

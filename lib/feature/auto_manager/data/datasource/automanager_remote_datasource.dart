@@ -89,6 +89,8 @@ abstract interface class AutoManagerRemoteDatasource {
 
   Future<User> fetchUser(String userId);
 
+  Future<Driver> fetchDriver(String driverId);
+
   Future<ListPage<User>> fetchUsers({
     required int pageIndex,
     required int pageSize,
@@ -140,5 +142,21 @@ abstract interface class AutoManagerRemoteDatasource {
 
   Future<List<UserPermission>> fetchPermissions();
 
-  Future<Driver> addDriver({required UserRequest userRequest});
+   Future<Driver> addDriver({required UserRequest userRequest});
+
+   // Work & Pay endpoints
+   Future<WorkAndPayAgreement> initiateWorkAndPayAgreement(
+       {required InitiateWorkAndPayRequest request});
+
+   Future<WorkAndPayPayment> recordWorkAndPayPayment(
+       {required RecordWorkAndPayPaymentRequest request});
+
+   Future<WorkAndPayAgreement> fetchWorkAndPayAgreement(
+       {required String agreementId});
+
+   Future<WorkAndPayAgreement> fetchWorkAndPayAgreementByDriverId(
+       {required String driverId});
+
+   Future<List<WorkAndPayPayment>> fetchWorkAndPayPayments(
+       {required String agreementId});
 }

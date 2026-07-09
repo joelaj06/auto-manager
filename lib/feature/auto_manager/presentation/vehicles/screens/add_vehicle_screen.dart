@@ -14,11 +14,6 @@ class AddVehicleScreen extends GetView<VehicleController> {
   Widget build(BuildContext context) {
     final VehicleArgument? args = Get.arguments as VehicleArgument?;
 
-    controller.clearFields();
-    if (args != null) {
-      controller.getVehicleDataFromArgs(args.vehicle);
-    }
-
     final bool isWide = MediaQuery.of(context).size.width >= 768;
 
     return isWide

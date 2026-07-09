@@ -7,7 +7,7 @@ part 'expense_category.freezed.dart';
 part 'expense_category.g.dart';
 
 @freezed
-class ExpenseCategory with _$ExpenseCategory {
+sealed class ExpenseCategory with _$ExpenseCategory {
   const factory ExpenseCategory({
     @JsonKey(name: '_id') required String? id,
     String? name,

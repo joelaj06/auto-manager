@@ -8,7 +8,7 @@ part 'rental_request.freezed.dart';
 part 'rental_request.g.dart';
 
 @freezed
-class RentalRequest with _$RentalRequest {
+sealed class RentalRequest with _$RentalRequest {
   const factory RentalRequest({
     String? id,
     String? renter,

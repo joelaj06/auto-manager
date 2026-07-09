@@ -9,7 +9,7 @@ part 'rental_model.freezed.dart';
 part 'rental_model.g.dart';
 
 @freezed
-class Rental with _$Rental {
+sealed class Rental with _$Rental {
   const factory Rental({
     @JsonKey(name: '_id') required String id,
     required String rentalCode,

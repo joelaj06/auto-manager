@@ -226,6 +226,11 @@ class AutoManagerRepositoryImpl extends Repository
   }
 
   @override
+  Future<Either<Failure, Driver>> fetchDriver({required String driverId}) {
+    return makeRequest(autoManagerRemoteDataSource.fetchDriver(driverId));
+  }
+
+  @override
   Future<Either<Failure, User>> updateUser({required UserRequest userRequest}) {
     return makeRequest(autoManagerRemoteDataSource.updateUser(
       updateUserRequest: userRequest,
@@ -368,6 +373,49 @@ class AutoManagerRepositoryImpl extends Repository
   Future<Either<Failure, Driver>> addDriver({required UserRequest userRequest}) {
     return makeRequest(autoManagerRemoteDataSource.addDriver(
       userRequest: userRequest,
+    ));
+  }
+
+  @override
+  Future<Either<Failure, WorkAndPayAgreement>> initiateWorkAndPayAgreement({
+    required InitiateWorkAndPayRequest request,
+  }) {
+    return makeRequest(
+        autoManagerRemoteDataSource.initiateWorkAndPayAgreement(request: request));
+  }
+
+  @override
+  Future<Either<Failure, WorkAndPayPayment>> recordWorkAndPayPayment({
+    required RecordWorkAndPayPaymentRequest request,
+  }) {
+    return makeRequest(
+        autoManagerRemoteDataSource.recordWorkAndPayPayment(request: request));
+  }
+
+  @override
+  Future<Either<Failure, WorkAndPayAgreement>> fetchWorkAndPayAgreement({
+    required String agreementId,
+  }) {
+    return makeRequest(autoManagerRemoteDataSource.fetchWorkAndPayAgreement(
+      agreementId: agreementId,
+    ));
+  }
+
+  @override
+  Future<Either<Failure, List<WorkAndPayPayment>>> fetchWorkAndPayPayments({
+    required String agreementId,
+  }) {
+    return makeRequest(autoManagerRemoteDataSource.fetchWorkAndPayPayments(
+      agreementId: agreementId,
+    ));
+  }
+
+  @override
+  Future<Either<Failure, WorkAndPayAgreement>> fetchWorkAndPayAgreementByDriverId({
+    required String driverId,
+  }) {
+    return makeRequest(autoManagerRemoteDataSource.fetchWorkAndPayAgreementByDriverId(
+      driverId: driverId,
     ));
   }
 }

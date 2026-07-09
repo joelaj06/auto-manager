@@ -6,7 +6,7 @@ part 'role_request.freezed.dart';
 part 'role_request.g.dart';
 
 @freezed
-class RoleRequest with _$RoleRequest {
+sealed class RoleRequest with _$RoleRequest {
   const factory RoleRequest({
     String? id,
     required String? name,

@@ -108,7 +108,22 @@ class AutoManagerEndpoints {
 
   static String role(String roleId) => 'roles/$roleId';
 
-  static const String permissions = 'permissions';
+   static const String permissions = 'permissions';
+
+   // Work & Pay endpoints
+   static const String workPayAgreement = 'work-pay/agreement';
+   
+   static String workPayAgreementDetail(String agreementId) =>
+       'work-pay/agreement/$agreementId';
+
+   static String workPayAgreementByDriver(String driverId) =>
+       'work-pay/agreements/driver/$driverId';
+   
+   static String workPayAgreementPayments(String agreementId) =>
+       'work-pay/agreement/$agreementId/payments';
+   
+   static const String workPayPayment = 'work-pay/payment';
+
 
 
 }

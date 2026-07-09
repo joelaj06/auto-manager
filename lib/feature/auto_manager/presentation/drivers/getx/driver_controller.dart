@@ -62,6 +62,14 @@ class DriverController extends GetxController {
       },
     );
     fetchAllVehicles();
+
+    final DriverArgument? args = Get.arguments as DriverArgument?;
+    if (args != null) {
+      getDriverDataFromArgs(args.driver);
+    } else {
+      clearFields();
+    }
+
     super.onInit();
   }
 
@@ -281,8 +289,19 @@ class DriverController extends GetxController {
   }
 
   void getDriverDataFromArgs(Driver driver) {
-    licenseExpiryDateController.value.text =
-        DataFormatter.formatDateToString(driver.licenceExpiryDate!);
+    firstName(driver.firstName);
+    lastName(driver.lastName);
+    email(driver.email ?? '');
+    phone(driver.phone ?? '');
+    licenseNumber(driver.licenseNumber ?? '');
+    if (driver.licenceExpiryDate != null) {
+      selectedLicenseExpiryDate(DateTime.tryParse(driver.licenceExpiryDate!) ?? DateTime.now());
+      licenseExpiryDateController.value.text =
+          DataFormatter.formatDateToString(driver.licenceExpiryDate!);
+    }
+    if (driver.vehicle != null) {
+      selectedVehicle(driver.vehicle);
+    }
   }
 
   void selectLicenseDate(BuildContext context) async {

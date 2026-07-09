@@ -6,7 +6,7 @@ part 'driver_request.freezed.dart';
 part 'driver_request.g.dart';
 
 @freezed
-class DriverRequest with _$DriverRequest {
+sealed class DriverRequest with _$DriverRequest {
   const factory DriverRequest({
     String? vehicleId,
     String? licenseNumber,

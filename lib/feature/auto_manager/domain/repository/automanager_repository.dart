@@ -108,6 +108,8 @@ abstract interface class AutoManagerRepository {
 
   Future<Either<Failure, User>> fetchUser({required String userId});
 
+  Future<Either<Failure, Driver>> fetchDriver({required String driverId});
+
   Future<Either<Failure, User>> updateUser({required UserRequest userRequest});
 
   Future<Either<Failure, Company>> updateCompany({
@@ -161,5 +163,26 @@ abstract interface class AutoManagerRepository {
 
   Future<Either<Failure, Role>> addRole({required RoleRequest roleRequest});
 
-  Future<Either<Failure, Driver>> addDriver({required UserRequest userRequest});
+   Future<Either<Failure, Driver>> addDriver({required UserRequest userRequest});
+
+   // Work & Pay
+   Future<Either<Failure, WorkAndPayAgreement>> initiateWorkAndPayAgreement({
+     required InitiateWorkAndPayRequest request,
+   });
+
+   Future<Either<Failure, WorkAndPayPayment>> recordWorkAndPayPayment({
+     required RecordWorkAndPayPaymentRequest request,
+   });
+
+   Future<Either<Failure, WorkAndPayAgreement>> fetchWorkAndPayAgreement({
+     required String agreementId,
+   });
+
+   Future<Either<Failure, WorkAndPayAgreement>> fetchWorkAndPayAgreementByDriverId({
+     required String driverId,
+   });
+
+    Future<Either<Failure, List<WorkAndPayPayment>>> fetchWorkAndPayPayments({
+      required String agreementId,
+    });
 }

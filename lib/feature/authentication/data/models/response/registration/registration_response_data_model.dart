@@ -8,7 +8,7 @@ part 'registration_response_data_model.freezed.dart';
 part 'registration_response_data_model.g.dart';
 
 @freezed
-class UserRegistrationData with _$UserRegistrationData {
+sealed class UserRegistrationData with _$UserRegistrationData {
   const factory UserRegistrationData({
     required String email,
     required String? userId,

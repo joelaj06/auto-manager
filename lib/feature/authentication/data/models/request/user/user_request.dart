@@ -6,7 +6,7 @@ part 'user_request.freezed.dart';
 part 'user_request.g.dart';
 
 @freezed
-class UserRequest with _$UserRequest {
+sealed class UserRequest with _$UserRequest {
   const factory UserRequest({
     String? id,
       String? firstName,

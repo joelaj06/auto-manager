@@ -8,7 +8,7 @@ part 'vehicle_request.freezed.dart';
 part 'vehicle_request.g.dart';
 
 @freezed
-class VehicleRequest with _$VehicleRequest {
+sealed class VehicleRequest with _$VehicleRequest {
   const factory VehicleRequest({
     String? id,
     String? licensePlate,
