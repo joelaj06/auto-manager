@@ -28,6 +28,7 @@ class AppRoutes{
   static const String addRole = '/addRole';
   static const String workAndPay = '/workAndPay';
   static const String driverDetails = '/driverDetails';
+  static const String initiateWorkAndPay = '/initiateWorkAndPay';
 
 
 
